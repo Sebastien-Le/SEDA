@@ -1,0 +1,148 @@
+---
+name:  Sorting
+title: Analysis of Sorting data
+jrs:   '1.1'
+
+items:
+    - name: plotindiv
+      title: Representation of the products
+      type: Image
+      width:  700
+      height: 500
+      renderFun: .plotindiv
+
+    - name: plotvar
+      title: Representation of the consumers
+      type: Image
+      width:  700
+      height: 500
+      renderFun: .plotvar
+
+    - name: plotitemvar
+      title: Representation of the categories
+      type: Image
+      width:  700
+      height: 500
+      renderFun: .plotitemvar
+
+    - name: eigengroup
+      title: Eigenvalue decomposition
+      type: Group
+      items:
+        - name: eigen
+          title: ''
+          type: Table
+          columns:
+            - name: component
+              title: ''
+              type: 'text'
+            - name: eigenvalue
+              title: 'Eigenvalue'
+              type: number
+            - name: purcent
+              title: '% of variance'
+              type: number
+            - name: purcentcum
+              title: 'Cumulative %'
+              type: number
+
+    - name: dimdesc
+      title: Automatic description of the axes
+      type: Preformatted
+
+    - name: individus
+      title: Individual tables
+      type: Group
+      items: 
+        - name:  coordonnees
+          title: Coordinates table
+          type:  Table
+          visible: (indcoord)
+          clearWith:
+            - nFactors
+          columns: []
+
+        - name:  contribution
+          title: Contributions table
+          type:  Table
+          visible: (indcontrib)
+          clearWith:
+            - nFactors
+          columns: []
+
+        - name:  cosinus
+          title: Cosinus table
+          type:  Table
+          visible: (indcos)
+          clearWith:
+            - nFactors
+          columns: []
+
+
+
+    - name: variables
+      title: Variable tables
+      type: Group
+      items: 
+        - name:  coordonnees
+          title: Coordinates table
+          type:  Table
+          visible: (varcoord)
+          clearWith:
+            - actvars
+            - nFactors
+          columns: []
+
+        - name:  contribution
+          title: Contributions table
+          type:  Table
+          visible: (varcontrib)
+          clearWith:
+            - actvars
+            - nFactors
+          columns: []
+
+        - name:  cosinus
+          title: Cosinus table
+          type:  Table
+          visible: (varcos)
+          clearWith:
+            - actvars
+            - nFactors
+          columns: []
+
+    - name: dfresgroup
+      title: Description of the products
+      type: Group
+      items:
+        - name: dfres
+          title: ''
+          type: Table
+          columns:
+            - name: component
+              title: ''
+              type: text
+              combineBelow: true
+            - name: word
+              title: Word
+              type: text
+            - name: internper
+              title: Intern %
+              type: Number
+            - name: globper
+              title: Global %
+              type: Number
+            - name: internfreq
+              title: Intern frequency
+              type: Number
+            - name: globfreq
+              title: Global frequency
+              type: Number
+            - name: pvaluedfres
+              title: p-value
+              format: zto,pvalue
+            - name: vtest
+              title: Vtest
+              type: Number
+           
+...

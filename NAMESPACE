@@ -1,0 +1,5 @@
+exportPattern("^[[:alpha:]]+")
+import(FactoMineR)
+import(SensoMineR)
+import(factoextra)
+import(ggplot2)

@@ -1,0 +1,52 @@
+---
+title: Sensory Evaluation Data Analysis
+name: SEDA
+version: 0.9.0
+jms: '1.0'
+authors:
+  - Thomas Leblay
+  - Fiona Tuffin
+  - Thomas Vincent
+  - Maëlle Beaudinet
+  - Sébastien Lê
+maintainer: sebastien.le@agrocampus-ouest.fr
+date: '2020-07-20'
+type: R
+description: >-
+  This module allows you to analyze two types of data. A first one, when
+  products are described according to a fixed list of sensory attributes (QDA
+  data). A second one, when products are described freely (Napping and sorting
+  data). Results are obtained thanks to the SensoMineR package.
+analyses:
+  - title: Analysis of QDA data
+    name: QDA
+    ns: SEDA
+    menuGroup: SEDA
+    menuTitle: Description of each product
+    menuSubgroup: Fixed list of attributes
+    menuSubtitle: 'SensoMineR::decat'
+  - title: Analysis of QDA data with resampling
+    name: QDABOOT
+    ns: SEDA
+    menuGroup: SEDA
+    menuTitle: Representation of the product space
+    menuSubgroup: Fixed list of attributes
+    menuSubtitle: 'SensoMineR::panellipse'
+  - title: Analysis of Napping data
+    name: Napping
+    ns: SEDA
+    menuGroup: SEDA
+    menuTitle: Analysis of Napping data
+    menuSubgroup: Free perception
+    menuSubtitle: 'FactoMineR::MFA'
+  - title: Analysis of Sorting data
+    name: Sorting
+    ns: SEDA
+    menuGroup: SEDA
+    menuTitle: Analysis of Sorting data
+    menuSubgroup: Free perception
+    menuSubtitle: 'FactoMineR::MCA'
+usesNative: true
+minApp: 1.0.8
+
+...

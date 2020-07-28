@@ -1,0 +1,36 @@
+title: Analysis of QDA data
+name: QDA
+jus: '3.0'
+stage: 0
+compilerMode: aggressive
+children:
+  - type: VariableSupplier
+    persistentItems: false
+    stretchFactor: 1
+    children:
+      - type: TargetLayoutBox
+        label: Product effect
+        children:
+          - type: VariablesListBox
+            name: prodeff
+            maxItemCount: 1
+            isTarget: true
+      - type: TargetLayoutBox
+        label: Panelist effect
+        children:
+          - type: VariablesListBox
+            name: paneff
+            maxItemCount: 1
+            isTarget: true
+      - type: TargetLayoutBox
+        label: Sensory attributes
+        children:
+          - type: VariablesListBox
+            name: sensoatt
+            isTarget: true
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: TextBox
+        name: threshold
+        format: number

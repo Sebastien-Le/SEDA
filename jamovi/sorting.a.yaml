@@ -1,0 +1,94 @@
+---
+name:  Sorting
+title: Analysis of Sorting data
+menuGroup: SEDA
+version: '1.0.0'
+jas: '1.2'
+
+options:
+    - name: data
+      type: Data
+
+    - name: actvars
+      title: Consumers
+      type: Variables
+      suggested:
+        - nominal
+        - ordinal
+      permitted:
+        - factor
+
+    - name: individus
+      title: Products labels
+      type: Variable
+      suggested:
+        - nominal
+      permitted:
+        - factor
+
+    - name: nFactors
+      title: Number of factors
+      type: Integer
+      default: 3
+
+    - name: abs
+      title: X-axis
+      type: Integer
+      default: 1
+    
+    - name: ord
+      title: Y-axis
+      type: Integer
+      default: 2
+
+    - name: proba
+      title: Significant threshold
+      type: Number
+      default: 0.05
+
+    - name: indcoord
+      title: Coordinates
+      type: Bool
+      default: false
+
+    - name: indcontrib
+      title: Contributions
+      type: Bool
+      default: false
+
+    - name: indcos
+      title: Cosinus
+      type: Bool
+      default: false
+
+    - name: varcoord
+      title: Coordinates
+      type: Bool
+      default: false
+
+    - name: varcontrib
+      title: Contributions
+      type: Bool
+      default: false
+
+    - name: varcos
+      title: Cosinus
+      type: Bool
+      default: false
+      
+    - name: ventil
+      title: Ventilation level
+      type: Number
+      default: 0.05
+      
+    - name: modality
+      title: Selection of categories
+      type: String
+      default: cos2 10
+
+    - name: leveltext
+      title: Level description
+      type: Number
+      default: 0.05
+      
+...

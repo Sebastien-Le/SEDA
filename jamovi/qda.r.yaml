@@ -1,0 +1,35 @@
+---
+name:  QDA
+title: Analysis of QDA data
+jrs:   '1.1'
+
+items:
+    - name: resTgroup
+      title: Coefficient, p-value and Vtest for each significant attribute
+      type: Group
+      items:
+        - name: resT
+          title: Sensory Analysis
+          type: Table
+          columns:
+            - name: component
+              title: ''
+              type: text
+              combineBelow: true
+            - name: var
+              title: 'Descriptor'
+              type: text
+            - name: coeff
+              title: 'Coefficient'
+              type: number
+            - name: adjmean
+              title: 'Adjusted mean'
+              type: number
+            - name: pvalue
+              title: 'p-value'
+              type: number
+              format: zto,pvalue
+            - name: vtest
+              title: 'Vtest'
+              type: number
+...

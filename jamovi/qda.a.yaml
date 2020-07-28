@@ -1,0 +1,32 @@
+---
+name:  QDA
+title: Analysis of QDA data
+menuGroup: SEDA
+
+menuSubgroup: Fixed list of attributes
+menuTitle: Description of each product
+
+version: '1.0.0'
+jas: '1.2'
+
+options:
+    - name: data
+      type: Data
+
+    - name: prodeff
+      title: Product effect
+      type: Variable
+
+    - name: paneff
+      title: Panelist effect
+      type: Variable
+
+    - name: sensoatt
+      title: Sensory attributes
+      type: Variables
+
+    - name: threshold
+      title: Threshold below which attributes characterize a product
+      type: Number
+      default: 0.05
+...

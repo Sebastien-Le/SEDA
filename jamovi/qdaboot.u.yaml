@@ -1,0 +1,138 @@
+title: Analysis of QDA data with resampling
+name: QDABOOT
+jus: '3.0'
+stage: 0
+compilerMode: tame
+children:
+  - type: VariableSupplier
+    persistentItems: false
+    stretchFactor: 1
+    children:
+      - type: TargetLayoutBox
+        label: Product Variable
+        children:
+          - type: VariablesListBox
+            name: prod
+            maxItemCount: 1
+            isTarget: true
+      - type: TargetLayoutBox
+        label: Panelist Variable
+        children:
+          - type: VariablesListBox
+            name: pane
+            maxItemCount: 1
+            isTarget: true
+      - type: TargetLayoutBox
+        label: Sensory attributes
+        children:
+          - type: VariablesListBox
+            name: senso
+            isTarget: true
+  - type: LayoutBox
+    margin: large
+    stretchFactor: 1
+    children:
+      - type: Label
+        label: Should the variables be standardized?
+        stretchFactor: 1
+        children:
+          - type: CheckBox
+            name: scale_unit_box
+  - type: LayoutBox
+    margin: large
+    stretchFactor: 1
+    children:
+      - type: Label
+        label: Which sensory attributes should be kept?
+        stretchFactor: 1
+        children:
+          - type: TextBox
+            name: level_search
+            format: number
+  - type: CollapseBox
+    label: Ellipses options
+    collapsed: true
+    margin: large
+    children:
+      - type: Label
+        label: ''
+        cell:
+          column: 0
+          row: 0
+        stretchFactor: 1
+        children:
+          - type: TextBox
+            name: thresh
+            format: number
+      - type: Label
+        label: ''
+        cell:
+          column: 1
+          row: 0
+        stretchFactor: 1
+        children:
+          - type: TextBox
+            name: nbsimul
+            format: number
+      - type: Label
+        label: ''
+        cell:
+          column: 2
+          row: 0
+        stretchFactor: 1
+        children:
+          - type: TextBox
+            name: nbpane
+            format: number
+      - type: CheckBox
+        name: center_pane_box
+      - type: CheckBox
+        name: scale_pane_box
+  - type: CollapseBox
+    label: Components to plot
+    collapsed: true
+    margin: large
+    children:
+      - type: Label
+        label: ''
+        cell:
+          column: 0
+          row: 0
+        stretchFactor: 1
+        children:
+          - type: TextBox
+            name: abs
+            format: number
+      - type: Label
+        label: ''
+        cell:
+          column: 1
+          row: 0
+        stretchFactor: 1
+        children:
+          - type: TextBox
+            name: ord
+            format: number
+  - type: CollapseBox
+    label: Graphic options
+    collapsed: true
+    margin: large
+    children:
+      - type: CheckBox
+        name: ind_gr_box
+      - type: CheckBox
+        name: var_gr_box
+      - type: CheckBox
+        name: name_box
+      - type: TextBox
+        name: cex
+        format: number
+  - type: CollapseBox
+    label: Numerical indicators
+    collapsed: true
+    margin: large
+    children:
+      - type: CheckBox
+        name: cor_tab_box_max
+      - type: CheckBox
+        name: cor_tab_box_min
