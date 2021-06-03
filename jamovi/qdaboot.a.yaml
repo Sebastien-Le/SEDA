@@ -19,19 +19,25 @@ options:
     type: Variable
     suggested:
       - nominal
+    permitted:
+      - factor
 
   - name: pane
     title: Subject Variable
     type: Variable
     suggested:
       - nominal
-
+    permitted:
+      - factor
+      
   - name: senso
     title: Sensory Attributes
     type: Variables
     suggested:
       - continuous
-
+    permitted:
+      - numeric
+      
   - name: thresh
     title: Threshold (%)
     type: Number
