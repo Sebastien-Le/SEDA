@@ -47,6 +47,26 @@ analyses:
     menuTitle: Analysis of Sorting Data
     menuSubgroup: Free perception
     menuSubtitle: 'FactoMineR::MCA'
+datasets:
+  - name: sensochoc
+    path: sensochoc.omv
+    description: Sensory profile data on chocolates
+    tags:
+      - decat
+      - panellipse
+      - Confidence ellipses      
+  - name: perfumes_napping
+    path: perfumes_napping.omv
+    description: Napping data on perfumes
+    tags:
+      - Napping
+      - MFA      
+  - name: perfumes_sorting
+    path: perfumes_sorting.omv
+    description: Sorting data on perfumes
+    tags:
+      - Sorting
+      - MCA      
 usesNative: true
 minApp: 1.0.8
 
