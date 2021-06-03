@@ -1,35 +1,46 @@
 ---
-name:  QDA
-title: Analysis of QDA data
-jrs:   '1.1'
+name: QDA
+title: Characterization of the Stimulus Space
+jrs: '1.1'
 
 items:
-    - name: resTgroup
-      title: Coefficient, p-value and Vtest for each significant attribute
-      type: Group
-      items:
-        - name: resT
-          title: Sensory Analysis
-          type: Table
-          columns:
-            - name: component
-              title: ''
-              type: text
-              combineBelow: true
-            - name: var
-              title: 'Descriptor'
-              type: text
-            - name: coeff
-              title: 'Coefficient'
-              type: number
-            - name: adjmean
-              title: 'Adjusted mean'
-              type: number
-            - name: pvalue
-              title: 'p-value'
-              type: number
-              format: zto,pvalue
-            - name: vtest
-              title: 'Vtest'
-              type: number
-...
+  - name: resF
+    title: Identification of the Sensory Dimensions
+    type: Table
+    columns:
+      - name: att
+        title: ''
+        type: text
+      - name: vtest
+        title: Vtest
+        type: number
+        format: zto,pvalue
+      - name: pvalue
+        title: p
+        type: number
+        format: zto,pvalue
+
+  - name: resT
+    title: Sensory Description of the Stimuli
+    type: Table
+    columns:
+      - name: component
+        title: ''
+        type: text
+        combineBelow: true
+      - name: var
+        title: 'Descriptor'
+        type: text
+      - name: coeff
+        title: 'Coefficient'
+        type: number
+      - name: adjmean
+        title: 'Adjusted mean'
+        type: number
+      - name: pvalue
+        title: 'p'
+        type: number
+        format: zto,pvalue
+      - name: vtest
+        title: 'Vtest'
+        type: number

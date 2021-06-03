@@ -1,4 +1,4 @@
-title: Analysis of QDA data
+title: Characterization of the Stimulus Space
 name: QDA
 jus: '3.0'
 stage: 0
@@ -9,21 +9,21 @@ children:
     stretchFactor: 1
     children:
       - type: TargetLayoutBox
-        label: Product effect
+        label: Stimulus Effect
         children:
           - type: VariablesListBox
             name: prodeff
             maxItemCount: 1
             isTarget: true
       - type: TargetLayoutBox
-        label: Panelist effect
+        label: Subject Effect
         children:
           - type: VariablesListBox
             name: paneff
             maxItemCount: 1
             isTarget: true
       - type: TargetLayoutBox
-        label: Sensory attributes
+        label: Sensory Attributes
         children:
           - type: VariablesListBox
             name: sensoatt

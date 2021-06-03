@@ -17,12 +17,12 @@ QDAClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                 
                 #Division blocs
                 
-                data = self$data
+                data <- self$data
                 data.qt <- data[,sapply(data, function(x) is.numeric(x))]
                 data.ql <- data[,sapply(data, function(x) is.factor(x))]
-                data = data.frame(data.ql, data.qt) #Ranger le jeu de données avec d'abord les var QL puis les var QT
+                data <- data.frame(data.ql, data.qt) #Ranger le jeu de données avec d'abord les var QL puis les var QT
                 
-                res.decat=private$.decat(data)
+                res.decat <- private$.decat(data)
                 
                 #Mise en place du tableau sous R
                 
@@ -56,20 +56,18 @@ QDAClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                 }
                 
                 
-                #Résultats
+                #Resultats
                 
                 if (is.null(res.decat$resT) == FALSE) {
                     private$.printresTable(tab)
+                    private$.printresFTable(res.decat$resF)
                 }
-
-                # self$results$desprod$setContent(res.decat)
             }
-            
         },
         
         .decat= function(data){
             
-            threshold=self$options$threshold
+            threshold=self$options$threshold/100
             prodeff=self$options$prodeff
             paneff=self$options$paneff
             formul=paste0("~", prodeff, "+", paneff)
@@ -190,7 +188,7 @@ QDAClass <- if (requireNamespace('jmvcore')) R6::R6Class(
         .printresTable= function(tab){
             
             for (i in 1:dim(tab)[1]){
-                self$results$resTgroup$resT$addRow(rowKey=i, values=list(component=as.character(tab[,1])[i])) #M?thode addRow
+                self$results$resT$addRow(rowKey=i, values=list(component=as.character(tab[,1])[i])) #M?thode addRow
             }
             
             for (i in 1:(dim(tab)[1])) {
@@ -200,10 +198,22 @@ QDAClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                 row[["adjmean"]]=tab[,4][i]
                 row[["pvalue"]]=tab[,5][i]
                 row[["vtest"]]=tab[,6][i]
-                self$results$resTgroup$resT$setRow(rowNo=i, values = row) #M?thode setRow
+                self$results$resT$setRow(rowNo=i, values = row) #M?thode setRow
             }
-            
-        }
+        },
         
+        .printresFTable = function(tab) {
+            
+            resF <- self$results$resF
+            
+            for (i in 1:dim(tab)[1]) {
+                resF$addRow(rowKey=i, value=NULL)  
+                row=list()
+                row[["att"]] = row.names(tab)[i]
+                row[["vtest"]] = tab[,1][i]
+                row[["pvalue"]] = tab[,2][i]
+                resF$setRow(rowKey=i, values = row)
+            }
+        }
     )
 )

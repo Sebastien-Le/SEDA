@@ -1,118 +1,105 @@
 ---
-name:  QDABOOT
-title: Analysis of QDA data with resampling
+name: QDABOOT
+title: Multivariate Representation of the Stimulus Space
 menuGroup: SEDA
 
-menuSubgroup: Fixed list of attributes
-menuTitle: Representation of the product space
+menuSubgroup: Fixed List of Attributes
+menuTitle: Representation of the Stimulus Space
 menuSubtitle: 'SensoMineR::panellipse'
 
 version: '1.0.0'
 jas: '1.2'
 
 options:
-    - name: data
-      type: Data
+  - name: data
+    type: Data
 
-    - name: prod
-      title: Product Variable
-      type: Variable
-      suggested: 
-        - nominal
-  
-    - name: pane
-      title: Panelist Variable
-      type: Variable
-      suggested:
-        - nominal
+  - name: prod
+    title: Stimulus Variable
+    type: Variable
+    suggested:
+      - nominal
 
-    - name: senso
-      title: Sensory attributes
-      type: Variables
-      suggested:
-        - continuous
-      
-    - name: thresh
-      title: Threshold
-      type: Number
-      default: 0.05
-      min: 0
-      max: 1
+  - name: pane
+    title: Subject Variable
+    type: Variable
+    suggested:
+      - nominal
 
-    - name: nbsimul
-      title: Number of panels
-      type: Number
-      default: 300
-      min: 10
-      max: 1000
-    
-    - name: nbpane
-      title: Number of panelists
-      type: Number
-      default: 20
-      min: 2
-    
-    - name: ind_gr_box
-      title: Individual variability around products
-      type: Bool
-      default: FALSE
-      
-    - name: var_gr_box
-      title: Variability around sensory attributes
-      type: Bool
-      default: FALSE
-                
-    - name: cor_tab_box_max
-      title: Upper-bounds of the correlation matrix
-      type: Bool
-      default: FALSE
-      
-    - name: cor_tab_box_min
-      title: Lower-bounds of the correlation matrix
-      type: Bool
-      default: FALSE
-    
-    - name: abs
-      title: X-axis
-      type: Integer
-      default: 1
-    
-    - name: ord
-      title: Y-axis
-      type: Integer
-      default: 2
-      
-    - name: cex
-      title: Legend height
-      type: Number
-      default: 1
-      min: 0.1
-      max: 2
-      
-    - name : name_box
-      title: Panelists' name
-      type: Bool
-      default: FALSE
+  - name: senso
+    title: Sensory Attributes
+    type: Variables
+    suggested:
+      - continuous
 
-    - name: scale_unit_box
-      title: Standardization of the sensory attributes
-      type: Bool
-      default: TRUE
-      
-    - name: center_pane_box
-      title: Center by panelist
-      type: Bool
-      default: TRUE
-      
-    - name: scale_pane_box
-      title: Scale by panelist
-      type: Bool
-      default: FALSE
-    
-    - name: level_search
-      title: Threshold below which attributes are selected (p-value of Product effect)
-      type: Number
-      default: 0.2
-      min: 0.01
-      max: 1
-...
+  - name: thresh
+    title: Threshold (%)
+    type: Number
+    default: 5
+    min: 0
+    max: 100
+
+  - name: nbsimul
+    title: Number of panels
+    type: Number
+    default: 300
+    min: 10
+    max: 1000
+
+  - name: nbpane
+    title: Number of subjects
+    type: Number
+    default: 20
+    min: 2
+
+  - name: ind_gr_box
+    title: Individual variability around stimuli
+    type: Bool
+    default: FALSE
+
+  - name: var_gr_box
+    title: Variability around sensory attributes
+    type: Bool
+    default: FALSE
+
+  - name: abs
+    title: X-axis
+    type: Integer
+    default: 1
+
+  - name: ord
+    title: Y-axis
+    type: Integer
+    default: 2
+
+  - name: scale_unit_box
+    title: Scale to unit variance
+    type: Bool
+    default: TRUE
+
+  - name: center_pane_box
+    title: Center by subject
+    type: Bool
+    default: TRUE
+
+  - name: scale_pane_box
+    title: Scale by subject
+    type: Bool
+    default: FALSE
+
+  - name: level_search
+    title: p-value of the Stimulus effect (%)
+    type: Number
+    default: 20
+    min: 1
+    max: 100
+
+  - name: nFactors
+    title: Number of factors
+    type: Integer
+    default: 3
+
+  - name: proba
+    title: Significance threshold (%)
+    type: Number
+    default: 5

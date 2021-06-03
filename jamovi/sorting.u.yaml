@@ -1,4 +1,4 @@
-title: Analysis of Sorting data
+title: Analysis of Sorting Data
 name: Sorting
 jus: '3.0'
 stage: 0
@@ -9,24 +9,36 @@ children:
     stretchFactor: 1
     children:
       - type: TargetLayoutBox
-        label: Products labels
+        label: Stimuli Labels
         children:
           - type: VariablesListBox
             name: individus
             maxItemCount: 1
             isTarget: true
       - type: TargetLayoutBox
-        label: Consumers
+        label: Subjects
         children:
           - type: VariablesListBox
             name: actvars
+            isTarget: true
+      - type: TargetLayoutBox
+        label: Quantitative Supplementary Variables
+        children:
+          - type: VariablesListBox
+            name: quantisup
+            isTarget: true
+      - type: TargetLayoutBox
+        label: Supplementary Subjects
+        children:
+          - type: VariablesListBox
+            name: qualisup
             isTarget: true
   - type: LayoutBox
     margin: large
     stretchFactor: 1
     children:
       - type: Label
-        label: Random assignment for rare categories
+        label: Random Assignment for Rare Categories
         stretchFactor: 1
         children:
           - type: TextBox
@@ -36,13 +48,12 @@ children:
     margin: large
     stretchFactor: 1
     children:
-      - type: Label
-        label: Graphic options
-        stretchFactor: 1
+      - type: CollapseBox
+        label: Graphic Options
+        collapsed: true
         children:
-          - type: CollapseBox
-            label: Components to plot
-            collapsed: true
+          - type: Label
+            label: Components to Plot
             children:
               - type: Label
                 label: ''
@@ -64,24 +75,31 @@ children:
                   - type: TextBox
                     name: ord
                     format: number
-          - type: CollapseBox
-            label: Categories to plot
-            collapsed: true
+          - type: Label
+            label: Categories to Plot
             children:
+              - type: CheckBox
+                name: varmodvar
               - type: TextBox
                 name: modality
                 format: string
+              - type: CheckBox
+                name: varmodqualisup
+          - type: Label
+            label: Quantitative Supplementary Variables
+            children:
+              - type: CheckBox
+                name: quantimod
   - type: LayoutBox
     margin: large
     stretchFactor: 1
     children:
-      - type: Label
-        label: Numerical indicators
-        stretchFactor: 1
+      - type: CollapseBox
+        label: Numerical Indicators
+        collapsed: true
         children:
-          - type: CollapseBox
-            label: Automatic description of the axis
-            collapsed: true
+          - type: Label
+            label: Automatic Description of the Axis
             children:
               - type: Label
                 label: ''
@@ -103,9 +121,8 @@ children:
                   - type: TextBox
                     name: nFactors
                     format: number
-          - type: CollapseBox
-            label: Automatic description of the products
-            collapsed: true
+          - type: Label
+            label: Automatic Description of the Stimuli
             children:
               - type: LayoutBox
                 margin: large
@@ -113,9 +130,8 @@ children:
                   - type: TextBox
                     name: leveltext
                     format: number
-          - type: CollapseBox
-            label: Individual table options
-            collapsed: true
+          - type: Label
+            label: Individual Table Options
             children:
               - type: LayoutBox
                 margin: large
@@ -127,9 +143,8 @@ children:
                     name: indcontrib
                   - type: CheckBox
                     name: indcos
-          - type: CollapseBox
-            label: Variable table options
-            collapsed: true
+          - type: Label
+            label: Variable Table Options
             children:
               - type: LayoutBox
                 margin: large

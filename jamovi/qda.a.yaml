@@ -1,32 +1,31 @@
 ---
-name:  QDA
-title: Analysis of QDA data
+name: QDA
+title: Characterization of the Stimulus Space
 menuGroup: SEDA
 
-menuSubgroup: Fixed list of attributes
-menuTitle: Description of each product
+menuSubgroup: Fixed List of Attributes
+menuTitle: Characterization of the Stimulus Space
 
 version: '1.0.0'
 jas: '1.2'
 
 options:
-    - name: data
-      type: Data
+  - name: data
+    type: Data
 
-    - name: prodeff
-      title: Product effect
-      type: Variable
+  - name: prodeff
+    title: Stimulus Effect
+    type: Variable
 
-    - name: paneff
-      title: Panelist effect
-      type: Variable
+  - name: paneff
+    title: Subject Effect
+    type: Variable
 
-    - name: sensoatt
-      title: Sensory attributes
-      type: Variables
+  - name: sensoatt
+    title: Sensory Attributes
+    type: Variables
 
-    - name: threshold
-      title: Threshold below which attributes characterize a product
-      type: Number
-      default: 0.05
-...
+  - name: threshold
+    title: Significance threshold (%)
+    type: Number
+    default: 5

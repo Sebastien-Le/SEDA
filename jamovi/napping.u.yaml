@@ -1,4 +1,4 @@
-title: Analysis of Napping data
+title: Analysis of Napping Data
 name: Napping
 jus: '3.0'
 stage: 0
@@ -9,26 +9,26 @@ children:
     stretchFactor: 1
     children:
       - type: TargetLayoutBox
-        label: Products labels
+        label: Stimuli Labels
         children:
           - type: VariablesListBox
             name: individus
             maxItemCount: 1
             isTarget: true
       - type: TargetLayoutBox
-        label: (X,Y) coordinates
+        label: (X,Y) Coordinates
         children:
           - type: VariablesListBox
             name: actvars
             isTarget: true
       - type: TargetLayoutBox
-        label: Quantitative supplementary information
+        label: Quantitative Supplementary Information
         children:
           - type: VariablesListBox
             name: quantisup
             isTarget: true
       - type: TargetLayoutBox
-        label: Categorical supplementary information
+        label: Categorical Supplementary Information
         children:
           - type: VariablesListBox
             name: qualisup
@@ -37,13 +37,12 @@ children:
     margin: large
     stretchFactor: 1
     children:
-      - type: Label
-        label: Graphic options
-        stretchFactor: 1
+      - type: CollapseBox
+        label: Graphic Options
+        collapsed: true
         children:
-          - type: CollapseBox
-            label: Components to plot
-            collapsed: true
+          - type: Label
+            label: Components to Plot
             children:
               - type: Label
                 label: ''
@@ -65,9 +64,8 @@ children:
                   - type: TextBox
                     name: ord
                     format: number
-          - type: CollapseBox
-            label: Individual graphic options
-            collapsed: true
+          - type: Label
+            label: Individual Graphic Options
             children:
               - type: CheckBox
                 name: modactillus
@@ -75,9 +73,8 @@ children:
                 name: modact
               - type: CheckBox
                 name: modillus
-          - type: CollapseBox
-            label: Variable graphic options
-            collapsed: true
+          - type: Label
+            label: Variable Graphic Options
             children:
               - type: CheckBox
                 name: varactillus
@@ -92,13 +89,12 @@ children:
     margin: large
     stretchFactor: 1
     children:
-      - type: Label
-        label: Numerical indicators
-        stretchFactor: 1
+      - type: CollapseBox
+        label: Numerical Indicators
+        collapsed: true
         children:
-          - type: CollapseBox
-            label: Automatic description of the axes
-            collapsed: true
+          - type: Label
+            label: Automatic Description of the Axes
             children:
               - type: Label
                 label: ''
@@ -120,9 +116,8 @@ children:
                   - type: TextBox
                     name: nFactors
                     format: number
-          - type: CollapseBox
-            label: Individual table options
-            collapsed: true
+          - type: Label
+            label: Individual Table Options
             children:
               - type: LayoutBox
                 margin: large
@@ -134,9 +129,8 @@ children:
                     name: contribind
                   - type: CheckBox
                     name: cosind
-          - type: CollapseBox
-            label: Variable table options
-            collapsed: true
+          - type: Label
+            label: Variable Table Options
             children:
               - type: LayoutBox
                 margin: large

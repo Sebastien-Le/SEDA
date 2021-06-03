@@ -1,4 +1,4 @@
-title: Analysis of QDA data with resampling
+title: Multivariate Representation of the Stimulus Space
 name: QDABOOT
 jus: '3.0'
 stage: 0
@@ -9,21 +9,21 @@ children:
     stretchFactor: 1
     children:
       - type: TargetLayoutBox
-        label: Product Variable
+        label: Stimulus Variable
         children:
           - type: VariablesListBox
             name: prod
             maxItemCount: 1
             isTarget: true
       - type: TargetLayoutBox
-        label: Panelist Variable
+        label: Subject Variable
         children:
           - type: VariablesListBox
             name: pane
             maxItemCount: 1
             isTarget: true
       - type: TargetLayoutBox
-        label: Sensory attributes
+        label: Sensory Attributes
         children:
           - type: VariablesListBox
             name: senso
@@ -33,7 +33,7 @@ children:
     stretchFactor: 1
     children:
       - type: Label
-        label: Should the variables be standardized?
+        label: Standardization of the Sensory Attributes
         stretchFactor: 1
         children:
           - type: CheckBox
@@ -43,96 +43,129 @@ children:
     stretchFactor: 1
     children:
       - type: Label
-        label: Which sensory attributes should be kept?
+        label: Selection of the Sensory Attributes
         stretchFactor: 1
         children:
           - type: TextBox
             name: level_search
             format: number
-  - type: CollapseBox
-    label: Ellipses options
-    collapsed: true
+  - type: LayoutBox
     margin: large
+    stretchFactor: 1
     children:
-      - type: Label
-        label: ''
-        cell:
-          column: 0
-          row: 0
+      - type: CollapseBox
+        label: Graphic Options
+        collapsed: true
         stretchFactor: 1
         children:
-          - type: TextBox
-            name: thresh
-            format: number
-      - type: Label
-        label: ''
-        cell:
-          column: 1
-          row: 0
+          - type: Label
+            label: Components to Plot
+            children:
+              - type: Label
+                label: ''
+                cell:
+                  column: 0
+                  row: 0
+                stretchFactor: 1
+                children:
+                  - type: TextBox
+                    name: abs
+                    format: number
+              - type: Label
+                label: ''
+                cell:
+                  column: 1
+                  row: 0
+                stretchFactor: 1
+                children:
+                  - type: TextBox
+                    name: ord
+                    format: number
+          - type: Label
+            label: Additional Plots
+            children:
+              - type: CheckBox
+                name: ind_gr_box
+              - type: CheckBox
+                name: var_gr_box
+      - type: CollapseBox
+        label: Resampling Options
+        collapsed: true
         stretchFactor: 1
         children:
-          - type: TextBox
-            name: nbsimul
-            format: number
-      - type: Label
-        label: ''
-        cell:
-          column: 2
-          row: 0
+          - type: Label
+            label: ''
+            cell:
+              column: 0
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: TextBox
+                name: nbpane
+                format: number
+          - type: Label
+            label: ''
+            cell:
+              column: 0
+              row: 1
+            stretchFactor: 1
+            children:
+              - type: TextBox
+                name: nbsimul
+                format: number
+          - type: Label
+            label: ''
+            cell:
+              column: 0
+              row: 2
+            stretchFactor: 1
+            children:
+              - type: TextBox
+                name: thresh
+                format: number
+          - type: Label
+            label: ''
+            cell:
+              column: 1
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: CheckBox
+                name: center_pane_box
+          - type: Label
+            label: ''
+            cell:
+              column: 1
+              row: 1
+            stretchFactor: 1
+            children:
+              - type: CheckBox
+                name: scale_pane_box
+      - type: CollapseBox
+        label: Numerical Indicators
+        collapsed: true
         stretchFactor: 1
         children:
-          - type: TextBox
-            name: nbpane
-            format: number
-      - type: CheckBox
-        name: center_pane_box
-      - type: CheckBox
-        name: scale_pane_box
-  - type: CollapseBox
-    label: Components to plot
-    collapsed: true
-    margin: large
-    children:
-      - type: Label
-        label: ''
-        cell:
-          column: 0
-          row: 0
-        stretchFactor: 1
-        children:
-          - type: TextBox
-            name: abs
-            format: number
-      - type: Label
-        label: ''
-        cell:
-          column: 1
-          row: 0
-        stretchFactor: 1
-        children:
-          - type: TextBox
-            name: ord
-            format: number
-  - type: CollapseBox
-    label: Graphic options
-    collapsed: true
-    margin: large
-    children:
-      - type: CheckBox
-        name: ind_gr_box
-      - type: CheckBox
-        name: var_gr_box
-      - type: CheckBox
-        name: name_box
-      - type: TextBox
-        name: cex
-        format: number
-  - type: CollapseBox
-    label: Numerical indicators
-    collapsed: true
-    margin: large
-    children:
-      - type: CheckBox
-        name: cor_tab_box_max
-      - type: CheckBox
-        name: cor_tab_box_min
+          - type: Label
+            label: Automatic Description of the Axes
+            children:
+              - type: Label
+                label: ''
+                cell:
+                  column: 0
+                  row: 0
+                stretchFactor: 1
+                children:
+                  - type: TextBox
+                    name: proba
+                    format: number
+              - type: Label
+                label: ''
+                cell:
+                  column: 1
+                  row: 0
+                stretchFactor: 1
+                children:
+                  - type: TextBox
+                    name: nFactors
+                    format: number

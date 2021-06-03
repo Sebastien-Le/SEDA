@@ -1,94 +1,124 @@
 ---
-name:  Sorting
-title: Analysis of Sorting data
+name: Sorting
+title: Analysis of Sorting Data
 menuGroup: SEDA
 version: '1.0.0'
 jas: '1.2'
 
 options:
-    - name: data
-      type: Data
+  - name: data
+    type: Data
 
-    - name: actvars
-      title: Consumers
-      type: Variables
-      suggested:
-        - nominal
-        - ordinal
-      permitted:
-        - factor
+  - name: actvars
+    title: Subjects
+    type: Variables
+    suggested:
+      - nominal
+      - ordinal
+    permitted:
+      - factor
 
-    - name: individus
-      title: Products labels
-      type: Variable
-      suggested:
-        - nominal
-      permitted:
-        - factor
+  - name: individus
+    title: Stimuli Labels
+    type: Variable
+    suggested:
+      - nominal
+    permitted:
+      - factor
 
-    - name: nFactors
-      title: Number of factors
-      type: Integer
-      default: 3
+  - name: quantisup
+    title: Quantitative Supplementary Variables
+    type: Variables
+    suggested:
+      - continuous
+    permitted:
+      - numeric
 
-    - name: abs
-      title: X-axis
-      type: Integer
-      default: 1
-    
-    - name: ord
-      title: Y-axis
-      type: Integer
-      default: 2
+  - name: qualisup
+    title: Supplementary Subjects
+    type: Variables
+    suggested:
+      - nominal
+      - ordinal
+    permitted:
+      - factor
 
-    - name: proba
-      title: Significant threshold
-      type: Number
-      default: 0.05
+  - name: nFactors
+    title: Number of factors
+    type: Integer
+    default: 3
 
-    - name: indcoord
-      title: Coordinates
-      type: Bool
-      default: false
+  - name: abs
+    title: X-axis
+    type: Integer
+    default: 1
 
-    - name: indcontrib
-      title: Contributions
-      type: Bool
-      default: false
+  - name: ord
+    title: Y-axis
+    type: Integer
+    default: 2
 
-    - name: indcos
-      title: Cosinus
-      type: Bool
-      default: false
+  - name: varmodqualisup
+    title: Supplementary categories
+    type: Bool
+    default: true
 
-    - name: varcoord
-      title: Coordinates
-      type: Bool
-      default: false
+  - name: varmodvar
+    title: Active categories
+    type: Bool
+    default: true
 
-    - name: varcontrib
-      title: Contributions
-      type: Bool
-      default: false
+  - name: quantimod
+    title: Quantitative supplementary variables
+    type: Bool
+    default: false
 
-    - name: varcos
-      title: Cosinus
-      type: Bool
-      default: false
-      
-    - name: ventil
-      title: Ventilation level
-      type: Number
-      default: 0.05
-      
-    - name: modality
-      title: Selection of categories
-      type: String
-      default: cos2 10
+  - name: proba
+    title: Significance threshold (%)
+    type: Number
+    default: 5
 
-    - name: leveltext
-      title: Level description
-      type: Number
-      default: 0.05
-      
-...
+  - name: indcoord
+    title: Coordinates
+    type: Bool
+    default: false
+
+  - name: indcontrib
+    title: Contributions
+    type: Bool
+    default: false
+
+  - name: indcos
+    title: Cosine
+    type: Bool
+    default: false
+
+  - name: varcoord
+    title: Coordinates
+    type: Bool
+    default: false
+
+  - name: varcontrib
+    title: Contributions
+    type: Bool
+    default: false
+
+  - name: varcos
+    title: Cosine
+    type: Bool
+    default: false
+
+  - name: ventil
+    title: Ventilation level (%)
+    type: Number
+    default: 5
+
+  - name: modality
+    title: Selection of categories
+    type: String
+    default: cos2 10
+
+  - name: leveltext
+    title: Level description (%)
+    type: Number
+    default: 5
