@@ -16,11 +16,15 @@ options:
   - name: prodeff
     title: Stimulus Effect
     type: Variable
+    suggested:
+      - nominal
 
   - name: paneff
     title: Subject Effect
     type: Variable
-
+    suggested:
+      - nominal
+      
   - name: sensoatt
     title: Sensory Attributes
     type: Variables
