@@ -18,17 +18,25 @@ options:
     type: Variable
     suggested:
       - nominal
-
+    permitted:
+      - factor
+      
   - name: paneff
     title: Subject Effect
     type: Variable
     suggested:
       - nominal
+    permitted:
+      - factor
       
   - name: sensoatt
     title: Sensory Attributes
     type: Variables
-
+    suggested:
+      - continuous
+    permitted:
+      - numeric
+      
   - name: threshold
     title: Significance threshold (%)
     type: Number
