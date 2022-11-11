@@ -1,7 +1,7 @@
 Package: SEDA
 Type: Package
 Title: Sensory Evaluation Data Analysis
-Version: 1.0.0
+Version: 1.1.0
 Author: TL/FT
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: Proposes univariate and multivariate analyses based on the SensoMineR package

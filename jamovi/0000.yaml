@@ -1,23 +1,24 @@
 ---
 title: Sensory Evaluation Data Analysis
 name: SEDA
-version: 1.0.0
+version: 1.1.0
 jms: '1.0'
 authors:
   - Thomas Leblay
   - Fiona Tuffin
   - Thomas Vincent
   - Maëlle Beaudinet
-  - Maxime Saland  
+  - Maxime Saland
   - Sébastien Lê
 maintainer: sebastien.le@agrocampus-ouest.fr
-date: '2021-05-03'
+date: '2022-10-26'
 type: R
 description: >-
-  This module allows you to analyze two types of perception data. A first one, when
-  stimuli are described according to a fixed list of sensory attributes (QDA
-  data, for instance). A second one, when stimuli are described freely (Napping and sorting
-  data). Results are obtained thanks to the SensoMineR package.
+  This module allows you to analyze two types of perception data. A first one,
+  when stimuli are described according to a fixed list of sensory attributes
+  (QDA data, for instance). A second one, when stimuli are described freely
+  (Napping and sorting data). Results are obtained thanks to the SensoMineR
+  package.
 analyses:
   - title: Characterization of the Stimulus Space
     name: QDA
@@ -33,6 +34,13 @@ analyses:
     menuTitle: Representation of the Stimulus Space
     menuSubgroup: Fixed List of Attributes
     menuSubtitle: 'SensoMineR::panellipse'
+  - title: Analysis of JAR data
+    name: JAR
+    ns: SEDA
+    menuGroup: SEDA
+    menuTitle: Identification of defects
+    menuSubgroup: Fixed List of Attributes
+    menuSubtitle: 'SensoMineR::JAR'
   - title: Analysis of Napping Data
     name: Napping
     ns: SEDA
@@ -54,19 +62,25 @@ datasets:
     tags:
       - decat
       - panellipse
-      - Confidence ellipses      
+      - Confidence ellipses
   - name: perfumes_napping
     path: perfumes_napping.omv
     description: Napping data on perfumes
     tags:
       - Napping
-      - MFA      
+      - MFA
   - name: perfumes_sorting
     path: perfumes_sorting.omv
     description: Sorting data on perfumes
     tags:
       - Sorting
-      - MCA      
+      - MCA
+  - name: milkshake
+    path: milkshake_jar.omv
+    description: JAR data on milkshakes
+    tags:
+      - JAR
+      - lm
 usesNative: true
 minApp: 1.0.8
 

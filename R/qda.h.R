@@ -19,13 +19,25 @@ QDAOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 
             private$..prodeff <- jmvcore::OptionVariable$new(
                 "prodeff",
-                prodeff)
+                prodeff,
+                suggested=list(
+                    "nominal"),
+                permitted=list(
+                    "factor"))
             private$..paneff <- jmvcore::OptionVariable$new(
                 "paneff",
-                paneff)
+                paneff,
+                suggested=list(
+                    "nominal"),
+                permitted=list(
+                    "factor"))
             private$..sensoatt <- jmvcore::OptionVariables$new(
                 "sensoatt",
-                sensoatt)
+                sensoatt,
+                suggested=list(
+                    "continuous"),
+                permitted=list(
+                    "numeric"))
             private$..threshold <- jmvcore::OptionNumber$new(
                 "threshold",
                 threshold,
@@ -173,6 +185,8 @@ QDA <- function(
             `if`( ! missing(paneff), paneff, NULL),
             `if`( ! missing(sensoatt), sensoatt, NULL))
 
+    for (v in prodeff) if (v %in% names(data)) data[[v]] <- as.factor(data[[v]])
+    for (v in paneff) if (v %in% names(data)) data[[v]] <- as.factor(data[[v]])
 
     options <- QDAOptions$new(
         prodeff = prodeff,

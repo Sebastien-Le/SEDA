@@ -1,0 +1,52 @@
+---
+name:  JAR
+title: Analysis of JAR data
+menuGroup: SEDA
+
+menuSubgroup: Fixed List of Attributes
+menuTitle: Identification of defects
+menuSubtitle: 'SensoMineR::JAR'
+
+version: '1.0.0'
+jas: '1.2'
+
+options:
+  - name: data
+    type: Data
+
+  - name: prodeff
+    title: Stimulus Effect
+    type: Variable
+    suggested:
+      - nominal
+    permitted:
+      - factor
+      
+  - name: paneff
+    title: Subject Effect
+    type: Variable
+    suggested:
+      - nominal
+    permitted:
+      - factor
+
+  - name: likvar
+    title: Liking Variable
+    type: Variable
+    suggested:
+      - continuous
+    permitted:
+      - numeric      
+      
+  - name: sensoatt
+    title: Sensory Attributes
+    type: Variables
+    suggested:
+      - nominal
+    permitted:
+      - factor
+      
+  - name: jarmod
+    title: Coding of the JAR level
+    type: String
+    default: "jar"

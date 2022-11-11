@@ -1,0 +1,36 @@
+---
+name:  JAR
+title: Analysis of JAR data
+jrs:   '1.1'
+
+items:
+  - name: frequencebrut
+    title: Contingency Table (Defects by Products)
+    type: Preformatted
+    
+  - name: frequencebrutdes
+    title: Description of the Products According to Defects
+    type: Preformatted
+    
+  - name: plotjar
+    title: Representation of the Products and the Defects
+    type: Image
+    width: 600
+    height: 500
+    renderFun: .plotboth
+
+  - name: penalty
+    title: Penalties Obtained from All Defects
+    type: Preformatted
+
+  - name: frequence
+    title: Frequencies of Defects by Product and Sensory Attribute
+    type: Preformatted
+    
+  - name: plotpen
+    title: Representation of the Penalties for the First Product
+    type: Image
+    width: 600
+    height: 500
+    renderFun: .plotpenalty
+    

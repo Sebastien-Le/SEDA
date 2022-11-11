@@ -33,17 +33,23 @@ QDABOOTOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "prod",
                 prod,
                 suggested=list(
-                    "nominal"))
+                    "nominal"),
+                permitted=list(
+                    "factor"))
             private$..pane <- jmvcore::OptionVariable$new(
                 "pane",
                 pane,
                 suggested=list(
-                    "nominal"))
+                    "nominal"),
+                permitted=list(
+                    "factor"))
             private$..senso <- jmvcore::OptionVariables$new(
                 "senso",
                 senso,
                 suggested=list(
-                    "continuous"))
+                    "continuous"),
+                permitted=list(
+                    "numeric"))
             private$..thresh <- jmvcore::OptionNumber$new(
                 "thresh",
                 thresh,
@@ -351,6 +357,8 @@ QDABOOT <- function(
             `if`( ! missing(pane), pane, NULL),
             `if`( ! missing(senso), senso, NULL))
 
+    for (v in prod) if (v %in% names(data)) data[[v]] <- as.factor(data[[v]])
+    for (v in pane) if (v %in% names(data)) data[[v]] <- as.factor(data[[v]])
 
     options <- QDABOOTOptions$new(
         prod = prod,
