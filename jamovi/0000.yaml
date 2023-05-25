@@ -1,7 +1,7 @@
 ---
 title: Sensory Evaluation Data Analysis
 name: SEDA
-version: 1.1.0
+version: 1.2.0
 jms: '1.0'
 authors:
   - Thomas Leblay
@@ -9,16 +9,16 @@ authors:
   - Thomas Vincent
   - Maëlle Beaudinet
   - Maxime Saland
+  - Maïwen Faure
   - Sébastien Lê
 maintainer: sebastien.le@agrocampus-ouest.fr
-date: '2022-10-26'
+date: '2023-05-05'
 type: R
 description: >-
-  This module allows you to analyze two types of perception data. A first one,
-  when stimuli are described according to a fixed list of sensory attributes
-  (QDA data, for instance). A second one, when stimuli are described freely
-  (Napping and sorting data). Results are obtained thanks to the SensoMineR
-  package.
+  This module allows you to analyze two types of sensory data. A first one, when
+  stimuli are described according to a fixed list of sensory attributes (QDA
+  data, JAR data). A second one, when stimuli are described freely (Napping and
+  sorting data). Results are obtained thanks to the SensoMineR package.
 analyses:
   - title: Characterization of the Stimulus Space
     name: QDA
@@ -34,6 +34,13 @@ analyses:
     menuTitle: Representation of the Stimulus Space
     menuSubgroup: Fixed List of Attributes
     menuSubtitle: 'SensoMineR::panellipse'
+  - title: Analysis of CATA data
+    name: cata
+    ns: SEDA
+    menuGroup: SEDA
+    menuTitle: Identification of CATA
+    menuSubgroup: Fixed List of Attributes
+    menuSubtitle: 'SensoMineR::CATA'
   - title: Analysis of JAR data
     name: JAR
     ns: SEDA
@@ -55,6 +62,13 @@ analyses:
     menuTitle: Analysis of Sorting Data
     menuSubgroup: Free perception
     menuSubtitle: 'FactoMineR::MCA'
+  - title: External Preference Mapping
+    name: carto
+    ns: SEDA
+    menuGroup: SEDA
+    menuTitle: Preference Mapping
+    menuSubgroup: Hedonic Data
+    menuSubtitle: 'SensoMineR::carto'
 datasets:
   - name: sensochoc
     path: sensochoc.omv
@@ -81,6 +95,21 @@ datasets:
     tags:
       - JAR
       - lm
+  - name: senso_cocktail
+    path: senso_cocktail.omv
+    description: Sensory description of cocktails
+    tags:
+      - PCA
+  - name: senso_hedo_cocktail
+    path: senso_hedo_cocktail.omv
+    description: Sensory and hedonic description of cocktails
+    tags:
+      - carto
+  - name: Giacalone_et_al_cata
+    path: Giacalone_et_al_cata.omv
+    description: CATA data
+    tags:
+      - cata
 usesNative: true
 minApp: 1.0.8
 

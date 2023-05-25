@@ -1,0 +1,34 @@
+---
+name:  cata
+title: Analysis of CATA data
+menuGroup: SEDA
+
+menuSubgroup: Fixed List of Attributes
+menuTitle: Identification of CATA
+menuSubtitle: 'SensoMineR::CATA'
+version: '1.0.0'
+jas: '1.2'
+
+options:
+  - name: data
+    type: Data
+
+  - name: stimuli
+    title: Stimulus Effect
+    type: Variable  
+
+  - name: group
+    title: CATA
+    type: Variables
+    suggested:
+      - continuous
+    permitted:
+      - numeric
+
+  - name: thres
+    title: Significance threshold (%)
+    type: Number
+    default: 5
+  
+...
+

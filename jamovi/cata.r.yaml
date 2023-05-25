@@ -1,0 +1,62 @@
+---
+name: cata
+title: Analysis of CATA data
+jrs: '1.1'
+
+items:
+  - name: textualgroup
+    title: Stimuli by CATA Data Table
+    type: Group
+    items:
+      - name: textual
+        title: Contingency Table
+        type: Table
+        visible: stimuli
+        clearWith:
+          - stimuli
+          - group
+        columns: []
+        
+  - name: dfresgroup
+    title: Description of the Stimuli According to CATA
+    type: Group
+    items:
+      - name: dfres
+        title: Description of the Products According to CATA
+        type: Table
+        visible: stimuli
+        columns:
+          - name: component
+            title: ''
+            type: text
+            combineBelow: true
+          - name: word
+            title: CATA
+            type: text
+          - name: internper
+            title: Intern %
+            type: Number
+          - name: globper
+            title: Global %
+            type: Number
+          - name: internfreq
+            title: Intern frequency
+            type: Number
+          - name: globfreq
+            title: Global frequency
+            type: Number
+          - name: pvaluedfres
+            title: p
+            format: zto,pvalue
+          - name: vtest
+            title: Vtest
+            type: Number
+
+  - name: plotcata
+    title: Representation of the Stimuli and the CATA
+    type: Image
+    width: 600
+    height: 500
+    renderFun: .plotcatatis
+
+...

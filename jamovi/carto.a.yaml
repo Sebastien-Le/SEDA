@@ -1,0 +1,73 @@
+---
+name: carto
+title: External Preference Mapping
+menuGroup: SEDA
+
+menuTitle: Preference Mapping
+menuSubgroup: Hedonic Data
+menuSubtitle: SensoMineR::carto
+
+version: '1.0.0'
+jas: '1.2'
+
+options:
+  - name: data
+    type: Data
+
+  - name: individus
+    title: Individual Labels
+    type: Variable
+    suggested:
+      - nominal
+    permitted:
+      - factor
+
+  - name: coox
+    title: X-axis
+    type: Variable
+    suggested:
+      - continuous
+    permitted:
+      - numeric  
+
+  - name: cooy
+    title: Y-axis
+    type: Variable
+    suggested:
+      - continuous
+    permitted:
+      - numeric  
+
+  - name: hedo
+    title: Liking Variables
+    type: Variables
+    suggested:
+      - continuous
+    permitted:
+      - numeric
+
+  - name: regtype
+    title: Regression Model
+    type: List
+    options:
+      - title: Quadratic
+        name: '1'
+      - title: Vector
+        name: '2'
+      - title: Circular
+        name: '3'
+      - title: Elliptical
+        name: '4'
+    default: '1'
+
+  - name: colabove
+    title: When Higher to the Average ([0,12])
+    type: Number
+    default: 0
+
+  - name: colbelow
+    title: When Lower to the Average ([0,12])
+    type: Number
+    default: 7.5
+
+...
