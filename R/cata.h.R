@@ -8,6 +8,7 @@ cataOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         initialize = function(
             stimuli = NULL,
             group = NULL,
+            tuto = TRUE,
             thres = 5, ...) {
 
             super$initialize(
@@ -18,7 +19,12 @@ cataOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 
             private$..stimuli <- jmvcore::OptionVariable$new(
                 "stimuli",
-                stimuli)
+                stimuli,
+                suggested=list(
+                    "nominal",
+                    "ordinal"),
+                permitted=list(
+                    "factor"))
             private$..group <- jmvcore::OptionVariables$new(
                 "group",
                 group,
@@ -26,6 +32,10 @@ cataOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "continuous"),
                 permitted=list(
                     "numeric"))
+            private$..tuto <- jmvcore::OptionBool$new(
+                "tuto",
+                tuto,
+                default=TRUE)
             private$..thres <- jmvcore::OptionNumber$new(
                 "thres",
                 thres,
@@ -33,15 +43,18 @@ cataOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 
             self$.addOption(private$..stimuli)
             self$.addOption(private$..group)
+            self$.addOption(private$..tuto)
             self$.addOption(private$..thres)
         }),
     active = list(
         stimuli = function() private$..stimuli$value,
         group = function() private$..group$value,
+        tuto = function() private$..tuto$value,
         thres = function() private$..thres$value),
     private = list(
         ..stimuli = NA,
         ..group = NA,
+        ..tuto = NA,
         ..thres = NA)
 )
 
@@ -49,6 +62,7 @@ cataResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "cataResults",
     inherit = jmvcore::Group,
     active = list(
+        instructions = function() private$.items[["instructions"]],
         textualgroup = function() private$.items[["textualgroup"]],
         dfresgroup = function() private$.items[["dfresgroup"]],
         plotcata = function() private$.items[["plotcata"]]),
@@ -58,7 +72,16 @@ cataResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             super$initialize(
                 options=options,
                 name="",
-                title="Analysis of CATA data")
+                title="Analysis of CATA data",
+                refs=list(
+                    "cata",
+                    "sensominer",
+                    "senso"))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="instructions",
+                title="Instructions",
+                visible="(tuto)"))
             self$add(R6::R6Class(
                 inherit = jmvcore::Group,
                 active = list(
@@ -93,7 +116,7 @@ cataResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                         self$add(jmvcore::Table$new(
                             options=options,
                             name="dfres",
-                            title="Description of the Products According to CATA",
+                            title="Description of the Stimuli According to CATA",
                             visible="stimuli",
                             columns=list(
                                 list(
@@ -163,9 +186,11 @@ cataBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param data .
 #' @param stimuli .
 #' @param group .
+#' @param tuto .
 #' @param thres .
 #' @return A results object containing:
 #' \tabular{llllll}{
+#'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$textualgroup$textual} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$dfresgroup$dfres} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$plotcata} \tab \tab \tab \tab \tab an image \cr
@@ -176,6 +201,7 @@ cata <- function(
     data,
     stimuli,
     group,
+    tuto = TRUE,
     thres = 5) {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
@@ -189,10 +215,12 @@ cata <- function(
             `if`( ! missing(stimuli), stimuli, NULL),
             `if`( ! missing(group), group, NULL))
 
+    for (v in stimuli) if (v %in% names(data)) data[[v]] <- as.factor(data[[v]])
 
     options <- cataOptions$new(
         stimuli = stimuli,
         group = group,
+        tuto = tuto,
         thres = thres)
 
     analysis <- cataClass$new(

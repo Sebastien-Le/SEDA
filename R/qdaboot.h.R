@@ -9,6 +9,7 @@ QDABOOTOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             prod = NULL,
             pane = NULL,
             senso = NULL,
+            tuto = TRUE,
             thresh = 5,
             nbsimul = 300,
             nbpane = 20,
@@ -20,7 +21,7 @@ QDABOOTOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             center_pane_box = TRUE,
             scale_pane_box = FALSE,
             level_search = 20,
-            nFactors = 3,
+            nFactors = 2,
             proba = 5, ...) {
 
             super$initialize(
@@ -50,6 +51,10 @@ QDABOOTOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "continuous"),
                 permitted=list(
                     "numeric"))
+            private$..tuto <- jmvcore::OptionBool$new(
+                "tuto",
+                tuto,
+                default=TRUE)
             private$..thresh <- jmvcore::OptionNumber$new(
                 "thresh",
                 thresh,
@@ -104,7 +109,7 @@ QDABOOTOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             private$..nFactors <- jmvcore::OptionInteger$new(
                 "nFactors",
                 nFactors,
-                default=3)
+                default=2)
             private$..proba <- jmvcore::OptionNumber$new(
                 "proba",
                 proba,
@@ -113,6 +118,7 @@ QDABOOTOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..prod)
             self$.addOption(private$..pane)
             self$.addOption(private$..senso)
+            self$.addOption(private$..tuto)
             self$.addOption(private$..thresh)
             self$.addOption(private$..nbsimul)
             self$.addOption(private$..nbpane)
@@ -131,6 +137,7 @@ QDABOOTOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         prod = function() private$..prod$value,
         pane = function() private$..pane$value,
         senso = function() private$..senso$value,
+        tuto = function() private$..tuto$value,
         thresh = function() private$..thresh$value,
         nbsimul = function() private$..nbsimul$value,
         nbpane = function() private$..nbpane$value,
@@ -148,6 +155,7 @@ QDABOOTOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..prod = NA,
         ..pane = NA,
         ..senso = NA,
+        ..tuto = NA,
         ..thresh = NA,
         ..nbsimul = NA,
         ..nbpane = NA,
@@ -167,6 +175,7 @@ QDABOOTResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "QDABOOTResults",
     inherit = jmvcore::Group,
     active = list(
+        instructions = function() private$.items[["instructions"]],
         plotind = function() private$.items[["plotind"]],
         plotvar = function() private$.items[["plotvar"]],
         eigenGr = function() private$.items[["eigenGr"]],
@@ -181,7 +190,16 @@ QDABOOTResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             super$initialize(
                 options=options,
                 name="",
-                title="Multivariate Representation of the Stimulus Space")
+                title="Multivariate Representation of the Stimulus Space",
+                refs=list(
+                    "ellipse",
+                    "sensominer",
+                    "senso"))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="instructions",
+                title="Instructions",
+                visible="(tuto)"))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="plotind",
@@ -231,7 +249,7 @@ QDABOOTResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$add(jmvcore::Preformatted$new(
                 options=options,
                 name="dimdesc",
-                title="Automatic Description of the Axes"))
+                title="Automatic Description of the Dimensions"))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="plotspa",
@@ -299,6 +317,7 @@ QDABOOTBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param prod .
 #' @param pane .
 #' @param senso .
+#' @param tuto .
 #' @param thresh .
 #' @param nbsimul .
 #' @param nbpane .
@@ -314,6 +333,7 @@ QDABOOTBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param proba .
 #' @return A results object containing:
 #' \tabular{llllll}{
+#'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$plotind} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$plotvar} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$eigenGr$eigen_table} \tab \tab \tab \tab \tab a table \cr
@@ -330,6 +350,7 @@ QDABOOT <- function(
     prod,
     pane,
     senso,
+    tuto = TRUE,
     thresh = 5,
     nbsimul = 300,
     nbpane = 20,
@@ -341,7 +362,7 @@ QDABOOT <- function(
     center_pane_box = TRUE,
     scale_pane_box = FALSE,
     level_search = 20,
-    nFactors = 3,
+    nFactors = 2,
     proba = 5) {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
@@ -364,6 +385,7 @@ QDABOOT <- function(
         prod = prod,
         pane = pane,
         senso = senso,
+        tuto = tuto,
         thresh = thresh,
         nbsimul = nbsimul,
         nbpane = nbpane,

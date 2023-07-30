@@ -38,6 +38,11 @@ options:
     permitted:
       - numeric
       
+  - name: tuto
+    title: Read me before running
+    type: Bool
+    default: true    
+
   - name: thresh
     title: Threshold (%)
     type: Number
@@ -101,9 +106,9 @@ options:
     max: 100
 
   - name: nFactors
-    title: Number of factors
+    title: Number of dimensions
     type: Integer
-    default: 3
+    default: 2
 
   - name: proba
     title: Significance threshold (%)

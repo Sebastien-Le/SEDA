@@ -5,6 +5,54 @@ QDABOOTClass <- if (requireNamespace('jmvcore')) R6::R6Class(
     "QDABOOTClass",
     inherit = QDABOOTBase,
     private = list(
+    #---------------------------------------------  
+    #### Init + run functions ----
+
+        .init = function() {
+            if (is.null(self$data) | is.null(self$options$senso)) {
+              if (self$options$tuto==TRUE){
+                self$results$instructions$setVisible(visible = TRUE)
+              }
+            }
+            
+            self$results$instructions$setContent(
+            "<html>
+            <head>
+            </head>
+            <body>
+            <div class='justified-text'>
+            <p><b>What you need to know before analysing QDA data in jamovi (2)</b></p>
+            <p>______________________________________________________________________________</p>
+
+            <p> Quantitative Descriptive Analysis (QDA) is a sensory evaluation technique used to objectively and systematically measure 
+            and describe the sensory characteristics of products, such as food, beverages, personal care products, and more (<I>stimuli</I>).</p>
+
+            <p> The goal of QDA is to generate a detailed and quantitative profile of the sensory attributes of the stimuli being evaluated.</p>
+
+            <p> Therefore, we are interested in representing the stimuli on a map such that
+            two stimuli are all the closer if they have been perceived in the same way.</p>
+
+            <p> The interface provides a map of the stimuli that takes into account the variability of perception of the assessors, by means of 
+            confidence ellipses.</p>
+
+            <p> These ellipses are obtained using resampling techniques. New virtual panels are drawn at random and their perceptions are projected as an additional information 
+            in order to represent the ellipses.</p>
+
+            <p> Open the <b>sensochoc</b> dataset. Use all the sensory attributes to represent your products. You can see that chocolates
+            <I>choc2</I>, <I>choc5</I>, and <I>choc6</I> have a similar sensory profile, as their respective ellipses are overlapping.</p>
+
+            <p> Variability around sensory attributes can also be represented through the <I>Graphic Options</I> menu. In our example, 
+            the sensory attribute crunchy is far less clear in the minds of panelists than the sensory attribute cocoa aroma might be.</p>
+
+            <p>______________________________________________________________________________</p>
+            
+            </div>
+            </body>
+            </html>"
+            )
+            
+        },
+
         .run = function() {
             options(error = recover)
             if(is.null(self$options$prod)||is.null(self$options$pane)||is.null(self$options$senso)) {

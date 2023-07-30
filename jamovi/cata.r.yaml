@@ -2,8 +2,17 @@
 name: cata
 title: Analysis of CATA data
 jrs: '1.1'
+refs:
+    - cata
+    - sensominer
+    - senso
 
 items:
+  - name: instructions
+    title: Instructions
+    visible: (tuto)
+    type: Html
+
   - name: textualgroup
     title: Stimuli by CATA Data Table
     type: Group
@@ -22,7 +31,7 @@ items:
     type: Group
     items:
       - name: dfres
-        title: Description of the Products According to CATA
+        title: Description of the Stimuli According to CATA
         type: Table
         visible: stimuli
         columns:

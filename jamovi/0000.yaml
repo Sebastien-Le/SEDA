@@ -11,14 +11,15 @@ authors:
   - Maxime Saland
   - Maïwen Faure
   - Sébastien Lê
-maintainer: sebastien.le@agrocampus-ouest.fr
+maintainer: Sébastien Lê <sebastien.le@agrocampus-ouest.fr>
 date: '2023-05-05'
 type: R
 description: >-
   This module allows you to analyze two types of sensory data. A first one, when
   stimuli are described according to a fixed list of sensory attributes (QDA
   data, JAR data). A second one, when stimuli are described freely (Napping and
-  sorting data). It is also possible to get an external preference mapping. Results are obtained thanks to the SensoMineR package.
+  sorting data). It is also possible to get an external preference mapping.
+  Results are obtained thanks to the SensoMineR package.
 analyses:
   - title: Characterization of the Stimulus Space
     name: QDA
@@ -45,7 +46,7 @@ analyses:
     name: JAR
     ns: SEDA
     menuGroup: SEDA
-    menuTitle: Identification of defects
+    menuTitle: Identification of Defects
     menuSubgroup: Fixed List of Attributes
     menuSubtitle: 'SensoMineR::JAR'
   - title: Analysis of Napping Data
@@ -53,14 +54,14 @@ analyses:
     ns: SEDA
     menuGroup: SEDA
     menuTitle: Analysis of Napping Data
-    menuSubgroup: Free perception
+    menuSubgroup: Free Perception
     menuSubtitle: 'FactoMineR::MFA'
   - title: Analysis of Sorting Data
     name: Sorting
     ns: SEDA
     menuGroup: SEDA
     menuTitle: Analysis of Sorting Data
-    menuSubgroup: Free perception
+    menuSubgroup: Free Perception
     menuSubtitle: 'FactoMineR::MCA'
   - title: External Preference Mapping
     name: carto

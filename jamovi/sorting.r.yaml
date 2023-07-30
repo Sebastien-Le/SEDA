@@ -2,8 +2,51 @@
 name: Sorting
 title: Analysis of Sorting Data
 jrs: '1.1'
+refs:
+    - sorting
+    - sensominer
+    - senso
 
 items:
+  - name: instructions
+    title: Instructions
+    visible: (tuto)
+    type: Html
+    
+  - name: dfresgroup
+    title: Description of the Stimuli
+    type: Group
+    items:
+      - name: dfres
+        title: Description of the Stimuli
+        type: Table
+        columns:
+          - name: component
+            title: ''
+            type: text
+            combineBelow: true
+          - name: word
+            title: Word
+            type: text
+          - name: internper
+            title: Intern %
+            type: Number
+          - name: globper
+            title: Global %
+            type: Number
+          - name: internfreq
+            title: Intern frequency
+            type: Number
+          - name: globfreq
+            title: Global frequency
+            type: Number
+          - name: pvaluedfres
+            title: p
+            format: zto,pvalue
+          - name: vtest
+            title: Vtest
+            type: Number
+
   - name: plotindiv
     title: Representation of the Stimuli
     type: Image
@@ -24,14 +67,6 @@ items:
     width: 700
     height: 500
     renderFun: .plotitemvar
-
-  - name: plotquantisup
-    title: Representation of the Quantitative Supplementary Variables
-    type: Image
-    visible: (quantimod)
-    width: 700
-    height: 500
-    renderFun: .plotquantisup
 
   - name: eigengroup
     title: Eigenvalue Decomposition
@@ -55,7 +90,7 @@ items:
             type: number
 
   - name: dimdesc
-    title: Automatic Description of the Axes
+    title: Automatic Description of the Dimensions
     type: Preformatted
 
   - name: individus
@@ -117,36 +152,41 @@ items:
           - nFactors
         columns: []
 
-  - name: dfresgroup
-    title: Description of the Stimuli
-    type: Group
-    items:
-      - name: dfres
-        title: Description of the Stimuli
-        type: Table
-        columns:
-          - name: component
-            title: ''
-            type: text
-            combineBelow: true
-          - name: word
-            title: Word
-            type: text
-          - name: internper
-            title: Intern %
-            type: Number
-          - name: globper
-            title: Global %
-            type: Number
-          - name: internfreq
-            title: Intern frequency
-            type: Number
-          - name: globfreq
-            title: Global frequency
-            type: Number
-          - name: pvaluedfres
-            title: p
-            format: zto,pvalue
-          - name: vtest
-            title: Vtest
-            type: Number
+  - name: plotclassif
+    title: Representation of the Stimuli According to Clusters
+    visible: (graphclassif)
+    type: Image
+    width: 700
+    height: 500
+    renderFun: .plotclassif        
+
+  - name: longformatdata
+    title: Long Format Data
+    type: Preformatted
+    visible: (longformat)
+  
+  - name: newvar
+    type: Output
+    title: Coordinates
+    measureType: continuous
+    initInRun: true
+    clearWith:
+      - actvars
+      - quantisup
+      - qualisup
+      - individus
+      - nFactors
+      - norme
+
+  - name: newvar2
+    type: Output
+    title: Coordinates
+    measureType: continuous
+    initInRun: true
+    clearWith:
+      - actvars
+      - quantisup
+      - qualisup
+      - individus
+      - nFactors
+      - norme

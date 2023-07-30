@@ -17,23 +17,6 @@ options:
     permitted:
       - numeric
 
-  - name: quantisup
-    title: Quantitative Supplementary Information
-    type: Variables
-    suggested:
-      - continuous
-    permitted:
-      - numeric
-
-  - name: qualisup
-    title: Categorical Supplementary Information
-    type: Variables
-    suggested:
-      - nominal
-      - ordinal
-    permitted:
-      - factor
-
   - name: individus
     title: Stimuli Labels
     type: Variable
@@ -42,40 +25,23 @@ options:
     permitted:
       - factor
 
+  - name: qualisup
+    title: Supplementary Coordinates
+    type: Variables
+    suggested:
+      - continuous
+    permitted:
+      - numeric
+
+  - name: tuto
+    title: Read me before running
+    type: Bool
+    default: true
+
   - name: nFactors
-    title: Number of Factors
+    title: Number of dimensions
     type: Integer
-    default: 3
-
-  - name: corvar
-    title: Correlations
-    type: Bool
-    default: false
-
-  - name: contribvar
-    title: Contributions
-    type: Bool
-    default: false
-
-  - name: cosvar
-    title: Cosine
-    type: Bool
-    default: false
-
-  - name: coordind
-    title: Coordinates
-    type: Bool
-    default: false
-
-  - name: contribind
-    title: Contributions
-    type: Bool
-    default: false
-
-  - name: cosind
-    title: Cosine
-    type: Bool
-    default: false
+    default: 2
 
   - name: proba
     title: Significance threshold (%)
@@ -92,37 +58,25 @@ options:
     type: Integer
     default: 2
 
-  - name: varact
-    title: Active variables
+  - name: ncp
+    title: Number of components
+    type: Integer
+    default: 5
+
+  - name: newvar
+    title: Coordinates
+    type: Output
+
+  - name: graphclassif
+    title: Representation of the clusters
     type: Bool
     default: false
 
-  - name: varillus
-    title: Supplementary variables
-    type: Bool
-    default: false
+  - name: nbclust
+    title: Number of clusters
+    type: Integer
+    default: -1
 
-  - name: varactillus
-    title: 'Active and supplementary variables'
-    type: Bool
-    default: true
-
-  - name: limcosvar
-    title: Quality of representation (%)
-    type: Number
-    default: 0
-
-  - name: modact
-    title: Individuals
-    type: Bool
-    default: false
-
-  - name: modillus
-    title: Categorical supplementary variables
-    type: Bool
-    default: false
-
-  - name: modactillus
-    title: 'Individuals and categorical supplementary variables'
-    type: Bool
-    default: true
+  - name: newvar2
+    title: Cluster variable
+    type: Output

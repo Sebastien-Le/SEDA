@@ -1,10 +1,85 @@
-
-# This file is a generated template, your changes will not be overwritten
-
 SortingClass <- if (requireNamespace('jmvcore')) R6::R6Class(
     "SortingClass",
     inherit = SortingBase,
+    
+    active = list(
+      dataProcessed = function() {
+      if (is.null(private$.dataProcessed))
+      private$.dataProcessed <- private$.buildData()
+      return(private$.dataProcessed)
+      },
+      #important car si on passe directement par self$nbclust doesn't work
+      nbclust = function() {
+            if (is.null(private$.nbclust))
+                private$.nbclust <- private$.computeNbclust()
+
+            return(private$.nbclust)
+        },
+      nQualsup = function() {
+            if (is.null(private$.nQualsup))
+                private$.nQualsup <- private$.computeNQualsup()
+
+            return(private$.nQualsup)
+        },
+      SortingResult = function() {
+        if (is.null(private$.SortingResult))
+        private$.SortingResult <- private$.getSortingResult()
+        return(private$.SortingResult)
+      }
+    ),
+
     private = list(
+        
+        .dataProcessed = NULL,
+        .nbclust = NULL,
+        .SortingResult = NULL,
+
+#---------------------------------------------  
+#### Init + run functions ----
+
+        .init = function() {
+            if (is.null(self$data) | is.null(self$options$actvars)) {
+              if (self$options$tuto==TRUE){
+                self$results$instructions$setVisible(visible = TRUE)
+              }
+            }
+            
+            self$results$instructions$setContent(
+            "<html>
+            <head>
+            </head>
+            <body>
+            <div class='justified-text'>
+            <p><b>What you need to know before analysing sorting data in jamovi</b></p>
+            <p>______________________________________________________________________________</p>
+
+            <p> Sorting task refers to a type of cognitive test or experimental procedure where assessors are asked to categorize or group stimuli 
+            based on the way they perceive the stimuli. The stimuli can be any sensory information, such as visual, auditory, or tactile, and the task aims to understand how people organize and process this information.</p>
+            
+            <p>  Sorting tasks are commonly used in psychological research to study various aspects of cognition, perception, and information processing. 
+            These tasks can provide insights into how individuals perceive and make sense of the world around them, how they categorize different stimuli, and how they form mental representations of the information.</p>
+
+            <p> Sometimes groups of stimuli are labelled. These labels are essential for interpreting how the stimuli as a whole are perceived. 
+            The SEDA module treats labels as textual information and analyses them as such.</p>
+
+            <p> The interface provides different types of results. First, a description of the stimuli based on the labels, second a multivariate
+            representation of the stimuli according to the groups provided by the assessors. This multivariate analysis is completed by an unsupervised 
+            clustering of the stimuli.</p>
+
+            <p> Clustering is based on the number of components saved. By default, clustering is based on the first 5 components,
+            <I>i.e.</I> the distance between individuals is calculated on these 5 components.</p>
+
+            <p> By default, the <I>Number of clusters</I> field is set to -1 which means that the number of clusters is automatically chosen by the computer.</p>
+
+            <p>______________________________________________________________________________</p>
+            
+            </div>
+            </body>
+            </html>"
+            )
+            
+        },        
+
         .run = function() {
             
             if (is.null(self$options$actvars)) return()
@@ -20,7 +95,10 @@ SortingClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                 
                 data <- predata[[1]]
                 datatext <- predata[[2]]
+
+                self$results$longformatdata$setContent(datatext)
                 
+                #if (self$options$longformat==TRUE){
                 #lancement de l'analyse textuelle
                 res.textual=private$.textual(datatext)
                 dfres=private$.descfreq(res.textual)
@@ -56,8 +134,10 @@ SortingClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                     tab <- xxinit
                     private$.populateDFTable(tab)
                 }
+                #}
                                 
                 res.mca=private$.MCA(data)
+                res.classif <- private$.classif(res.mca)
 
                 dimdesc=private$.dimdesc(res.mca)
                 self$results$dimdesc$setContent(dimdesc)
@@ -76,14 +156,17 @@ SortingClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                 imageitemvar=self$results$plotitemvar
                 imageitemvar$setState(res.mca)
 
-                imagequantisup=self$results$plotquantisup
-                imagequantisup$setState(res.mca)
-                
+                if (self$options$graphclassif==TRUE){
+                    imageclass = self$results$plotclassif
+                    imageclass$setState(res.classif)
+                }          
+
+                private$.output(res.mca)
+                private$.output2(res.classif)
             }
         },
         
-        .dimdesc = function(table) {
-            
+        .dimdesc = function(table) {            
             proba_gui=self$options$proba/100
             nFactors_gui=self$options$nFactors
             
@@ -100,27 +183,29 @@ SortingClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             FactoMineR::descfreq(res$cont.table, proba = threshold)
         },
         
+        .computeNbclust = function() {
+            nbclust <- self$options$nbclust
+            return(nbclust)
+        },
+        
         .MCA = function(data) {
             
             actvars_gui=self$options$actvars
-            quantisup_gui=self$options$quantisup
             qualisup_gui=self$options$qualisup
-            nFactors_gui=self$options$nFactors
+            #nFactors_gui=self$options$nFactors
             ventil=self$options$ventil/100
             
-            if (is.null(quantisup_gui) == FALSE && is.null(qualisup_gui)== TRUE) {
-                FactoMineR::MCA(data, quanti.sup=(length(actvars_gui)+1):(length(actvars_gui)+length(quantisup_gui)), ncp=nFactors_gui, level.ventil=ventil, graph=FALSE)
-            }
-            else if (is.null(quantisup_gui)==TRUE && is.null(qualisup_gui) == FALSE) {
-                FactoMineR::MCA(data, quali.sup=(length(actvars_gui)+1):(length(actvars_gui)+length(qualisup_gui)), ncp=nFactors_gui, level.ventil=ventil, graph=FALSE)
-            }
-            else if (is.null(quantisup_gui) == FALSE && is.null(qualisup_gui) == FALSE) {
-                FactoMineR::MCA(data, quanti.sup=(length(actvars_gui)+1):(length(actvars_gui)+length(quantisup_gui)),quali.sup=(length(actvars_gui)+length(quantisup_gui)+1):(length(actvars_gui)+length(quantisup_gui)+length(qualisup_gui)), ncp=nFactors_gui, level.ventil=ventil, graph=FALSE)
+            if (is.null(qualisup_gui) == FALSE) {
+                FactoMineR::MCA(data, quali.sup=(length(actvars_gui)+1):(length(actvars_gui)+length(qualisup_gui)), ncp=self$options$ncp, level.ventil=ventil, graph=FALSE)
             }
             else {
-                FactoMineR::MCA(data,ncp=nFactors_gui, level.ventil=ventil, graph=FALSE)
+                FactoMineR::MCA(data,ncp=self$options$ncp, level.ventil=ventil, graph=FALSE)
             }
         },
+
+        .classif = function(res) {
+          FactoMineR::HCPC(res,nb.clust=self$nbclust,graph=F)
+        },      
         
         .printeigenTable = function(table){
 
@@ -147,6 +232,7 @@ SortingClass <- if (requireNamespace('jmvcore')) R6::R6Class(
 
             actvars_gui=self$options$actvars
             nFactors_gui=self$options$nFactors
+            nFactors_out <- min(self$options$ncp,dim(self$MCAResult$eig)[1])
 
             if (is.null(self$options$individus)==FALSE)
                 individus_gui=self$data[[self$options$individus]]
@@ -182,7 +268,7 @@ SortingClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             for (i in seq(nrow(quoivar)))
                 tablevar$addRow(rowKey=i, value=NULL)
 
-            for (i in 1:nFactors_gui){
+            for (i in 1:nFactors_out){
                 tablevar$addColumn(name=paste0("dim",i), title=paste0("Dim.", as.character(i)),type='number') #, superTitle='Facteurs'
                 tableind$addColumn(name=paste0("dim",i), title=paste0("Dim.", as.character(i)),type='number')
             }
@@ -190,7 +276,7 @@ SortingClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             for (var in seq(nrow(quoivar))) {
                 row=list()
                 row[["variables"]]=rownames(quoivar)[var]
-                for (i in 1:nFactors_gui) {
+                for (i in 1:nFactors_out) {
                     row[[paste0("dim",i)]]=quoivar[var,i]
                 }
                 tablevar$setRow(rowNo=var, values=row) #on remplie le tableau en reprenant les r?sultats de results$var$coord
@@ -202,7 +288,7 @@ SortingClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                     row[["individus"]]= individus_gui[ind]
                 else
                     row[["individus"]]= rownames(quoiind)[ind]
-                for (i in 1:nFactors_gui){
+                for (i in 1:nFactors_out){
                     row[[paste0("dim",i)]]=quoiind[ind,i]
                 }
                 tableind$setRow(rowNo=ind, values=row) #on remplie le tableau en reprenant les r?sultats de results$var$coord
@@ -250,7 +336,6 @@ SortingClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                 res.mca=image$state
                 abs=self$options$abs
                 ord=self$options$ord
-                # quantisup = self$options$quantimod
                 # qualisup = self$options$varmodqualisup
 
                 plot=plot.MCA(res.mca, axes=c(abs, ord), choix="ind", invisible=c("var","quali.sup", "quanti.sup"),title = "Representation of the Stimuli")
@@ -269,7 +354,6 @@ SortingClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                 res.mca=image$state
                 abs=self$options$abs
                 ord=self$options$ord
-                quantisup = self$options$quantimod
                 qualisup = self$options$varmodqualisup
 
                 plot=plot.MCA(res.mca, axes=c(abs, ord), choix="var", title = "Representation of the Subjects")
@@ -316,18 +400,71 @@ SortingClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             }
         },
 
+        .plotclassif= function(image, ...){
+
+        if (is.null(self$options$actvars)) return()
+
+        else {
+          abs_gui=self$options$abs
+          ord_gui=self$options$ord
+
+          res.classif=image$state
+          plot=FactoMineR::plot.HCPC(res.classif, axes=c(abs_gui, ord_gui), choice="map", draw.tree = F, title="Representation of the Stimuli According to Clusters")
+          print(plot)
+          TRUE
+        }
+        },
+
+        .output = function(res.mca) {
+        nFactors_out <- min(self$options$ncp,dim(self$MCAResult$eig)[1])
+        if (self$results$newvar$isNotFilled()) {
+          keys <- 1:nFactors_out
+          measureTypes <- rep("continuous", nFactors_out)
+          titles <- paste(("Dim."), keys)
+          descriptions <- character(length(keys))
+          self$results$newvar$set(
+            keys=keys,
+            titles=titles,
+            descriptions=descriptions,
+            measureTypes=measureTypes
+          )
+          for (i in 1:nFactors_out) {
+            scores <- as.numeric(res.mca$ind$coord[, i])
+            self$results$newvar$setValues(index=i, scores)
+          }
+          self$results$newvar$setRowNums(rownames(self$data))
+        }
+      },
+
+      .output2 = function(res.classif){
+        if (self$results$newvar2$isNotFilled()) {
+          keys <- 1
+          measureTypes <- "nominal"
+          titles <- "Cluster"
+          descriptions <- "Cluster variable"
+          self$results$newvar2$set(
+            keys=keys,
+            titles=titles,
+            descriptions=descriptions,
+            measureTypes=measureTypes
+          )
+            scores <- as.factor(res.classif$data.clust[rownames(private$.buildData()),dim(res.classif$data.clust)[2]])
+            self$results$newvar2$setValues(index=1, scores)
+
+          self$results$newvar2$setRowNums(rownames(self$data))
+        }
+      },        
+
         .buildData = function() {
             
             dataactvars=data.frame(self$data[,self$options$actvars])
             colnames(dataactvars)=self$options$actvars
 
-            dataquantisup=data.frame(self$data[,self$options$quantisup])
-            colnames(dataquantisup)=self$options$quantisup
 
             dataqualisup=data.frame(self$data[,self$options$qualisup])
             colnames(dataqualisup)=self$options$qualisup
 
-            data=data.frame(dataactvars,dataquantisup,dataqualisup)
+            data=data.frame(dataactvars,dataqualisup)
             
             if (is.null(self$options$individus)==FALSE) {
                 rownames(data)=self$data[[self$options$individus]]

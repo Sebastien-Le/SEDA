@@ -2,57 +2,26 @@
 name: Napping
 title: Analysis of Napping Data
 jrs: '1.1'
+refs: 
+    - napping
+    - sensominer
+    - mfa
+    - senso
 
 items:
+  - name: instructions
+    title: Instructions
+    visible: (tuto)
+    type: Html
+
   - name: plotind
-    visible: (modactillus)
-    title: Representation of the Stimuli (and Categorical Supplementary Variables)
+    title: Representation of the Stimuli
     type: Image
     width: 800
     height: 600
     renderFun: .plotindividus
 
-  - name: plotind2
-    visible: (modact)
-    title: Representation of the Stimuli
-    type: Image
-    width: 800
-    height: 600
-    renderFun: .plotindividus2
-
-  - name: plotind3
-    visible: (modillus)
-    title: Representation of the Categorical Supplementary Variables
-    type: Image
-    width: 800
-    height: 600
-    renderFun: .plotindividus3
-
-  - name: plotvar
-    visible: (varactillus)
-    title: Representation of the Active and Supplementary Variables
-    type: Image
-    width: 600
-    height: 600
-    renderFun: .plotvariables
-
-  - name: plotvar2
-    visible: (varact)
-    title: Representation of the Active Variables
-    type: Image
-    width: 600
-    height: 600
-    renderFun: .plotvariables2
-
-  - name: plotvar3
-    visible: (varillus)
-    title: Representation of the Supplementary Variables
-    type: Image
-    width: 600
-    height: 600
-    renderFun: .plotvariables3
-
-  - name: plotgrp
+  - name: plotgroup
     title: Representation of the Subjects
     type: Image
     width: 600
@@ -79,63 +48,41 @@ items:
           - name: purcentcum
             title: 'Cumulative %'
             type: number
-
+            
   - name: descdesdim
-    title: Automatic Description of the Axes
+    title: Automatic Description of the Dimensions
     type: Preformatted
 
-  - name: individus
-    title: Individual Tables
-    type: Group
-    items:
-      - name: coordonnees
-        title: Coordinates Table
-        visible: (coordind)
-        type: Table
-        clearWith:
-          - nFactors
-        columns: []
+  - name: plotclassif
+    title: Representation of the Stimuli According to Clusters
+    visible: (graphclassif)
+    type: Image
+    width: 800
+    height: 600
+    renderFun: .plotclassif
 
-      - name: contribution
-        title: Contributions Table
-        visible: (contribind)
-        type: Table
-        clearWith:
-          - nFactors
-        columns: []
+  - name: newvar
+    type: Output
+    title: Coordinates
+    measureType: continuous
+    initInRun: true
+    clearWith:
+      - actvars
+      - quantisup
+      - qualisup
+      - individus
+      - nFactors
+      - norme
 
-      - name: cosinus
-        title: Cosine Table
-        visible: (cosind)
-        type: Table
-        clearWith:
-          - nFactors
-        columns: []
-
-  - name: variables
-    title: Variable Tables
-    type: Group
-    items:
-      - name: correlations
-        title: Correlations Table
-        visible: (corvar)
-        type: Table
-        clearWith:
-          - nFactors
-        columns: []
-
-      - name: contribution
-        title: Contributions Table
-        visible: (contribvar)
-        type: Table
-        clearWith:
-          - nFactors
-        columns: []
-
-      - name: cosinus
-        title: Cosine Table
-        visible: (cosvar)
-        type: Table
-        clearWith:
-          - nFactors
-        columns: []
+  - name: newvar2
+    type: Output
+    title: Coordinates
+    measureType: continuous
+    initInRun: true
+    clearWith:
+      - actvars
+      - quantisup
+      - qualisup
+      - individus
+      - nFactors
+      - norme

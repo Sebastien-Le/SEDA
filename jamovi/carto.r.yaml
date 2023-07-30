@@ -2,8 +2,18 @@
 name:  carto
 title: External Preference Mapping
 jrs:   '1.1'
+refs:
+    - sensominer
+    - senso
+    - carto1
+    - carto2
 
 items:
+    - name: instructions
+      title: Instructions
+      visible: (tuto)
+      type: Html
+
     - name: plotcarto
       title: Representation of the Products
       type: Image

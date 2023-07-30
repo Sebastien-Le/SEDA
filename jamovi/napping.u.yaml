@@ -16,23 +16,27 @@ children:
             maxItemCount: 1
             isTarget: true
       - type: TargetLayoutBox
-        label: (X,Y) Coordinates
+        label: '(X,Y) Coordinates'
         children:
           - type: VariablesListBox
             name: actvars
             isTarget: true
       - type: TargetLayoutBox
-        label: Quantitative Supplementary Information
-        children:
-          - type: VariablesListBox
-            name: quantisup
-            isTarget: true
-      - type: TargetLayoutBox
-        label: Categorical Supplementary Information
+        label: 'Supplementary (X,Y) Coordinates'
         children:
           - type: VariablesListBox
             name: qualisup
             isTarget: true
+  - type: LayoutBox
+    margin: large
+    stretchFactor: 1
+    children:
+      - type: Label
+        label: Instructions
+        stretchFactor: 1
+        children:
+          - type: CheckBox
+            name: tuto                
   - type: LayoutBox
     margin: large
     stretchFactor: 1
@@ -64,27 +68,6 @@ children:
                   - type: TextBox
                     name: ord
                     format: number
-          - type: Label
-            label: Individual Graphic Options
-            children:
-              - type: CheckBox
-                name: modactillus
-              - type: CheckBox
-                name: modact
-              - type: CheckBox
-                name: modillus
-          - type: Label
-            label: Variable Graphic Options
-            children:
-              - type: CheckBox
-                name: varactillus
-              - type: CheckBox
-                name: varact
-              - type: CheckBox
-                name: varillus
-              - type: TextBox
-                name: limcosvar
-                format: number
   - type: LayoutBox
     margin: large
     stretchFactor: 1
@@ -94,7 +77,7 @@ children:
         collapsed: true
         children:
           - type: Label
-            label: Automatic Description of the Axes
+            label: Automatic Description of the Dimensions
             children:
               - type: Label
                 label: ''
@@ -117,28 +100,65 @@ children:
                     name: nFactors
                     format: number
           - type: Label
-            label: Individual Table Options
+            label: Save
             children:
-              - type: LayoutBox
-                margin: large
+              - type: Label
+                label: ''
+                cell:
+                  column: 0
+                  row: 0
                 stretchFactor: 1
                 children:
-                  - type: CheckBox
-                    name: coordind
-                  - type: CheckBox
-                    name: contribind
-                  - type: CheckBox
-                    name: cosind
+                  - type: TextBox
+                    name: ncp
+                    format: number
+              - type: Label
+                label: ''
+                cell:
+                  column: 1
+                  row: 0
+                stretchFactor: 1
+                children:
+                  - type: Output
+                    name: newvar
+  - type: LayoutBox
+    margin: large
+    stretchFactor: 1
+    children:
+      - type: CollapseBox
+        label: Clustering
+        stretchFactor: 1
+        collapsed: true
+        children:
           - type: Label
-            label: Variable Table Options
+            label: Clustering Graphic Options
+            children:
+              - type: Label
+                label: ''
+                cell:
+                  column: 0
+                  row: 0
+                stretchFactor: 1
+                children:
+                  - type: CheckBox
+                    name: graphclassif
+                    format: number
+              - type: Label
+                label: ''
+                cell:
+                  column: 1
+                  row: 0
+                stretchFactor: 1
+                children:
+                  - type: TextBox
+                    name: nbclust
+                    format: number
+          - type: Label
+            label: Save
             children:
               - type: LayoutBox
                 margin: large
                 stretchFactor: 1
                 children:
-                  - type: CheckBox
-                    name: corvar
-                  - type: CheckBox
-                    name: contribvar
-                  - type: CheckBox
-                    name: cosvar
+                  - type: Output
+                    name: newvar2    

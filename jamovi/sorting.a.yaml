@@ -26,14 +26,6 @@ options:
     permitted:
       - factor
 
-  - name: quantisup
-    title: Quantitative Supplementary Variables
-    type: Variables
-    suggested:
-      - continuous
-    permitted:
-      - numeric
-
   - name: qualisup
     title: Supplementary Subjects
     type: Variables
@@ -43,10 +35,15 @@ options:
     permitted:
       - factor
 
+  - name: tuto
+    title: Read me before running
+    type: Bool
+    default: true            
+
   - name: nFactors
-    title: Number of factors
+    title: Number of dimensions
     type: Integer
-    default: 3
+    default: 2
 
   - name: abs
     title: X-axis
@@ -67,11 +64,6 @@ options:
     title: Active categories
     type: Bool
     default: true
-
-  - name: quantimod
-    title: Quantitative supplementary variables
-    type: Bool
-    default: false
 
   - name: proba
     title: Significance threshold (%)
@@ -122,3 +114,31 @@ options:
     title: Level description (%)
     type: Number
     default: 5
+
+  - name: longformat
+    title: Long format dataset
+    type: Bool
+    default: false    
+
+  - name: ncp
+    title: Number of components
+    type: Integer
+    default: 5
+
+  - name: graphclassif
+    title: Representation of the clusters
+    type: Bool
+    default: false        
+
+  - name: newvar
+    title: Coordinates
+    type: Output
+
+  - name: nbclust
+    title: Number of clusters
+    type: Integer
+    default: -1
+
+  - name: newvar2
+    title: Cluster variable
+    type: Output

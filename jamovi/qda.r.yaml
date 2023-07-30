@@ -2,8 +2,16 @@
 name: QDA
 title: Characterization of the Stimulus Space
 jrs: '1.1'
+refs:
+    - sensominer
+    - senso
 
 items:
+  - name: instructions
+    title: Instructions
+    visible: (tuto)
+    type: Html
+
   - name: resF
     title: Identification of the Sensory Dimensions
     type: Table

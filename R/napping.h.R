@@ -7,26 +7,16 @@ NappingOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     public = list(
         initialize = function(
             actvars = NULL,
-            quantisup = NULL,
-            qualisup = NULL,
             individus = NULL,
-            nFactors = 3,
-            corvar = FALSE,
-            contribvar = FALSE,
-            cosvar = FALSE,
-            coordind = FALSE,
-            contribind = FALSE,
-            cosind = FALSE,
+            qualisup = NULL,
+            tuto = TRUE,
+            nFactors = 2,
             proba = 5,
             abs = 1,
             ord = 2,
-            varact = FALSE,
-            varillus = FALSE,
-            varactillus = TRUE,
-            limcosvar = 0,
-            modact = FALSE,
-            modillus = FALSE,
-            modactillus = TRUE, ...) {
+            ncp = 5,
+            graphclassif = FALSE,
+            nbclust = -1, ...) {
 
             super$initialize(
                 package="SEDA",
@@ -41,21 +31,6 @@ NappingOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "continuous"),
                 permitted=list(
                     "numeric"))
-            private$..quantisup <- jmvcore::OptionVariables$new(
-                "quantisup",
-                quantisup,
-                suggested=list(
-                    "continuous"),
-                permitted=list(
-                    "numeric"))
-            private$..qualisup <- jmvcore::OptionVariables$new(
-                "qualisup",
-                qualisup,
-                suggested=list(
-                    "nominal",
-                    "ordinal"),
-                permitted=list(
-                    "factor"))
             private$..individus <- jmvcore::OptionVariable$new(
                 "individus",
                 individus,
@@ -63,34 +38,21 @@ NappingOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "nominal"),
                 permitted=list(
                     "factor"))
+            private$..qualisup <- jmvcore::OptionVariables$new(
+                "qualisup",
+                qualisup,
+                suggested=list(
+                    "continuous"),
+                permitted=list(
+                    "numeric"))
+            private$..tuto <- jmvcore::OptionBool$new(
+                "tuto",
+                tuto,
+                default=TRUE)
             private$..nFactors <- jmvcore::OptionInteger$new(
                 "nFactors",
                 nFactors,
-                default=3)
-            private$..corvar <- jmvcore::OptionBool$new(
-                "corvar",
-                corvar,
-                default=FALSE)
-            private$..contribvar <- jmvcore::OptionBool$new(
-                "contribvar",
-                contribvar,
-                default=FALSE)
-            private$..cosvar <- jmvcore::OptionBool$new(
-                "cosvar",
-                cosvar,
-                default=FALSE)
-            private$..coordind <- jmvcore::OptionBool$new(
-                "coordind",
-                coordind,
-                default=FALSE)
-            private$..contribind <- jmvcore::OptionBool$new(
-                "contribind",
-                contribind,
-                default=FALSE)
-            private$..cosind <- jmvcore::OptionBool$new(
-                "cosind",
-                cosind,
-                default=FALSE)
+                default=2)
             private$..proba <- jmvcore::OptionNumber$new(
                 "proba",
                 proba,
@@ -103,176 +65,106 @@ NappingOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "ord",
                 ord,
                 default=2)
-            private$..varact <- jmvcore::OptionBool$new(
-                "varact",
-                varact,
+            private$..ncp <- jmvcore::OptionInteger$new(
+                "ncp",
+                ncp,
+                default=5)
+            private$..newvar <- jmvcore::OptionOutput$new(
+                "newvar")
+            private$..graphclassif <- jmvcore::OptionBool$new(
+                "graphclassif",
+                graphclassif,
                 default=FALSE)
-            private$..varillus <- jmvcore::OptionBool$new(
-                "varillus",
-                varillus,
-                default=FALSE)
-            private$..varactillus <- jmvcore::OptionBool$new(
-                "varactillus",
-                varactillus,
-                default=TRUE)
-            private$..limcosvar <- jmvcore::OptionNumber$new(
-                "limcosvar",
-                limcosvar,
-                default=0)
-            private$..modact <- jmvcore::OptionBool$new(
-                "modact",
-                modact,
-                default=FALSE)
-            private$..modillus <- jmvcore::OptionBool$new(
-                "modillus",
-                modillus,
-                default=FALSE)
-            private$..modactillus <- jmvcore::OptionBool$new(
-                "modactillus",
-                modactillus,
-                default=TRUE)
+            private$..nbclust <- jmvcore::OptionInteger$new(
+                "nbclust",
+                nbclust,
+                default=-1)
+            private$..newvar2 <- jmvcore::OptionOutput$new(
+                "newvar2")
 
             self$.addOption(private$..actvars)
-            self$.addOption(private$..quantisup)
-            self$.addOption(private$..qualisup)
             self$.addOption(private$..individus)
+            self$.addOption(private$..qualisup)
+            self$.addOption(private$..tuto)
             self$.addOption(private$..nFactors)
-            self$.addOption(private$..corvar)
-            self$.addOption(private$..contribvar)
-            self$.addOption(private$..cosvar)
-            self$.addOption(private$..coordind)
-            self$.addOption(private$..contribind)
-            self$.addOption(private$..cosind)
             self$.addOption(private$..proba)
             self$.addOption(private$..abs)
             self$.addOption(private$..ord)
-            self$.addOption(private$..varact)
-            self$.addOption(private$..varillus)
-            self$.addOption(private$..varactillus)
-            self$.addOption(private$..limcosvar)
-            self$.addOption(private$..modact)
-            self$.addOption(private$..modillus)
-            self$.addOption(private$..modactillus)
+            self$.addOption(private$..ncp)
+            self$.addOption(private$..newvar)
+            self$.addOption(private$..graphclassif)
+            self$.addOption(private$..nbclust)
+            self$.addOption(private$..newvar2)
         }),
     active = list(
         actvars = function() private$..actvars$value,
-        quantisup = function() private$..quantisup$value,
-        qualisup = function() private$..qualisup$value,
         individus = function() private$..individus$value,
+        qualisup = function() private$..qualisup$value,
+        tuto = function() private$..tuto$value,
         nFactors = function() private$..nFactors$value,
-        corvar = function() private$..corvar$value,
-        contribvar = function() private$..contribvar$value,
-        cosvar = function() private$..cosvar$value,
-        coordind = function() private$..coordind$value,
-        contribind = function() private$..contribind$value,
-        cosind = function() private$..cosind$value,
         proba = function() private$..proba$value,
         abs = function() private$..abs$value,
         ord = function() private$..ord$value,
-        varact = function() private$..varact$value,
-        varillus = function() private$..varillus$value,
-        varactillus = function() private$..varactillus$value,
-        limcosvar = function() private$..limcosvar$value,
-        modact = function() private$..modact$value,
-        modillus = function() private$..modillus$value,
-        modactillus = function() private$..modactillus$value),
+        ncp = function() private$..ncp$value,
+        newvar = function() private$..newvar$value,
+        graphclassif = function() private$..graphclassif$value,
+        nbclust = function() private$..nbclust$value,
+        newvar2 = function() private$..newvar2$value),
     private = list(
         ..actvars = NA,
-        ..quantisup = NA,
-        ..qualisup = NA,
         ..individus = NA,
+        ..qualisup = NA,
+        ..tuto = NA,
         ..nFactors = NA,
-        ..corvar = NA,
-        ..contribvar = NA,
-        ..cosvar = NA,
-        ..coordind = NA,
-        ..contribind = NA,
-        ..cosind = NA,
         ..proba = NA,
         ..abs = NA,
         ..ord = NA,
-        ..varact = NA,
-        ..varillus = NA,
-        ..varactillus = NA,
-        ..limcosvar = NA,
-        ..modact = NA,
-        ..modillus = NA,
-        ..modactillus = NA)
+        ..ncp = NA,
+        ..newvar = NA,
+        ..graphclassif = NA,
+        ..nbclust = NA,
+        ..newvar2 = NA)
 )
 
 NappingResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "NappingResults",
     inherit = jmvcore::Group,
     active = list(
+        instructions = function() private$.items[["instructions"]],
         plotind = function() private$.items[["plotind"]],
-        plotind2 = function() private$.items[["plotind2"]],
-        plotind3 = function() private$.items[["plotind3"]],
-        plotvar = function() private$.items[["plotvar"]],
-        plotvar2 = function() private$.items[["plotvar2"]],
-        plotvar3 = function() private$.items[["plotvar3"]],
-        plotgrp = function() private$.items[["plotgrp"]],
+        plotgroup = function() private$.items[["plotgroup"]],
         eigengroup = function() private$.items[["eigengroup"]],
         descdesdim = function() private$.items[["descdesdim"]],
-        individus = function() private$.items[["individus"]],
-        variables = function() private$.items[["variables"]]),
+        plotclassif = function() private$.items[["plotclassif"]],
+        newvar = function() private$.items[["newvar"]],
+        newvar2 = function() private$.items[["newvar2"]]),
     private = list(),
     public=list(
         initialize=function(options) {
             super$initialize(
                 options=options,
                 name="",
-                title="Analysis of Napping Data")
+                title="Analysis of Napping Data",
+                refs=list(
+                    "napping",
+                    "sensominer",
+                    "mfa",
+                    "senso"))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="instructions",
+                title="Instructions",
+                visible="(tuto)"))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="plotind",
-                visible="(modactillus)",
-                title="Representation of the Stimuli (and Categorical Supplementary Variables)",
+                title="Representation of the Stimuli",
                 width=800,
                 height=600,
                 renderFun=".plotindividus"))
             self$add(jmvcore::Image$new(
                 options=options,
-                name="plotind2",
-                visible="(modact)",
-                title="Representation of the Stimuli",
-                width=800,
-                height=600,
-                renderFun=".plotindividus2"))
-            self$add(jmvcore::Image$new(
-                options=options,
-                name="plotind3",
-                visible="(modillus)",
-                title="Representation of the Categorical Supplementary Variables",
-                width=800,
-                height=600,
-                renderFun=".plotindividus3"))
-            self$add(jmvcore::Image$new(
-                options=options,
-                name="plotvar",
-                visible="(varactillus)",
-                title="Representation of the Active and Supplementary Variables",
-                width=600,
-                height=600,
-                renderFun=".plotvariables"))
-            self$add(jmvcore::Image$new(
-                options=options,
-                name="plotvar2",
-                visible="(varact)",
-                title="Representation of the Active Variables",
-                width=600,
-                height=600,
-                renderFun=".plotvariables2"))
-            self$add(jmvcore::Image$new(
-                options=options,
-                name="plotvar3",
-                visible="(varillus)",
-                title="Representation of the Supplementary Variables",
-                width=600,
-                height=600,
-                renderFun=".plotvariables3"))
-            self$add(jmvcore::Image$new(
-                options=options,
-                name="plotgrp",
+                name="plotgroup",
                 title="Representation of the Subjects",
                 width=600,
                 height=600,
@@ -312,81 +204,41 @@ NappingResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$add(jmvcore::Preformatted$new(
                 options=options,
                 name="descdesdim",
-                title="Automatic Description of the Axes"))
-            self$add(R6::R6Class(
-                inherit = jmvcore::Group,
-                active = list(
-                    coordonnees = function() private$.items[["coordonnees"]],
-                    contribution = function() private$.items[["contribution"]],
-                    cosinus = function() private$.items[["cosinus"]]),
-                private = list(),
-                public=list(
-                    initialize=function(options) {
-                        super$initialize(
-                            options=options,
-                            name="individus",
-                            title="Individual Tables")
-                        self$add(jmvcore::Table$new(
-                            options=options,
-                            name="coordonnees",
-                            title="Coordinates Table",
-                            visible="(coordind)",
-                            clearWith=list(
-                                "nFactors"),
-                            columns=list()))
-                        self$add(jmvcore::Table$new(
-                            options=options,
-                            name="contribution",
-                            title="Contributions Table",
-                            visible="(contribind)",
-                            clearWith=list(
-                                "nFactors"),
-                            columns=list()))
-                        self$add(jmvcore::Table$new(
-                            options=options,
-                            name="cosinus",
-                            title="Cosine Table",
-                            visible="(cosind)",
-                            clearWith=list(
-                                "nFactors"),
-                            columns=list()))}))$new(options=options))
-            self$add(R6::R6Class(
-                inherit = jmvcore::Group,
-                active = list(
-                    correlations = function() private$.items[["correlations"]],
-                    contribution = function() private$.items[["contribution"]],
-                    cosinus = function() private$.items[["cosinus"]]),
-                private = list(),
-                public=list(
-                    initialize=function(options) {
-                        super$initialize(
-                            options=options,
-                            name="variables",
-                            title="Variable Tables")
-                        self$add(jmvcore::Table$new(
-                            options=options,
-                            name="correlations",
-                            title="Correlations Table",
-                            visible="(corvar)",
-                            clearWith=list(
-                                "nFactors"),
-                            columns=list()))
-                        self$add(jmvcore::Table$new(
-                            options=options,
-                            name="contribution",
-                            title="Contributions Table",
-                            visible="(contribvar)",
-                            clearWith=list(
-                                "nFactors"),
-                            columns=list()))
-                        self$add(jmvcore::Table$new(
-                            options=options,
-                            name="cosinus",
-                            title="Cosine Table",
-                            visible="(cosvar)",
-                            clearWith=list(
-                                "nFactors"),
-                            columns=list()))}))$new(options=options))}))
+                title="Automatic Description of the Dimensions"))
+            self$add(jmvcore::Image$new(
+                options=options,
+                name="plotclassif",
+                title="Representation of the Stimuli According to Clusters",
+                visible="(graphclassif)",
+                width=800,
+                height=600,
+                renderFun=".plotclassif"))
+            self$add(jmvcore::Output$new(
+                options=options,
+                name="newvar",
+                title="Coordinates",
+                measureType="continuous",
+                initInRun=TRUE,
+                clearWith=list(
+                    "actvars",
+                    "quantisup",
+                    "qualisup",
+                    "individus",
+                    "nFactors",
+                    "norme")))
+            self$add(jmvcore::Output$new(
+                options=options,
+                name="newvar2",
+                title="Coordinates",
+                measureType="continuous",
+                initInRun=TRUE,
+                clearWith=list(
+                    "actvars",
+                    "quantisup",
+                    "qualisup",
+                    "individus",
+                    "nFactors",
+                    "norme")))}))
 
 NappingBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "NappingBase",
@@ -413,110 +265,70 @@ NappingBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' 
 #' @param data .
 #' @param actvars .
-#' @param quantisup .
-#' @param qualisup .
 #' @param individus .
+#' @param qualisup .
+#' @param tuto .
 #' @param nFactors .
-#' @param corvar .
-#' @param contribvar .
-#' @param cosvar .
-#' @param coordind .
-#' @param contribind .
-#' @param cosind .
 #' @param proba .
 #' @param abs .
 #' @param ord .
-#' @param varact .
-#' @param varillus .
-#' @param varactillus .
-#' @param limcosvar .
-#' @param modact .
-#' @param modillus .
-#' @param modactillus .
+#' @param ncp .
+#' @param graphclassif .
+#' @param nbclust .
 #' @return A results object containing:
 #' \tabular{llllll}{
+#'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$plotind} \tab \tab \tab \tab \tab an image \cr
-#'   \code{results$plotind2} \tab \tab \tab \tab \tab an image \cr
-#'   \code{results$plotind3} \tab \tab \tab \tab \tab an image \cr
-#'   \code{results$plotvar} \tab \tab \tab \tab \tab an image \cr
-#'   \code{results$plotvar2} \tab \tab \tab \tab \tab an image \cr
-#'   \code{results$plotvar3} \tab \tab \tab \tab \tab an image \cr
-#'   \code{results$plotgrp} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$plotgroup} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$eigengroup$eigen} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$descdesdim} \tab \tab \tab \tab \tab a preformatted \cr
-#'   \code{results$individus$coordonnees} \tab \tab \tab \tab \tab a table \cr
-#'   \code{results$individus$contribution} \tab \tab \tab \tab \tab a table \cr
-#'   \code{results$individus$cosinus} \tab \tab \tab \tab \tab a table \cr
-#'   \code{results$variables$correlations} \tab \tab \tab \tab \tab a table \cr
-#'   \code{results$variables$contribution} \tab \tab \tab \tab \tab a table \cr
-#'   \code{results$variables$cosinus} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$plotclassif} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$newvar} \tab \tab \tab \tab \tab an output \cr
+#'   \code{results$newvar2} \tab \tab \tab \tab \tab an output \cr
 #' }
 #'
 #' @export
 Napping <- function(
     data,
     actvars,
-    quantisup,
-    qualisup,
     individus,
-    nFactors = 3,
-    corvar = FALSE,
-    contribvar = FALSE,
-    cosvar = FALSE,
-    coordind = FALSE,
-    contribind = FALSE,
-    cosind = FALSE,
+    qualisup,
+    tuto = TRUE,
+    nFactors = 2,
     proba = 5,
     abs = 1,
     ord = 2,
-    varact = FALSE,
-    varillus = FALSE,
-    varactillus = TRUE,
-    limcosvar = 0,
-    modact = FALSE,
-    modillus = FALSE,
-    modactillus = TRUE) {
+    ncp = 5,
+    graphclassif = FALSE,
+    nbclust = -1) {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("Napping requires jmvcore to be installed (restart may be required)")
 
     if ( ! missing(actvars)) actvars <- jmvcore::resolveQuo(jmvcore::enquo(actvars))
-    if ( ! missing(quantisup)) quantisup <- jmvcore::resolveQuo(jmvcore::enquo(quantisup))
-    if ( ! missing(qualisup)) qualisup <- jmvcore::resolveQuo(jmvcore::enquo(qualisup))
     if ( ! missing(individus)) individus <- jmvcore::resolveQuo(jmvcore::enquo(individus))
+    if ( ! missing(qualisup)) qualisup <- jmvcore::resolveQuo(jmvcore::enquo(qualisup))
     if (missing(data))
         data <- jmvcore::marshalData(
             parent.frame(),
             `if`( ! missing(actvars), actvars, NULL),
-            `if`( ! missing(quantisup), quantisup, NULL),
-            `if`( ! missing(qualisup), qualisup, NULL),
-            `if`( ! missing(individus), individus, NULL))
+            `if`( ! missing(individus), individus, NULL),
+            `if`( ! missing(qualisup), qualisup, NULL))
 
-    for (v in qualisup) if (v %in% names(data)) data[[v]] <- as.factor(data[[v]])
     for (v in individus) if (v %in% names(data)) data[[v]] <- as.factor(data[[v]])
 
     options <- NappingOptions$new(
         actvars = actvars,
-        quantisup = quantisup,
-        qualisup = qualisup,
         individus = individus,
+        qualisup = qualisup,
+        tuto = tuto,
         nFactors = nFactors,
-        corvar = corvar,
-        contribvar = contribvar,
-        cosvar = cosvar,
-        coordind = coordind,
-        contribind = contribind,
-        cosind = cosind,
         proba = proba,
         abs = abs,
         ord = ord,
-        varact = varact,
-        varillus = varillus,
-        varactillus = varactillus,
-        limcosvar = limcosvar,
-        modact = modact,
-        modillus = modillus,
-        modactillus = modactillus)
+        ncp = ncp,
+        graphclassif = graphclassif,
+        nbclust = nbclust)
 
     analysis <- NappingClass$new(
         options = options,

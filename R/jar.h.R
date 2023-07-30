@@ -10,6 +10,7 @@ JAROptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             paneff = NULL,
             likvar = NULL,
             sensoatt = NULL,
+            tuto = TRUE,
             jarmod = "jar", ...) {
 
             super$initialize(
@@ -46,6 +47,10 @@ JAROptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "nominal"),
                 permitted=list(
                     "factor"))
+            private$..tuto <- jmvcore::OptionBool$new(
+                "tuto",
+                tuto,
+                default=TRUE)
             private$..jarmod <- jmvcore::OptionString$new(
                 "jarmod",
                 jarmod,
@@ -55,6 +60,7 @@ JAROptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..paneff)
             self$.addOption(private$..likvar)
             self$.addOption(private$..sensoatt)
+            self$.addOption(private$..tuto)
             self$.addOption(private$..jarmod)
         }),
     active = list(
@@ -62,12 +68,14 @@ JAROptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         paneff = function() private$..paneff$value,
         likvar = function() private$..likvar$value,
         sensoatt = function() private$..sensoatt$value,
+        tuto = function() private$..tuto$value,
         jarmod = function() private$..jarmod$value),
     private = list(
         ..prodeff = NA,
         ..paneff = NA,
         ..likvar = NA,
         ..sensoatt = NA,
+        ..tuto = NA,
         ..jarmod = NA)
 )
 
@@ -75,6 +83,7 @@ JARResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "JARResults",
     inherit = jmvcore::Group,
     active = list(
+        instructions = function() private$.items[["instructions"]],
         frequencebrut = function() private$.items[["frequencebrut"]],
         frequencebrutdes = function() private$.items[["frequencebrutdes"]],
         plotjar = function() private$.items[["plotjar"]],
@@ -87,7 +96,16 @@ JARResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             super$initialize(
                 options=options,
                 name="",
-                title="Analysis of JAR data")
+                title="Analysis of JAR data",
+                refs=list(
+                    "jar",
+                    "sensominer",
+                    "senso"))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="instructions",
+                title="Instructions",
+                visible="(tuto)"))
             self$add(jmvcore::Preformatted$new(
                 options=options,
                 name="frequencebrut",
@@ -147,9 +165,11 @@ JARBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param paneff .
 #' @param likvar .
 #' @param sensoatt .
+#' @param tuto .
 #' @param jarmod .
 #' @return A results object containing:
 #' \tabular{llllll}{
+#'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$frequencebrut} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$frequencebrutdes} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$plotjar} \tab \tab \tab \tab \tab an image \cr
@@ -165,6 +185,7 @@ JAR <- function(
     paneff,
     likvar,
     sensoatt,
+    tuto = TRUE,
     jarmod = "jar") {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
@@ -191,6 +212,7 @@ JAR <- function(
         paneff = paneff,
         likvar = likvar,
         sensoatt = sensoatt,
+        tuto = tuto,
         jarmod = jarmod)
 
     analysis <- JARClass$new(

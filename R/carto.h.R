@@ -10,6 +10,7 @@ cartoOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             coox = NULL,
             cooy = NULL,
             hedo = NULL,
+            tuto = TRUE,
             regtype = "1",
             colabove = 0,
             colbelow = 7.5, ...) {
@@ -48,6 +49,10 @@ cartoOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "continuous"),
                 permitted=list(
                     "numeric"))
+            private$..tuto <- jmvcore::OptionBool$new(
+                "tuto",
+                tuto,
+                default=TRUE)
             private$..regtype <- jmvcore::OptionList$new(
                 "regtype",
                 regtype,
@@ -70,6 +75,7 @@ cartoOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..coox)
             self$.addOption(private$..cooy)
             self$.addOption(private$..hedo)
+            self$.addOption(private$..tuto)
             self$.addOption(private$..regtype)
             self$.addOption(private$..colabove)
             self$.addOption(private$..colbelow)
@@ -79,6 +85,7 @@ cartoOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         coox = function() private$..coox$value,
         cooy = function() private$..cooy$value,
         hedo = function() private$..hedo$value,
+        tuto = function() private$..tuto$value,
         regtype = function() private$..regtype$value,
         colabove = function() private$..colabove$value,
         colbelow = function() private$..colbelow$value),
@@ -87,6 +94,7 @@ cartoOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..coox = NA,
         ..cooy = NA,
         ..hedo = NA,
+        ..tuto = NA,
         ..regtype = NA,
         ..colabove = NA,
         ..colbelow = NA)
@@ -96,6 +104,7 @@ cartoResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "cartoResults",
     inherit = jmvcore::Group,
     active = list(
+        instructions = function() private$.items[["instructions"]],
         plotcarto = function() private$.items[["plotcarto"]]),
     private = list(),
     public=list(
@@ -103,7 +112,17 @@ cartoResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             super$initialize(
                 options=options,
                 name="",
-                title="External Preference Mapping")
+                title="External Preference Mapping",
+                refs=list(
+                    "sensominer",
+                    "senso",
+                    "carto1",
+                    "carto2"))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="instructions",
+                title="Instructions",
+                visible="(tuto)"))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="plotcarto",
@@ -140,11 +159,13 @@ cartoBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param coox .
 #' @param cooy .
 #' @param hedo .
+#' @param tuto .
 #' @param regtype .
 #' @param colabove .
 #' @param colbelow .
 #' @return A results object containing:
 #' \tabular{llllll}{
+#'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$plotcarto} \tab \tab \tab \tab \tab an image \cr
 #' }
 #'
@@ -155,6 +176,7 @@ carto <- function(
     coox,
     cooy,
     hedo,
+    tuto = TRUE,
     regtype = "1",
     colabove = 0,
     colbelow = 7.5) {
@@ -181,6 +203,7 @@ carto <- function(
         coox = coox,
         cooy = cooy,
         hedo = hedo,
+        tuto = tuto,
         regtype = regtype,
         colabove = colabove,
         colbelow = colbelow)

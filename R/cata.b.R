@@ -6,6 +6,49 @@ cataClass = if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
     "cataClass",
     inherit = cataBase,
     private = list(
+    
+    #---------------------------------------------  
+    #### Init + run functions ----
+
+      .init = function() {
+            if (is.null(self$data) | is.null(self$options$group)) {
+              if (self$options$tuto==TRUE){
+                self$results$instructions$setVisible(visible = TRUE)
+              }
+            }
+            
+            self$results$instructions$setContent(
+            "<html>
+            <head>
+            </head>
+            <body>
+            <div class='justified-text'>
+            <p><b>What you need to know before analysing CATA data in jamovi</b></p>
+            <p>______________________________________________________________________________</p>
+
+            <p> CATA stands for <I>Check-All-That-Apply</I>. CATA is a method used in sensory evaluation and consumer research to obtain 
+            descriptive and discriminative information about stimuli, products or samples.</p>
+            <p> In a CATA test, panelists or consumers are presented with a list of attributes or sensory characteristics related to the stimuli they are evaluating. 
+            The panelists are asked to check all the attributes that they perceive or find present in the stimulus. 
+            Unlike traditional rating scales where panelists assign a single score to each attribute, CATA allows the panelists 
+            to select multiple attributes that they perceive simultaneously in the stimulus.</p>
+            <p> CATA captures the multiplicity of attributes: CATA allows panelists to express the complex sensory profiles of 
+            stimuli by selecting multiple attributes that co-occur in the same stimulus. CATA is user-friendly: The check-all-that-apply format is 
+            straightforward and easy for panelists to understand and complete.</p>
+
+            <p> In the SEDA module, the analysis of CATA data is based on a contingency table, and a two steps procedure. After building the 
+            contingency table, the interface provides a description of the stimuli according to the CATA items. Then, a correspondence 
+            analysis is performed to vizualize the relationship between the stimuli and the CATA items.</p>
+
+            <p>______________________________________________________________________________</p>
+            
+            </div>
+            </body>
+            </html>"
+            )
+            
+        },
+
       .run = function() {
         if (is.null(self$options$stimuli)|| is.null(self$options$group)){
           return()
@@ -149,12 +192,5 @@ cataClass = if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
         data=data.frame(datastimuli, datanote)
         return(data)
       }
-
-      
-      
     )
 )
-
-
-
-

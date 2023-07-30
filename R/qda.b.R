@@ -5,6 +5,49 @@ QDAClass <- if (requireNamespace('jmvcore')) R6::R6Class(
     "QDAClass",
     inherit = QDABase,
     private = list(
+
+    #---------------------------------------------  
+    #### Init + run functions ----
+
+            .init = function() {
+            if (is.null(self$data) | is.null(self$options$sensoatt)) {
+              if (self$options$tuto==TRUE){
+                self$results$instructions$setVisible(visible = TRUE)
+              }
+            }
+            
+            self$results$instructions$setContent(
+            "<html>
+            <head>
+            </head>
+            <body>
+            <div class='justified-text'>
+            <p><b>What you need to know before analysing QDA data in jamovi (1)</b></p>
+            <p>______________________________________________________________________________</p>
+
+            <p> Quantitative Descriptive Analysis (QDA) is a sensory evaluation technique used to objectively and systematically measure 
+            and describe the sensory characteristics of products, such as food, beverages, personal care products, and more (<I>stimuli</I>).</p>
+
+            <p> The goal of QDA is to generate a detailed and quantitative profile of the sensory attributes of the stimuli being evaluated.</p>
+
+            <p> Therefore, we are interested in pointing out the attributes that are the most characteristic according to the set of stimuli as a whole, 
+            and to each of the stimulus as such.</p>
+
+            <p> The interface provides two types of results. An sorted list of the sensory attributes characterising the stimulus space and, 
+            for each stimulus, a list of the attributes that characterise it.</p>
+
+            <p> Open the <b>sensochoc</b> dataset. Use all the sensory attributes to characterize your products. You can see that the chocolate
+            <B>choc1</B> was perceived as very bitter and not sweet at all.</p>
+
+            <p>______________________________________________________________________________</p>
+            
+            </div>
+            </body>
+            </html>"
+            )
+            
+        },
+
         .run = function() {
             
             if (is.null(self$options$sensoatt)) return()
@@ -51,7 +94,7 @@ QDAClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                     tab <- tab[, c(1,6,2,3,4,5)] #Ordonner les colonnes
                     colnames(tab)[2]="Descriptor"
                     
-                    if (length(self$options$sensoatt) == 1) #Afficher le nom du descripteur ? la place de "1" quand un seul descripteur est choisi
+                    if (length(self$options$sensoatt) == 1) #Afficher le nom du descripteur à la place de "1" quand un seul descripteur est choisi
                         tab[,2]=self$options$sensoatt
                 }
                 
@@ -188,7 +231,7 @@ QDAClass <- if (requireNamespace('jmvcore')) R6::R6Class(
         .printresTable= function(tab){
             
             for (i in 1:dim(tab)[1]){
-                self$results$resT$addRow(rowKey=i, values=list(component=as.character(tab[,1])[i])) #M?thode addRow
+                self$results$resT$addRow(rowKey=i, values=list(component=as.character(tab[,1])[i])) #Méthode addRow
             }
             
             for (i in 1:(dim(tab)[1])) {
@@ -198,7 +241,7 @@ QDAClass <- if (requireNamespace('jmvcore')) R6::R6Class(
                 row[["adjmean"]]=tab[,4][i]
                 row[["pvalue"]]=tab[,5][i]
                 row[["vtest"]]=tab[,6][i]
-                self$results$resT$setRow(rowNo=i, values = row) #M?thode setRow
+                self$results$resT$setRow(rowNo=i, values = row) #Méthode setRow
             }
         },
         

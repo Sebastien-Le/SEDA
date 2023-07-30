@@ -2,8 +2,17 @@
 name: QDABOOT
 title: Multivariate Representation of the Stimulus Space
 jrs: '1.1'
+refs: 
+    - ellipse
+    - sensominer
+    - senso
 
 items:
+  - name: instructions
+    title: Instructions
+    visible: (tuto)
+    type: Html
+
   - name: plotind
     title: Representation of the Stimuli
     type: Image
@@ -41,7 +50,7 @@ items:
             type: number
 
   - name: dimdesc
-    title: Automatic Description of the Axes
+    title: Automatic Description of the Dimensions
     type: Preformatted
 
   - name: plotspa

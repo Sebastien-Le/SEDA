@@ -4,9 +4,53 @@ JARClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
   "JARClass",
   inherit = JARBase,
   private = list(       
-    
-    
+        
+    #---------------------------------------------  
     #### Init + run functions ----
+      
+      .init = function() {
+            if (is.null(self$data) | is.null(self$options$sensoatt)) {
+              if (self$options$tuto==TRUE){
+                self$results$instructions$setVisible(visible = TRUE)
+              }
+            }
+            
+            self$results$instructions$setContent(
+            "<html>
+            <head>
+            </head>
+            <body>
+            <div class='justified-text'>
+            <p><b>What you need to know before analysing JAR data in jamovi</b></p>
+            <p>______________________________________________________________________________</p>
+
+            <p> <I>Just About Right</I> (JAR) data is a type of sensory evaluation data used in the sensory science and consumer research. 
+            It is a specific scaling method that aims to determine the ideal or optimal level of a sensory attribute in a stimulus/product, as perceived by consumers or sensory panelists.</p>
+            <p> In a JAR test, participants are presented with stimuli that vary in the intensity or level of a particular sensory attribute (<I>e.g.</I>, sweetness, saltiness, spiciness, etc.). 
+            Participants are then asked to rate each sample on a scale that typically ranges from <I>Too Little</I> to <I>Just About Right</I> to <I>Too Much</I>.</p>
+            <p> The JAR scale is designed to capture the point at which the sensory attribute is perceived as being neither too weak nor too strong but is at an ideal or preferred level. 
+            The Just About Right point represents the optimal level of the attribute that best satisfies the consumers' preferences or expectations for that specific stimulus/product.<p>
+            <p> JAR data is valuable for product development and optimization, as it helps product developers and marketers understand the target sensory attributes that consumers find most appealing and desirable. 
+            By identifying the Just About Right levels of sensory attributes, manufacturers can fine-tune their products to meet consumer preferences, leading to better consumer acceptance and satisfaction. 
+            Additionally, JAR tests can be used to compare different product formulations or variations to find the optimal sensory profile that aligns with consumer preferences.</p>
+            
+            <p> In the SEDA module, the focus is on the defects. Therefore, the interface provides a contingency table crosses stimuli and defects, a description 
+            of the stimuli according to the defects, a representation of the products and their respective defects. Penalties are calculated relatively 
+            to the whole set of stimuli, then a representation of the penalties for the <b>first</b> stimulus is provided.</p>
+
+            <p> <b>Warning</b>: the first stimulus is the one corresponding to the first level of the stimulus variable. The value of the levels can be modified
+            to obtain a representation of another stimulus. To do so, click on the Data tab, then on the stimulus variable: by clicking on the 
+            arrows next the levels field, you can change the order of the levels, and therefore of the stimuli.</p>
+
+            <p>______________________________________________________________________________</p>
+            
+            </div>
+            </body>
+            </html>"
+            )
+            
+        },
+
     .run = function() {
       
       ready <- TRUE

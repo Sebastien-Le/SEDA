@@ -9,6 +9,7 @@ QDAOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             prodeff = NULL,
             paneff = NULL,
             sensoatt = NULL,
+            tuto = TRUE,
             threshold = 5, ...) {
 
             super$initialize(
@@ -38,6 +39,10 @@ QDAOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "continuous"),
                 permitted=list(
                     "numeric"))
+            private$..tuto <- jmvcore::OptionBool$new(
+                "tuto",
+                tuto,
+                default=TRUE)
             private$..threshold <- jmvcore::OptionNumber$new(
                 "threshold",
                 threshold,
@@ -46,17 +51,20 @@ QDAOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..prodeff)
             self$.addOption(private$..paneff)
             self$.addOption(private$..sensoatt)
+            self$.addOption(private$..tuto)
             self$.addOption(private$..threshold)
         }),
     active = list(
         prodeff = function() private$..prodeff$value,
         paneff = function() private$..paneff$value,
         sensoatt = function() private$..sensoatt$value,
+        tuto = function() private$..tuto$value,
         threshold = function() private$..threshold$value),
     private = list(
         ..prodeff = NA,
         ..paneff = NA,
         ..sensoatt = NA,
+        ..tuto = NA,
         ..threshold = NA)
 )
 
@@ -64,6 +72,7 @@ QDAResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "QDAResults",
     inherit = jmvcore::Group,
     active = list(
+        instructions = function() private$.items[["instructions"]],
         resF = function() private$.items[["resF"]],
         resT = function() private$.items[["resT"]]),
     private = list(),
@@ -72,7 +81,15 @@ QDAResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             super$initialize(
                 options=options,
                 name="",
-                title="Characterization of the Stimulus Space")
+                title="Characterization of the Stimulus Space",
+                refs=list(
+                    "sensominer",
+                    "senso"))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="instructions",
+                title="Instructions",
+                visible="(tuto)"))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="resF",
@@ -151,9 +168,11 @@ QDABase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param prodeff .
 #' @param paneff .
 #' @param sensoatt .
+#' @param tuto .
 #' @param threshold .
 #' @return A results object containing:
 #' \tabular{llllll}{
+#'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$resF} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$resT} \tab \tab \tab \tab \tab a table \cr
 #' }
@@ -170,6 +189,7 @@ QDA <- function(
     prodeff,
     paneff,
     sensoatt,
+    tuto = TRUE,
     threshold = 5) {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
@@ -192,6 +212,7 @@ QDA <- function(
         prodeff = prodeff,
         paneff = paneff,
         sensoatt = sensoatt,
+        tuto = tuto,
         threshold = threshold)
 
     analysis <- QDAClass$new(

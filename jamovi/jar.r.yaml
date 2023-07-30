@@ -2,8 +2,17 @@
 name:  JAR
 title: Analysis of JAR data
 jrs:   '1.1'
+refs:
+    - jar
+    - sensominer
+    - senso
 
 items:
+  - name: instructions
+    title: Instructions
+    visible: (tuto)
+    type: Html
+
   - name: frequencebrut
     title: Contingency Table (Defects by Products)
     type: Preformatted
@@ -33,4 +42,3 @@ items:
     width: 600
     height: 500
     renderFun: .plotpenalty
-    

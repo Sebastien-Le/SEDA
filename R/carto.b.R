@@ -11,6 +11,48 @@ cartoClass = if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
     "cartoClass",
     inherit = cartoBase,
     private = list(
+
+    #---------------------------------------------  
+    #### Init + run functions ----
+
+            .init = function() {
+            if (is.null(self$data) | is.null(self$options$hedo)) {
+              if (self$options$tuto==TRUE){
+                self$results$instructions$setVisible(visible = TRUE)
+              }
+            }
+            
+            self$results$instructions$setContent(
+            "<html>
+            <head>
+            </head>
+            <body>
+            <div class='justified-text'>
+            <p><b>What you need to know before analysing hedonic data in jamovi</b></p>
+            <p>______________________________________________________________________________</p>
+
+            <p> External Preference Mapping is a technique used to understand the relationships between sensory attributes of a set of products and consumer preferences.
+            It is a part of consumer research in sensory science and is commonly employed in the food and beverage industry and other product development fields.</p>
+            
+            <p> The goal of External Preference Mapping is to explore and quantify the sensory characteristics of products that drive consumer liking or preferences.</p>
+
+            <p> In the SEDA module, to obtain a preference map, you need two elements: a two-dimensional representation space, on the one hand, hedonic scores, on the other hand.</p>
+
+            <p> Open the <b>senso_hedo_cocktail</b> dataset. With the <b>MEDA module</b>, run a PCA on the sensory attributes (from color intensity to thickness) and make sure to save the 2 first components. Once you have 
+            saved the representation space, you can now use it to represent your hedonic scores.</p>
+
+            <p> Come back to the external preference mapping analysis. The X-axis and Y-axis of your representation space are the 2 first components that
+            you have previously saved. The liking variables are the columns from O to DJ.</p>
+
+            <p>______________________________________________________________________________</p>
+            
+            </div>
+            </body>
+            </html>"
+            )
+            
+        },
+
       .run = function() {
         if (is.null(self$options$coox)|| is.null(self$options$cooy)|| is.null(self$options$hedo)){
           return()

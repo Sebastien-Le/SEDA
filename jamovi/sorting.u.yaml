@@ -22,17 +22,16 @@ children:
             name: actvars
             isTarget: true
       - type: TargetLayoutBox
-        label: Quantitative Supplementary Variables
-        children:
-          - type: VariablesListBox
-            name: quantisup
-            isTarget: true
-      - type: TargetLayoutBox
         label: Supplementary Subjects
         children:
           - type: VariablesListBox
             name: qualisup
             isTarget: true
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: CheckBox
+        name: tuto            
   - type: LayoutBox
     margin: large
     stretchFactor: 1
@@ -81,15 +80,11 @@ children:
               - type: CheckBox
                 name: varmodvar
               - type: TextBox
+                stretchFactor: 2
                 name: modality
                 format: string
               - type: CheckBox
                 name: varmodqualisup
-          - type: Label
-            label: Quantitative Supplementary Variables
-            children:
-              - type: CheckBox
-                name: quantimod
   - type: LayoutBox
     margin: large
     stretchFactor: 1
@@ -99,7 +94,7 @@ children:
         collapsed: true
         children:
           - type: Label
-            label: Automatic Description of the Axis
+            label: Automatic Description of the Dimensions
             children:
               - type: Label
                 label: ''
@@ -122,14 +117,27 @@ children:
                     name: nFactors
                     format: number
           - type: Label
-            label: Automatic Description of the Stimuli
+            label: Description of the Stimuli
             children:
-              - type: LayoutBox
-                margin: large
+              - type: Label
+                label: ''
+                cell:
+                  column: 0
+                  row: 0
+                stretchFactor: 1
                 children:
                   - type: TextBox
                     name: leveltext
                     format: number
+              - type: Label
+                label: ''
+                cell:
+                  column: 1
+                  row: 0
+                stretchFactor: 1
+                children:
+                  - type: CheckBox
+                    name: longformat
           - type: Label
             label: Individual Table Options
             children:
@@ -156,3 +164,66 @@ children:
                     name: varcontrib
                   - type: CheckBox
                     name: varcos
+          - type: Label
+            label: Save
+            children:
+              - type: Label
+                label: ''
+                cell:
+                  column: 0
+                  row: 0
+                stretchFactor: 1
+                children:
+                  - type: TextBox
+                    name: ncp
+                    format: number
+              - type: Label
+                label: ''
+                cell:
+                  column: 1
+                  row: 0
+                stretchFactor: 1
+                children:
+                  - type: Output
+                    name: newvar     
+  - type: LayoutBox
+    margin: large
+    stretchFactor: 1
+    children:
+      - type: CollapseBox
+        label: Clustering
+        stretchFactor: 1
+        collapsed: true
+        children:
+          - type: Label
+            label: Clustering Graphic Options
+            children:
+              - type: Label
+                label: ''
+                cell:
+                  column: 0
+                  row: 0
+                stretchFactor: 1
+                children:
+                  - type: CheckBox
+                    name: graphclassif
+                    format: number
+              - type: Label
+                label: ''
+                cell:
+                  column: 1
+                  row: 0
+                stretchFactor: 1
+                children:
+                  - type: TextBox
+                    name: nbclust
+                    format: number
+          - type: Label
+            label: Save
+            children:
+              - type: LayoutBox
+                margin: large
+                stretchFactor: 1
+                children:
+                  - type: Output
+                    name: newvar2                

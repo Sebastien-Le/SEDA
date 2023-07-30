@@ -36,6 +36,11 @@ options:
       - continuous
     permitted:
       - numeric
+
+  - name: tuto
+    title: Read me before running
+    type: Bool
+    default: true      
       
   - name: threshold
     title: Significance threshold (%)

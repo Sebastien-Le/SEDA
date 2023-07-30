@@ -9,7 +9,7 @@ children:
     stretchFactor: 1
     children:
       - type: TargetLayoutBox
-        label: Individual Labels
+        label: Stimuli Labels
         children:
           - type: VariablesListBox
             name: individus
@@ -35,6 +35,11 @@ children:
           - type: VariablesListBox
             name: hedo
             isTarget: true
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: CheckBox
+        name: tuto            
   - type: LayoutBox
     children:
       - type: ComboBox

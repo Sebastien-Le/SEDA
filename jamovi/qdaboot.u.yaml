@@ -9,14 +9,14 @@ children:
     stretchFactor: 1
     children:
       - type: TargetLayoutBox
-        label: Stimulus Variable
+        label: Stimulus Effect
         children:
           - type: VariablesListBox
             name: prod
             maxItemCount: 1
             isTarget: true
       - type: TargetLayoutBox
-        label: Subject Variable
+        label: Subject Effect
         children:
           - type: VariablesListBox
             name: pane
@@ -28,6 +28,11 @@ children:
           - type: VariablesListBox
             name: senso
             isTarget: true
+  - type: LayoutBox
+    margin: large
+    children:
+      - type: CheckBox
+        name: tuto            
   - type: LayoutBox
     margin: large
     stretchFactor: 1
@@ -147,7 +152,7 @@ children:
         stretchFactor: 1
         children:
           - type: Label
-            label: Automatic Description of the Axes
+            label: Automatic Description of the Dimensions
             children:
               - type: Label
                 label: ''
