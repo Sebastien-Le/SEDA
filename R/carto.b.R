@@ -31,17 +31,18 @@ cartoClass = if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
             <p><b>What you need to know before analysing hedonic data in jamovi</b></p>
             <p>______________________________________________________________________________</p>
 
-            <p> External Preference Mapping is a technique used to understand the relationships between sensory attributes of a set of products and consumer preferences.
-            It is a part of consumer research in sensory science and is commonly employed in the food and beverage industry and other product development fields.</p>
-            
-            <p> The goal of External Preference Mapping is to explore and quantify the sensory characteristics of products that drive consumer liking or preferences.</p>
-
             <p> In the SEDA module, to obtain a preference map, you need two elements: a two-dimensional representation space, on the one hand, hedonic scores, on the other hand.</p>
 
-            <p> Open the <b>senso_hedo_cocktail</b> dataset. With the <b>MEDA module</b>, run a PCA on the sensory attributes (from color intensity to thickness) and make sure to save the 2 first components. Once you have 
+            <p> For the external preference map, open the <b>senso_hedo_cocktail</b> dataset. With the <b>MEDA module</b>, run a PCA on the sensory attributes (from color intensity to thickness) and make sure to save the 2 first components. Once you have 
             saved the representation space, you can now use it to represent your hedonic scores.</p>
 
-            <p> Come back to the external preference mapping analysis. The X-axis and Y-axis of your representation space are the 2 first components that
+            <p> Come back to the preference mapping analysis. The X-axis and Y-axis of your representation space are the 2 first components that
+            you have previously saved. The liking variables are the columns from O to DJ.</p>
+
+            <p> For the internal preference map, open the <b>senso_hedo_cocktail</b> dataset. With the <b>MEDA module</b>, run a PCA on the liking scores (columns from O to DJ) and make sure to save the 2 first components. Once you have 
+            saved the representation space, you can now use it to represent your hedonic scores.</p>
+
+            <p> Come back to the preference mapping analysis. The X-axis and Y-axis of your representation space are the 2 first components that
             you have previously saved. The liking variables are the columns from O to DJ.</p>
 
             <p>______________________________________________________________________________</p>
@@ -81,7 +82,7 @@ cartoClass = if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
           colbelow_gui <- self$options$colbelow
           colabove_gui <- self$options$colabove
           
-          plot=private$.carto_jamovi(data[,1:2],data[,3:n], main = 'External Preference Mapping', regmod = regtype_gui, col.min = colbelow_gui, col.max = colabove_gui)
+          plot=private$.carto_jamovi(data[,1:2],data[,3:n], main = 'Preference Mapping', regmod = regtype_gui, col.min = colbelow_gui, col.max = colabove_gui)
           print(plot)
           TRUE
         }

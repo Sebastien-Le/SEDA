@@ -27,7 +27,7 @@ QDABOOTClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             <p> Quantitative Descriptive Analysis (QDA) is a sensory evaluation technique used to objectively and systematically measure 
             and describe the sensory characteristics of products, such as food, beverages, personal care products, and more (<I>stimuli</I>).</p>
 
-            <p> The goal of QDA is to generate a detailed and quantitative profile of the sensory attributes of the stimuli being evaluated.</p>
+            <p> The goal of QDA is to generate a detailed, quantitative profile of evaluated stimuli based on sensory attributes.</p>
 
             <p> Therefore, we are interested in representing the stimuli on a map such that
             two stimuli are all the closer if they have been perceived in the same way.</p>

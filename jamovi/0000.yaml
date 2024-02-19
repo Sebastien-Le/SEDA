@@ -63,7 +63,7 @@ analyses:
     menuTitle: Analysis of Sorting Data
     menuSubgroup: Free Perception
     menuSubtitle: 'FactoMineR::MCA'
-  - title: External Preference Mapping
+  - title: Preference Mapping
     name: carto
     ns: SEDA
     menuGroup: SEDA

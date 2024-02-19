@@ -112,7 +112,7 @@ cartoResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             super$initialize(
                 options=options,
                 name="",
-                title="External Preference Mapping",
+                title="Preference Mapping",
                 refs=list(
                     "sensominer",
                     "senso",
@@ -151,7 +151,7 @@ cartoBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 requiresMissings = FALSE)
         }))
 
-#' External Preference Mapping
+#' Preference Mapping
 #'
 #' 
 #' @param data .
