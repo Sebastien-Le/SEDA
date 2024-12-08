@@ -27,49 +27,49 @@ analyses:
     menuGroup: SEDA
     menuTitle: Characterization of the Stimulus Space
     menuSubgroup: Fixed List of Attributes
-    menuSubtitle: 'SensoMineR::decat'
+    menuSubtitle: SensoMineR::decat
   - title: Multivariate Representation of the Stimulus Space
     name: QDABOOT
     ns: SEDA
     menuGroup: SEDA
     menuTitle: Representation of the Stimulus Space
     menuSubgroup: Fixed List of Attributes
-    menuSubtitle: 'SensoMineR::panellipse'
+    menuSubtitle: SensoMineR::panellipse
   - title: Analysis of CATA data
     name: cata
     ns: SEDA
     menuGroup: SEDA
     menuTitle: Identification of CATA
     menuSubgroup: Fixed List of Attributes
-    menuSubtitle: 'SensoMineR::CATA'
+    menuSubtitle: SensoMineR::CATA
   - title: Analysis of JAR data
     name: JAR
     ns: SEDA
     menuGroup: SEDA
     menuTitle: Identification of Defects
     menuSubgroup: Fixed List of Attributes
-    menuSubtitle: 'SensoMineR::JAR'
+    menuSubtitle: SensoMineR::JAR
   - title: Analysis of Napping Data
     name: Napping
     ns: SEDA
     menuGroup: SEDA
     menuTitle: Analysis of Napping Data
     menuSubgroup: Free Perception
-    menuSubtitle: 'FactoMineR::MFA'
+    menuSubtitle: FactoMineR::MFA
   - title: Analysis of Sorting Data
     name: Sorting
     ns: SEDA
     menuGroup: SEDA
     menuTitle: Analysis of Sorting Data
     menuSubgroup: Free Perception
-    menuSubtitle: 'FactoMineR::MCA'
+    menuSubtitle: FactoMineR::MCA
   - title: Preference Mapping
     name: carto
     ns: SEDA
     menuGroup: SEDA
     menuTitle: Preference Mapping
     menuSubgroup: Hedonic Data
-    menuSubtitle: 'SensoMineR::carto'
+    menuSubtitle: SensoMineR::carto
 datasets:
   - name: sensochoc
     path: sensochoc.omv

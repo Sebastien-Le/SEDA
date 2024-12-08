@@ -437,7 +437,7 @@ SortingClass <- if (requireNamespace('jmvcore')) R6::R6Class(
       },
 
       .output2 = function(res.classif){
-        if (self$results$newvar2$isNotFilled()) {
+        if (self$results$newvar2$isFilled()) {
           keys <- 1
           measureTypes <- "nominal"
           titles <- "Cluster"
@@ -448,7 +448,7 @@ SortingClass <- if (requireNamespace('jmvcore')) R6::R6Class(
             descriptions=descriptions,
             measureTypes=measureTypes
           )
-            scores <- as.factor(res.classif$data.clust[rownames(private$.buildData()),dim(res.classif$data.clust)[2]])
+            scores <- as.factor(res.classif$data.clust[,dim(res.classif$data.clust)[2]])
             self$results$newvar2$setValues(index=1, scores)
 
           self$results$newvar2$setRowNums(rownames(self$data))
