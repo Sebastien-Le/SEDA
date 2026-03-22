@@ -1,262 +1,285 @@
-
 # This file is a generated template, your changes will not be overwritten
-
 QDAClass <- if (requireNamespace('jmvcore')) R6::R6Class(
-    "QDAClass",
-    inherit = QDABase,
-    private = list(
-
-    #---------------------------------------------  
+  "QDAClass",
+  inherit = QDABase,
+  private = list(
+    
+    #---------------------------------------------
     #### Init + run functions ----
-
-            .init = function() {
-            if (is.null(self$data) | is.null(self$options$sensoatt)) {
-              if (self$options$tuto==TRUE){
-                self$results$instructions$setVisible(visible = TRUE)
-              }
-            }
-            
-            self$results$instructions$setContent(
-            "<html>
-            <head>
-            </head>
-            <body>
-            <div class='justified-text'>
-            <p><b>What you need to know before analysing QDA data in jamovi (1)</b></p>
-            <p>______________________________________________________________________________</p>
-
-            <p> Quantitative Descriptive Analysis (QDA) is a sensory evaluation technique used to objectively and systematically measure 
-            and describe the sensory characteristics of products, such as food, beverages, personal care products, and more (<I>stimuli</I>).</p>
-
-            <p> The goal of QDA is to generate a detailed, quantitative profile of evaluated stimuli based on sensory attributes.</p>
-
-            <p> Therefore, we are interested in pointing out the attributes that are the most characteristic of the set of stimuli as a whole, 
-            and to each of the stimulus as such.</p>
-
-            <p> The interface returns two types of results. A sorted list of the sensory attributes that characterize the stimulus space and, 
-            for each stimulus, a list of the attributes that characterize it.</p>
-
-            <p> Open the <b>sensochoc</b> dataset. Use all the sensory attributes to characterize your products. You can see that the chocolate
-            <B>choc1</B> was perceived as very bitter and not sweet at all.</p>
-
-            <p>______________________________________________________________________________</p>
-            
-            </div>
-            </body>
-            </html>"
-            )
-            
-        },
-
-        .run = function() {
-            
-            if (is.null(self$options$sensoatt)) return()
-            
-            else if (is.null(self$options$prodeff)) return()
-            
-            else if (is.null(self$options$paneff)) return()
-            
-            else{
-                
-                #Division blocs
-                
-                data <- self$data
-                data.qt <- data[,sapply(data, function(x) is.numeric(x))]
-                data.ql <- data[,sapply(data, function(x) is.factor(x))]
-                data <- data.frame(data.ql, data.qt) #Ranger le jeu de données avec d'abord les var QL puis les var QT
-                
-                res.decat <- private$.decat(data)
-                
-                #Mise en place du tableau sous R
-                
-                if (is.null(dim(res.decat$resT[[1]])[1]) == FALSE) {
-                    
-                    j=1
-                    while (dim(res.decat$resT[[j]])[1] == 0)
-                        j=j+1 #j est le rang du premier data.frame de res.decat$resT dont le nombre de lignes n'est pas nul
-                    
-                    tab=cbind(names(res.decat$resT)[j],res.decat$resT[[j]])
-                    A <- as.vector(rownames(tab)) #A contient les noms des descipteurs de resT$produit_1
-                    tab[,6] <- as.factor(A)
-                    colnames(tab)[1]="Product"
-                    
-                    for (i in (j+1):length(res.decat$resT)) {
-                        if (dim(res.decat$resT[[i]])[1] != 0) { #On ne rajoute au tableau final que les data.frame dont le nombre de lignes n'est pas nul
-                            pretab=cbind(names(res.decat$resT)[i],res.decat$resT[[i]])
-                            colnames(pretab)[1]="Product"
-                            A <- as.vector(rownames(pretab)) #A contient les noms des descipteurs de resT$produit_i
-                            pretab[,6] <-as.factor(A)
-                            tab=rbind(tab,pretab)
-                        }
-                    }
-                    
-                    rownames(tab) <- c()
-                    tab <- tab[, c(1,6,2,3,4,5)] #Ordonner les colonnes
-                    colnames(tab)[2]="Descriptor"
-                    
-                    if (length(self$options$sensoatt) == 1) #Afficher le nom du descripteur à la place de "1" quand un seul descripteur est choisi
-                        tab[,2]=self$options$sensoatt
-                }
-                
-                
-                #Resultats
-                
-                if (is.null(res.decat$resT) == FALSE) {
-                    private$.printresTable(tab)
-                    private$.printresFTable(res.decat$resF)
-                }
-            }
-        },
-        
-        .decat= function(data){
-            
-            threshold=self$options$threshold/100
-            prodeff=self$options$prodeff
-            paneff=self$options$paneff
-            formul=paste0("~", prodeff, "+", paneff)
-            firstvar=3
-            lastvar=ncol(data)
-            proba=threshold
-            nbrow = NULL 
-            nbcol = NULL 
-            random = TRUE
-            donnee <- data
-            
-            # old.par <- par(no.readonly = TRUE)
-            # old.contr = options()$contrasts
-            options(contrasts = c("contr.sum", "contr.sum"))
-            
-            for (j in 1 :(firstvar-1)) donnee[,j] <- as.factor(donnee[,j])
-            level.lower = -qnorm(proba/2)
-            # formul = as.formula(formul)
-            formul = as.formula(paste(formul, collapse = " "))
-            lab.sauv <- lab <- colnames(donnee)
-            for (i in 1:length(lab)) lab[i]=gsub(" ",".",lab[i])
-            colnames(donnee) = lab
-            equation <- as.character(formul)
-            # Terms=attr(terms(as.formula(equation)),"term.labels")
-            Terms=attr(terms(as.formula(paste(equation, collapse = " "))),"term.labels")
-            equation = paste("~",Terms[1])
-            if (length(Terms) > 1) for (i in 2:length(Terms)) equation <- paste(equation,"+",Terms[i])
-            #  equation <- as.character(as.formula(equation))
-            equation <- as.character(as.formula(paste(equation, collapse = " ")))
-            
-            dim.donnee <- dim(donnee)[2]
-            
-            if (length(strsplit(equation,split="+",fixed=TRUE)[[2]]) == 1) random = FALSE # if there is 1 effect, there is not random effect
-            for (i in 1:dim.donnee) {
-                if (gsub(" ","",strsplit(equation,split="+",fixed=TRUE)[[2]][1])==lab[i]) col.p <- i
-                if (random){
-                    if (gsub(" ","",strsplit(equation,split="+",fixed=TRUE)[[2]][2])==lab[i]) col.j <- i
-                }
-            }
-            nb.modalite <- nlevels(donnee[,col.p])
-            don.aux <- cbind.data.frame(donnee,fac=ordered(donnee[,col.p],rev(levels(donnee[,col.p]))))
-            dim.don.aux <- dim(don.aux)[2]
-            don.aux[,col.p] <- as.factor(don.aux[,dim.don.aux])
-            tabF <- matrix(0,lastvar+1-firstvar,2)
-            adjmean <- coeff <- tabT <- matrix(0,lastvar+1-firstvar,nb.modalite)
-            lab2 <- labels(don.aux)[[2]]
-            for (varendo in firstvar:lastvar) {
-                formule <- paste(lab[varendo],"~",equation[2])
-                # formule <- as.formula(formule)
-                formule <- as.formula(paste(formule, collapse = " "))
-                res <- summary(aov( formule , data = donnee, na.action =na.exclude))[[1]]
-                
-                nrow.facteur=nrow(res)
-                if (random) {
-                    panelist=colnames(donnee)[col.j]
-                    product = colnames(donnee)[col.p]
-                    for (i in 3:length(Terms)){                ## 1 is product, 2 is panelist
-                        if ((any(grep(product,Terms[i])))&(any(grep(":",Terms[i])))&(any(grep(panelist,Terms[i])))) nrow.facteur = i
-                    }
-                }
-                
-                ##    tabF[varendo-firstvar+1,1] <- -qnorm(pf(res[1,4],res[1,1],res[dim(res)[1],1],lower.tail=FALSE))
-                ##    tabF[varendo-firstvar+1,2] <-        pf(res[1,4],res[1,1],res[dim(res)[1],1],lower.tail=FALSE)
-                tabF[varendo-firstvar+1,1] <- -qnorm(pf(res[1,3]/res[nrow.facteur,3],res[1,1],res[nrow.facteur,1],lower.tail=FALSE))
-                tabF[varendo-firstvar+1,2] <-        pf(res[1,3]/res[nrow.facteur,3],res[1,1],res[nrow.facteur,1],lower.tail=FALSE)
-                res2 <- summary.lm(aov( formule , data = donnee, na.action =na.exclude))$coef[1:nb.modalite,]
-                moy <- res2[1,1]
-                res2 <- res2[-1,]
-                if (nb.modalite >2){
-                    ##      tabT[varendo-firstvar+1,1:(nb.modalite-1)] <-  -qnorm(( pf(res2[,3]^2,1,res[(dim(res)[[1]]),1],lower.tail=FALSE) )/2)*(res2[,1]/abs(res2[,1]))
-                    tabT[varendo-firstvar+1,1:(nb.modalite-1)] <- -qnorm((pf(res2[,3]^2*(res[nrow(res),3]/res[nrow.facteur,3]) ,1,res[nrow.facteur,1],lower.tail=FALSE) )/2)*sign(res2[,1])
-                    coeff[varendo-firstvar+1,1:(nb.modalite-1)] <-  res2[,1]
-                }
-                if (nb.modalite ==2){
-                    ##      tabT[varendo-firstvar+1,1:(nb.modalite-1)] <-  -qnorm(( pf(res2[3]^2,1,res[(dim(res)[[1]]),1],lower.tail=FALSE) )/2)*(res2[1]/abs(res2[1]))
-                    tabT[varendo-firstvar+1,1:(nb.modalite-1)] <- -qnorm((pf(res2[3]^2*(res[nrow(res),3]/res[nrow.facteur,3]) ,1,res[nrow.facteur,1],lower.tail=FALSE) )/2)*sign(res2[1])
-                    coeff[varendo-firstvar+1,1:(nb.modalite-1)] <-  res2[1]
-                }
-                res2 <- summary.lm(aov( formule , data = don.aux, na.action =na.exclude))$coef[2,]
-                ##    tabT[varendo-firstvar+1,nb.modalite] <-  -qnorm(( pf(res2[3]^2,1,res[(dim(res)[[1]]),1],lower.tail=FALSE) )/2)*(res2[1]/abs(res2[1]))
-                tabT[varendo-firstvar+1,nb.modalite] <- -qnorm((pf(res2[3]^2*(res[nrow(res),3]/res[nrow.facteur,3]) ,1,res[nrow.facteur,1],lower.tail=FALSE) )/2)*sign(res2[1])
-                coeff[varendo-firstvar+1,nb.modalite] <-  res2[1]
-                adjmean[varendo-firstvar+1,] <- moy+coeff[varendo-firstvar+1,]
-            }
-            nomdescripteur <- lab.sauv[firstvar:lastvar]
-            dimnames(tabF) <- list(nomdescripteur,c("Vtest","P-value"))
-            dimnames(adjmean) <-   dimnames(coeff) <- dimnames(tabT) <- list(nomdescripteur,levels(donnee[,col.p]))
-            resF <- vector("list",length=1)
-            select1 <- (1:nrow(tabF))[tabF[order(tabF[,2]),2]< proba]
-            if (length(select1) >0 ){
-                resF <- cbind.data.frame(qnorm(tabF[order(tabF[,2]),2],lower.tail=FALSE)[select1],tabF[order(tabF[,2]),2][select1])
-                dimnames(resF)[[2]]=c("Vtest","P-value")
-                resT <- vector("list",length=nb.modalite)
-                for (i in 1:nb.modalite) {
-                    select <- (1:nrow(tabT))[abs(tabT[rev(order(tabT[,i])),i])>=level.lower]
-                    resT[[i]] <- cbind.data.frame(coeff[rev(order(tabT[,i])),i][select],adjmean[rev(order(tabT[,i])),i][select],2*(pnorm(-abs(tabT[rev(order(tabT[,i])),i][select]))),tabT[rev(order(tabT[,i])),i][select])
-                    dimnames(resT[[i]])[[2]]=c("Coeff","Adjust mean","P-value","Vtest")
-                }
-                names(resT) = c(levels(donnee[,col.p]))
-            }
-            
-            result = list() 
-            result$tabF = tabF
-            result$tabT = t(tabT)
-            result$coeff = t(coeff)
-            result$adjmean = t(adjmean)
-            if (length(select1) > 0){
-                result$resF = resF
-                result$resT = resT
-            }
-            
-            if (length(select1) == 0) print("Warning: No variables are discriminant")
-            # options(contrasts = old.contr)
-            return(result)
-            
-        },
-
-        .printresTable= function(tab){
-            
-            for (i in 1:dim(tab)[1]){
-                self$results$resT$addRow(rowKey=i, values=list(component=as.character(tab[,1])[i])) #Méthode addRow
-            }
-            
-            for (i in 1:(dim(tab)[1])) {
-                row=list()
-                row[["var"]]=as.character(tab[,2])[i]
-                row[["coeff"]]=tab[,3][i]
-                row[["adjmean"]]=tab[,4][i]
-                row[["pvalue"]]=tab[,5][i]
-                row[["vtest"]]=tab[,6][i]
-                self$results$resT$setRow(rowNo=i, values = row) #Méthode setRow
-            }
-        },
-        
-        .printresFTable = function(tab) {
-            
-            resF <- self$results$resF
-            
-            for (i in 1:dim(tab)[1]) {
-                resF$addRow(rowKey=i, value=NULL)  
-                row=list()
-                row[["att"]] = row.names(tab)[i]
-                row[["vtest"]] = tab[,1][i]
-                row[["pvalue"]] = tab[,2][i]
-                resF$setRow(rowKey=i, values = row)
-            }
+    
+    .init = function() {
+      if (is.null(self$data) || is.null(self$options$sensoatt)) {
+        if (isTRUE(self$options$tuto))
+          self$results$instructions$setVisible(visible = TRUE)
+      }
+      self$results$instructions$setContent(
+        "<html>
+        <head></head>
+        <body>
+        <div class='justified-text'>
+        <p><b>What you need to know before analysing QDA data in jamovi (1)</b></p>
+        <p>______________________________________________________________________________</p>
+        <p> Quantitative Descriptive Analysis (QDA) is a sensory evaluation technique used to objectively and systematically measure
+        and describe the sensory characteristics of products, such as food, beverages, personal care products, and more (<I>stimuli</I>).</p>
+        <p> The goal of QDA is to generate a detailed, quantitative profile of evaluated stimuli based on sensory attributes.</p>
+        <p> Therefore, we are interested in pointing out the attributes that are the most characteristic of the set of stimuli as a whole,
+        and to each of the stimulus as such.</p>
+        <p> The interface returns two types of results. A sorted list of the sensory attributes that characterize the stimulus space and,
+        for each stimulus, a list of the attributes that characterize it.</p>
+        <p> Open the <b>sensochoc</b> dataset. Use all the sensory attributes to characterize your products. You can see that the chocolate
+        <B>choc1</B> was perceived as very bitter and not sweet at all.</p>
+        <p>______________________________________________________________________________</p>
+        </div>
+        </body>
+        </html>"
+      )
+    },
+    
+    .run = function() {
+      if (is.null(self$options$sensoatt)) return()
+      if (is.null(self$options$prodeff))  return()
+      if (is.null(self$options$paneff))   return()
+      
+      data_eff <- self$data[, c(self$options$prodeff, self$options$paneff), drop = FALSE]
+      for (nm in names(data_eff))
+        data_eff[[nm]] <- as.factor(data_eff[[nm]])
+      
+      data_att <- self$data[, self$options$sensoatt, drop = FALSE]
+      
+      if (!all(vapply(data_att, is.numeric, logical(1)))) {
+        jmvcore::reject("All sensory attributes must be numeric")
+        return()
+      }
+      
+      data <- data.frame(data_eff, data_att, check.names = FALSE)
+      
+      res.decat <- tryCatch(
+        private$.decat(data),
+        error = function(e) {
+          jmvcore::reject(paste("QDA analysis failed:", e$message))
+          NULL
         }
-    )
+      )
+      
+      if (is.null(res.decat)) return()
+      
+      ## Le test global F est la porte d'entrée
+      if (is.null(res.decat$resF) || !is.data.frame(res.decat$resF) || nrow(res.decat$resF) == 0) {
+        jmvcore::reject("No sensory attribute is discriminant at the selected significance threshold.")
+        return()
+      }
+      
+      private$.printresFTable(res.decat$resF)
+      
+      ## Si aucun tableau de tests t n'est disponible, on s'arrête là
+      if (is.null(res.decat$resT) || length(res.decat$resT) == 0)
+        return()
+      
+      ## Trouver le premier produit avec au moins un descripteur significatif
+      j <- 1
+      while (j <= length(res.decat$resT) && nrow(res.decat$resT[[j]]) == 0)
+        j <- j + 1
+      
+      ## Aucun descripteur significatif au niveau des tests t
+      if (j > length(res.decat$resT))
+        return()
+      
+      tab <- cbind(names(res.decat$resT)[j], res.decat$resT[[j]])
+      tab[, 6] <- as.factor(as.vector(rownames(tab)))
+      colnames(tab)[1] <- "Product"
+      
+      if (j < length(res.decat$resT)) {
+        for (i in (j + 1):length(res.decat$resT)) {
+          if (nrow(res.decat$resT[[i]]) != 0) {
+            pretab <- cbind(names(res.decat$resT)[i], res.decat$resT[[i]])
+            colnames(pretab)[1] <- "Product"
+            pretab[, 6] <- as.factor(as.vector(rownames(pretab)))
+            tab <- rbind(tab, pretab)
+          }
+        }
+      }
+      
+      rownames(tab) <- NULL
+      tab <- tab[, c(1, 6, 2, 3, 4, 5)]
+      colnames(tab)[2] <- "Descriptor"
+      
+      if (length(self$options$sensoatt) == 1)
+        tab[, 2] <- self$options$sensoatt
+      
+      private$.printresTable(tab)
+    },
+    
+    #### Compute results ----
+    
+    .decat = function(data) {
+      
+      threshold <- self$options$threshold / 100
+      prodeff   <- self$options$prodeff
+      paneff    <- self$options$paneff
+      formul    <- paste0("~", prodeff, "+", paneff)
+      firstvar  <- 3
+      lastvar   <- ncol(data)
+      proba     <- threshold
+      random    <- TRUE
+      donnee    <- data
+      
+      # Restaurer les contrastes après la fonction
+      old.contr <- options()$contrasts
+      on.exit(options(contrasts = old.contr), add = TRUE)
+      options(contrasts = c("contr.sum", "contr.sum"))
+      
+      for (j in 1:(firstvar - 1)) donnee[, j] <- as.factor(donnee[, j])
+      level.lower <- -qnorm(proba / 2)
+      formul      <- as.formula(paste(formul, collapse = " "))
+      lab.sauv    <- lab <- colnames(donnee)
+      for (i in 1:length(lab)) lab[i] <- gsub(" ", ".", lab[i])
+      colnames(donnee) <- lab
+      equation <- as.character(formul)
+      Terms    <- attr(terms(as.formula(paste(equation, collapse = " "))), "term.labels")
+      equation <- paste("~", Terms[1])
+      if (length(Terms) > 1)
+        for (i in 2:length(Terms)) equation <- paste(equation, "+", Terms[i])
+      equation <- as.character(as.formula(paste(equation, collapse = " ")))
+      
+      dim.donnee <- ncol(donnee)
+      
+      if (length(strsplit(equation, split = "+", fixed = TRUE)[[2]]) == 1)
+        random <- FALSE
+      
+      col.p <- col.j <- NULL
+      for (i in 1:dim.donnee) {
+        if (gsub(" ", "", strsplit(equation, split = "+", fixed = TRUE)[[2]][1]) == lab[i])
+          col.p <- i
+        if (random && length(strsplit(equation, split = "+", fixed = TRUE)[[2]]) >= 2) {
+          if (gsub(" ", "", strsplit(equation, split = "+", fixed = TRUE)[[2]][2]) == lab[i])
+            col.j <- i
+        }
+      }
+      
+      nb.modalite <- nlevels(donnee[, col.p])
+      don.aux     <- cbind.data.frame(donnee,
+                                      fac = ordered(donnee[, col.p], rev(levels(donnee[, col.p]))))
+      don.aux[, col.p] <- as.factor(don.aux[, ncol(don.aux)])
+      
+      tabF    <- matrix(0, lastvar + 1 - firstvar, 2)
+      adjmean <- coeff <- tabT <- matrix(0, lastvar + 1 - firstvar, nb.modalite)
+      
+      for (varendo in firstvar:lastvar) {
+        formule      <- as.formula(paste(lab[varendo], "~", equation[2]))
+        res          <- summary(aov(formule, data = donnee, na.action = na.exclude))[[1]]
+        nrow.facteur <- nrow(res)
+        
+        if (random && !is.null(col.j)) {
+          panelist <- colnames(donnee)[col.j]
+          product  <- colnames(donnee)[col.p]
+          for (i in 3:length(Terms)) {
+            if (any(grep(product, Terms[i])) &&
+                any(grep(":", Terms[i])) &&
+                any(grep(panelist, Terms[i])))
+              nrow.facteur <- i
+          }
+        }
+        
+        tabF[varendo - firstvar + 1, 1] <- -qnorm(pf(
+          res[1, 3] / res[nrow.facteur, 3], res[1, 1], res[nrow.facteur, 1],
+          lower.tail = FALSE))
+        tabF[varendo - firstvar + 1, 2] <- pf(
+          res[1, 3] / res[nrow.facteur, 3], res[1, 1], res[nrow.facteur, 1],
+          lower.tail = FALSE)
+        
+        res2 <- summary.lm(aov(formule, data = donnee, na.action = na.exclude))$coef[1:nb.modalite, ]
+        moy  <- res2[1, 1]
+        res2 <- res2[-1, ]
+        
+        if (nb.modalite > 2) {
+          tabT[varendo - firstvar + 1, 1:(nb.modalite - 1)] <-
+            -qnorm((pf(res2[, 3]^2 * (res[nrow(res), 3] / res[nrow.facteur, 3]),
+                       1, res[nrow.facteur, 1], lower.tail = FALSE)) / 2) * sign(res2[, 1])
+          coeff[varendo - firstvar + 1, 1:(nb.modalite - 1)] <- res2[, 1]
+        }
+        if (nb.modalite == 2) {
+          tabT[varendo - firstvar + 1, 1:(nb.modalite - 1)] <-
+            -qnorm((pf(res2[3]^2 * (res[nrow(res), 3] / res[nrow.facteur, 3]),
+                       1, res[nrow.facteur, 1], lower.tail = FALSE)) / 2) * sign(res2[1])
+          coeff[varendo - firstvar + 1, 1:(nb.modalite - 1)] <- res2[1]
+        }
+        
+        res2 <- summary.lm(aov(formule, data = don.aux, na.action = na.exclude))$coef[2, ]
+        tabT[varendo - firstvar + 1, nb.modalite] <-
+          -qnorm((pf(res2[3]^2 * (res[nrow(res), 3] / res[nrow.facteur, 3]),
+                     1, res[nrow.facteur, 1], lower.tail = FALSE)) / 2) * sign(res2[1])
+        coeff[varendo - firstvar + 1, nb.modalite]   <- res2[1]
+        adjmean[varendo - firstvar + 1, ]            <- moy + coeff[varendo - firstvar + 1, ]
+      }
+      
+      nomdescripteur <- lab.sauv[firstvar:lastvar]
+      dimnames(tabF)   <- list(nomdescripteur, c("Vtest", "P-value"))
+      dimnames(adjmean) <- dimnames(coeff) <- dimnames(tabT) <-
+        list(nomdescripteur, levels(donnee[, col.p]))
+      
+      select1 <- which(tabF[order(tabF[, 2]), 2] < proba)
+      
+      result        <- list()
+      result$tabF   <- tabF
+      result$tabT   <- t(tabT)
+      result$coeff  <- t(coeff)
+      result$adjmean <- t(adjmean)
+      
+      if (length(select1) > 0) {
+        resF <- cbind.data.frame(
+          qnorm(tabF[order(tabF[, 2]), 2], lower.tail = FALSE)[select1],
+          tabF[order(tabF[, 2]), 2][select1]
+        )
+        dimnames(resF)[[2]] <- c("Vtest", "P-value")
+        
+        resT <- vector("list", length = nb.modalite)
+        for (i in 1:nb.modalite) {
+          select <- which(abs(tabT[rev(order(tabT[, i])), i]) >= level.lower)
+          resT[[i]] <- cbind.data.frame(
+            coeff[rev(order(tabT[, i])), i][select],
+            adjmean[rev(order(tabT[, i])), i][select],
+            2 * pnorm(-abs(tabT[rev(order(tabT[, i])), i][select])),
+            tabT[rev(order(tabT[, i])), i][select]
+          )
+          dimnames(resT[[i]])[[2]] <- c("Coeff", "Adjust mean", "P-value", "Vtest")
+        }
+        names(resT)   <- levels(donnee[, col.p])
+        result$resF   <- resF
+        result$resT   <- resT
+      } else {
+        result$resF <- NULL
+        result$resT <- NULL
+        return(result)
+      }
+      
+      return(result)
+    },
+    
+    ### Helper functions ----
+    
+    .printresTable = function(tab) {
+      for (i in seq_len(nrow(tab))) {
+        self$results$resT$addRow(rowKey = i, values = list(
+          component = as.character(tab[i, 1]),
+          var       = as.character(tab[i, 2]),
+          coeff     = as.numeric(tab[i, 3]),
+          adjmean   = as.numeric(tab[i, 4]),
+          pvalue    = as.numeric(tab[i, 5]),
+          vtest     = as.numeric(tab[i, 6])
+        ))
+      }
+    },
+    
+    .printresFTable = function(tab) {
+      resF <- self$results$resF
+      
+      for (i in seq_len(nrow(tab))) {
+        resF$addRow(rowKey = i, values = list(
+          att    = rownames(tab)[i],
+          vtest  = as.numeric(tab[i, 1]),
+          pvalue = as.numeric(tab[i, 2])
+        ))
+      }
+    }
+  )
 )

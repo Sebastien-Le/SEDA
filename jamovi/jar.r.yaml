@@ -14,12 +14,43 @@ items:
     type: Html
 
   - name: frequencebrut
-    title: Contingency Table (Defects by Products)
-    type: Preformatted
+    title: Frequency Table (Stimuli × Defects)
+    type: Table
+    clearWith:
+      - prodeff
+      - paneff
+      - sensoatt
+    columns: []
     
   - name: frequencebrutdes
     title: Description of the Products According to Defects
-    type: Preformatted
+    type: Table
+    columns:
+      - name: product
+        title: ''
+        type: text
+        combineBelow: true
+      - name: defect
+        title: Defect
+        type: text
+      - name: internper
+        title: Intern %
+        type: Number
+      - name: globper
+        title: Global %
+        type: Number
+      - name: internfreq
+        title: Intern frequency
+        type: Number
+      - name: globfreq
+        title: Global frequency
+        type: Number
+      - name: pvaluedfres
+        title: p
+        format: zto,pvalue
+      - name: vtest
+        title: Vtest
+        type: Number
     
   - name: plotjar
     title: Representation of the Products and the Defects
@@ -30,15 +61,37 @@ items:
 
   - name: penalty
     title: Penalties Obtained from All Defects
-    type: Preformatted
+    type: Table
+    clearWith:
+      - prodeff
+      - paneff
+      - likvar
+      - sensoatt
+      - jarmod
+    columns:
+      - name: defect
+        title: Defect
+        type: text
+      - name: estimate
+        title: Penalty
+        type: number
+      - name: stderr
+        title: Std. Error
+        type: number
+      - name: pvalue
+        title: p
+        format: zto,pvalue
 
   - name: frequence
     title: Frequencies of Defects by Product and Sensory Attribute
     type: Preformatted
     
   - name: plotpen
-    title: Representation of the Penalties for the First Product
-    type: Image
-    width: 600
-    height: 500
-    renderFun: .plotpenalty
+    title: Representation of the Penalties for Each Product 
+    type: Array
+    template:
+      title: $key
+      type: Image
+      width: 600
+      height: 500
+      renderFun: .plotpenalty

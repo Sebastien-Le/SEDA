@@ -106,14 +106,53 @@ JARResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 name="instructions",
                 title="Instructions",
                 visible="(tuto)"))
-            self$add(jmvcore::Preformatted$new(
+            self$add(jmvcore::Table$new(
                 options=options,
                 name="frequencebrut",
-                title="Contingency Table (Defects by Products)"))
-            self$add(jmvcore::Preformatted$new(
+                title="Frequency Table (Stimuli \u00D7 Defects)",
+                clearWith=list(
+                    "prodeff",
+                    "paneff",
+                    "sensoatt"),
+                columns=list()))
+            self$add(jmvcore::Table$new(
                 options=options,
                 name="frequencebrutdes",
-                title="Description of the Products According to Defects"))
+                title="Description of the Products According to Defects",
+                columns=list(
+                    list(
+                        `name`="product", 
+                        `title`="", 
+                        `type`="text", 
+                        `combineBelow`=TRUE),
+                    list(
+                        `name`="defect", 
+                        `title`="Defect", 
+                        `type`="text"),
+                    list(
+                        `name`="internper", 
+                        `title`="Intern %", 
+                        `type`="Number"),
+                    list(
+                        `name`="globper", 
+                        `title`="Global %", 
+                        `type`="Number"),
+                    list(
+                        `name`="internfreq", 
+                        `title`="Intern frequency", 
+                        `type`="Number"),
+                    list(
+                        `name`="globfreq", 
+                        `title`="Global frequency", 
+                        `type`="Number"),
+                    list(
+                        `name`="pvaluedfres", 
+                        `title`="p", 
+                        `format`="zto,pvalue"),
+                    list(
+                        `name`="vtest", 
+                        `title`="Vtest", 
+                        `type`="Number"))))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="plotjar",
@@ -121,21 +160,47 @@ JARResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 width=600,
                 height=500,
                 renderFun=".plotboth"))
-            self$add(jmvcore::Preformatted$new(
+            self$add(jmvcore::Table$new(
                 options=options,
                 name="penalty",
-                title="Penalties Obtained from All Defects"))
+                title="Penalties Obtained from All Defects",
+                clearWith=list(
+                    "prodeff",
+                    "paneff",
+                    "likvar",
+                    "sensoatt",
+                    "jarmod"),
+                columns=list(
+                    list(
+                        `name`="defect", 
+                        `title`="Defect", 
+                        `type`="text"),
+                    list(
+                        `name`="estimate", 
+                        `title`="Penalty", 
+                        `type`="number"),
+                    list(
+                        `name`="stderr", 
+                        `title`="Std. Error", 
+                        `type`="number"),
+                    list(
+                        `name`="pvalue", 
+                        `title`="p", 
+                        `format`="zto,pvalue"))))
             self$add(jmvcore::Preformatted$new(
                 options=options,
                 name="frequence",
                 title="Frequencies of Defects by Product and Sensory Attribute"))
-            self$add(jmvcore::Image$new(
+            self$add(jmvcore::Array$new(
                 options=options,
                 name="plotpen",
-                title="Representation of the Penalties for the First Product",
-                width=600,
-                height=500,
-                renderFun=".plotpenalty"))}))
+                title="Representation of the Penalties for Each Product",
+                template=jmvcore::Image$new(
+                    options=options,
+                    title="$key",
+                    width=600,
+                    height=500,
+                    renderFun=".plotpenalty")))}))
 
 JARBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "JARBase",
@@ -171,13 +236,19 @@ JARBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
-#'   \code{results$frequencebrut} \tab \tab \tab \tab \tab a preformatted \cr
-#'   \code{results$frequencebrutdes} \tab \tab \tab \tab \tab a preformatted \cr
+#'   \code{results$frequencebrut} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$frequencebrutdes} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$plotjar} \tab \tab \tab \tab \tab an image \cr
-#'   \code{results$penalty} \tab \tab \tab \tab \tab a preformatted \cr
+#'   \code{results$penalty} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$frequence} \tab \tab \tab \tab \tab a preformatted \cr
-#'   \code{results$plotpen} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$plotpen} \tab \tab \tab \tab \tab an array of images \cr
 #' }
+#'
+#' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
+#'
+#' \code{results$frequencebrut$asDF}
+#'
+#' \code{as.data.frame(results$frequencebrut)}
 #'
 #' @export
 JAR <- function(

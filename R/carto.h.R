@@ -12,8 +12,8 @@ cartoOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             hedo = NULL,
             tuto = TRUE,
             regtype = "1",
-            colabove = 0,
-            colbelow = 7.5, ...) {
+            colbelow = "blue",
+            colabove = "red", ...) {
 
             super$initialize(
                 package="SEDA",
@@ -62,14 +62,32 @@ cartoOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "3",
                     "4"),
                 default="1")
-            private$..colabove <- jmvcore::OptionNumber$new(
-                "colabove",
-                colabove,
-                default=0)
-            private$..colbelow <- jmvcore::OptionNumber$new(
+            private$..colbelow <- jmvcore::OptionList$new(
                 "colbelow",
                 colbelow,
-                default=7.5)
+                options=list(
+                    "blue",
+                    "red",
+                    "green",
+                    "orange",
+                    "purple",
+                    "brown",
+                    "darkgrey",
+                    "black"),
+                default="blue")
+            private$..colabove <- jmvcore::OptionList$new(
+                "colabove",
+                colabove,
+                options=list(
+                    "red",
+                    "blue",
+                    "green",
+                    "orange",
+                    "purple",
+                    "brown",
+                    "darkgrey",
+                    "black"),
+                default="red")
 
             self$.addOption(private$..individus)
             self$.addOption(private$..coox)
@@ -77,8 +95,8 @@ cartoOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..hedo)
             self$.addOption(private$..tuto)
             self$.addOption(private$..regtype)
-            self$.addOption(private$..colabove)
             self$.addOption(private$..colbelow)
+            self$.addOption(private$..colabove)
         }),
     active = list(
         individus = function() private$..individus$value,
@@ -87,8 +105,8 @@ cartoOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         hedo = function() private$..hedo$value,
         tuto = function() private$..tuto$value,
         regtype = function() private$..regtype$value,
-        colabove = function() private$..colabove$value,
-        colbelow = function() private$..colbelow$value),
+        colbelow = function() private$..colbelow$value,
+        colabove = function() private$..colabove$value),
     private = list(
         ..individus = NA,
         ..coox = NA,
@@ -96,8 +114,8 @@ cartoOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..hedo = NA,
         ..tuto = NA,
         ..regtype = NA,
-        ..colabove = NA,
-        ..colbelow = NA)
+        ..colbelow = NA,
+        ..colabove = NA)
 )
 
 cartoResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
@@ -162,8 +180,8 @@ cartoBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param hedo .
 #' @param tuto .
 #' @param regtype .
-#' @param colabove .
 #' @param colbelow .
+#' @param colabove .
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
@@ -179,8 +197,8 @@ carto <- function(
     hedo,
     tuto = TRUE,
     regtype = "1",
-    colabove = 0,
-    colbelow = 7.5) {
+    colbelow = "blue",
+    colabove = "red") {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("carto requires jmvcore to be installed (restart may be required)")
@@ -206,8 +224,8 @@ carto <- function(
         hedo = hedo,
         tuto = tuto,
         regtype = regtype,
-        colabove = colabove,
-        colbelow = colbelow)
+        colbelow = colbelow,
+        colabove = colabove)
 
     analysis <- cartoClass$new(
         options = options,

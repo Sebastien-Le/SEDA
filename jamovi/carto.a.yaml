@@ -65,14 +65,47 @@ options:
         name: '4'
     default: '1'
 
-  - name: colabove
-    title: When Higher to the Average ([0,12])
-    type: Number
-    default: 0
-
   - name: colbelow
-    title: When Lower to the Average ([0,12])
-    type: Number
-    default: 7.5
+    title: Color for low preference areas
+    type: List
+    options:
+      - name: blue
+        title: Blue
+      - name: red
+        title: Red
+      - name: green
+        title: Green
+      - name: orange
+        title: Orange
+      - name: purple
+        title: Purple
+      - name: brown
+        title: Brown
+      - name: darkgrey
+        title: Dark grey
+      - name: black
+        title: Black
+    default: blue
 
+  - name: colabove
+    title: Color for high preference areas
+    type: List
+    options:
+      - name: red
+        title: Red
+      - name: blue
+        title: Blue
+      - name: green
+        title: Green
+      - name: orange
+        title: Orange
+      - name: purple
+        title: Purple
+      - name: brown
+        title: Brown
+      - name: darkgrey
+        title: Dark grey
+      - name: black
+        title: Black
+    default: red
 ...

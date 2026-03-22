@@ -67,5 +67,49 @@ items:
     width: 600
     height: 500
     renderFun: .plotcatatis
+    
+  - name: plotclassif
+    title: Representation of the Stimuli According to Clusters
+    type: Image
+    width: 600
+    height: 500
+    renderFun: .plotclassif
+
+  - name: clustergroup
+    title: Description of the Clusters
+    type: Group
+    items:
+      - name: clusterdesc
+        title: CATA Attributes Characterising Each Cluster
+        type: Table
+        clearWith:
+          - stimuli
+          - group
+        columns:
+          - name: cluster
+            title: ''
+            type: text
+            combineBelow: true
+          - name: word
+            title: CATA
+            type: text
+          - name: internper
+            title: Intern %
+            type: Number
+          - name: globper
+            title: Global %
+            type: Number
+          - name: internfreq
+            title: Intern frequency
+            type: Number
+          - name: globfreq
+            title: Global frequency
+            type: Number
+          - name: pvaluedfres
+            title: p
+            format: zto,pvalue
+          - name: vtest
+            title: Vtest
+            type: Number
 
 ...

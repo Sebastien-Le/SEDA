@@ -65,7 +65,9 @@ cataResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         instructions = function() private$.items[["instructions"]],
         textualgroup = function() private$.items[["textualgroup"]],
         dfresgroup = function() private$.items[["dfresgroup"]],
-        plotcata = function() private$.items[["plotcata"]]),
+        plotcata = function() private$.items[["plotcata"]],
+        plotclassif = function() private$.items[["plotclassif"]],
+        clustergroup = function() private$.items[["clustergroup"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -158,7 +160,66 @@ cataResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 title="Representation of the Stimuli and the CATA",
                 width=600,
                 height=500,
-                renderFun=".plotcatatis"))}))
+                renderFun=".plotcatatis"))
+            self$add(jmvcore::Image$new(
+                options=options,
+                name="plotclassif",
+                title="Representation of the Stimuli According to Clusters",
+                width=600,
+                height=500,
+                renderFun=".plotclassif"))
+            self$add(R6::R6Class(
+                inherit = jmvcore::Group,
+                active = list(
+                    clusterdesc = function() private$.items[["clusterdesc"]]),
+                private = list(),
+                public=list(
+                    initialize=function(options) {
+                        super$initialize(
+                            options=options,
+                            name="clustergroup",
+                            title="Description of the Clusters")
+                        self$add(jmvcore::Table$new(
+                            options=options,
+                            name="clusterdesc",
+                            title="CATA Attributes Characterising Each Cluster",
+                            clearWith=list(
+                                "stimuli",
+                                "group"),
+                            columns=list(
+                                list(
+                                    `name`="cluster", 
+                                    `title`="", 
+                                    `type`="text", 
+                                    `combineBelow`=TRUE),
+                                list(
+                                    `name`="word", 
+                                    `title`="CATA", 
+                                    `type`="text"),
+                                list(
+                                    `name`="internper", 
+                                    `title`="Intern %", 
+                                    `type`="Number"),
+                                list(
+                                    `name`="globper", 
+                                    `title`="Global %", 
+                                    `type`="Number"),
+                                list(
+                                    `name`="internfreq", 
+                                    `title`="Intern frequency", 
+                                    `type`="Number"),
+                                list(
+                                    `name`="globfreq", 
+                                    `title`="Global frequency", 
+                                    `type`="Number"),
+                                list(
+                                    `name`="pvaluedfres", 
+                                    `title`="p", 
+                                    `format`="zto,pvalue"),
+                                list(
+                                    `name`="vtest", 
+                                    `title`="Vtest", 
+                                    `type`="Number"))))}))$new(options=options))}))
 
 cataBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "cataBase",
@@ -195,6 +256,8 @@ cataBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #'   \code{results$textualgroup$textual} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$dfresgroup$dfres} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$plotcata} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$plotclassif} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$clustergroup$clusterdesc} \tab \tab \tab \tab \tab a table \cr
 #' }
 #'
 #' @export

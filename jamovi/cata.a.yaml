@@ -4,7 +4,7 @@ title: Analysis of CATA data
 menuGroup: SEDA
 
 menuSubgroup: Fixed List of Attributes
-menuTitle: Identification of CATA
+menuTitle: Analysis of CATA Data
 menuSubtitle: 'SensoMineR::CATA'
 version: '1.0.0'
 jas: '1.2'
