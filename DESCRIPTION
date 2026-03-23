@@ -8,4 +8,4 @@ Description: Proposes univariate and multivariate analyses based on the SensoMin
 License: What license is it under?
 Encoding: UTF-8
 LazyData: true
-Imports: jmvcore (>= 0.8.5), R6, FactoMineR, SensoMineR,ggplot2, factoextra, metR
+Imports: jmvcore (>= 0.8.5), R6, FactoMineR, SensoMineR,ggplot2, factoextra

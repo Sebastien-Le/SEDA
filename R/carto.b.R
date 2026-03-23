@@ -100,7 +100,7 @@ cartoClass = if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       colnames(Mat_labels)[1:2] <- c("Var1", "Var2")
       
       y_range <- range(depasse_df$Var2, na.rm = TRUE)
-      offset  <- if (diff(y_range) == 0) 0.05 else 0.05 * diff(y_range)
+      offset  <- if (diff(y_range) == 0) 0.03 else 0.03 * diff(y_range)
       
       plot <- ggplot(depasse_df, aes(x = Var1, y = Var2, z = value)) +
         geom_contour_filled(breaks = breaks_map) +
@@ -135,15 +135,6 @@ cartoClass = if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
           label = Mat_labels$name,
           size = 3
         )
-      
-      if (requireNamespace("metR", quietly = TRUE)) {
-        plot <- plot + metR::geom_text_contour(
-          aes(z = value),
-          colour = "grey30",
-          show.legend = FALSE,
-          stroke = 0.1
-        )
-      }
       
       print(plot)
       TRUE
