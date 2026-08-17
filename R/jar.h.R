@@ -11,7 +11,12 @@ JAROptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             likvar = NULL,
             sensoatt = NULL,
             tuto = TRUE,
-            jarmod = "jar", ...) {
+            showCode = FALSE,
+            jarmod = "jar",
+            consumerThreshold = 20,
+            penaltyThreshold = 1,
+            lowPattern = "too low|not enough|too weak|plain|low",
+            highPattern = "too high|too much|too strong|vivid|high", ...) {
 
             super$initialize(
                 package="SEDA",
@@ -51,17 +56,45 @@ JAROptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "tuto",
                 tuto,
                 default=TRUE)
+            private$..showCode <- jmvcore::OptionBool$new(
+                "showCode",
+                showCode,
+                default=FALSE)
             private$..jarmod <- jmvcore::OptionString$new(
                 "jarmod",
                 jarmod,
                 default="jar")
+            private$..consumerThreshold <- jmvcore::OptionNumber$new(
+                "consumerThreshold",
+                consumerThreshold,
+                min=0,
+                max=100,
+                default=20)
+            private$..penaltyThreshold <- jmvcore::OptionNumber$new(
+                "penaltyThreshold",
+                penaltyThreshold,
+                min=0,
+                default=1)
+            private$..lowPattern <- jmvcore::OptionString$new(
+                "lowPattern",
+                lowPattern,
+                default="too low|not enough|too weak|plain|low")
+            private$..highPattern <- jmvcore::OptionString$new(
+                "highPattern",
+                highPattern,
+                default="too high|too much|too strong|vivid|high")
 
             self$.addOption(private$..prodeff)
             self$.addOption(private$..paneff)
             self$.addOption(private$..likvar)
             self$.addOption(private$..sensoatt)
             self$.addOption(private$..tuto)
+            self$.addOption(private$..showCode)
             self$.addOption(private$..jarmod)
+            self$.addOption(private$..consumerThreshold)
+            self$.addOption(private$..penaltyThreshold)
+            self$.addOption(private$..lowPattern)
+            self$.addOption(private$..highPattern)
         }),
     active = list(
         prodeff = function() private$..prodeff$value,
@@ -69,14 +102,24 @@ JAROptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         likvar = function() private$..likvar$value,
         sensoatt = function() private$..sensoatt$value,
         tuto = function() private$..tuto$value,
-        jarmod = function() private$..jarmod$value),
+        showCode = function() private$..showCode$value,
+        jarmod = function() private$..jarmod$value,
+        consumerThreshold = function() private$..consumerThreshold$value,
+        penaltyThreshold = function() private$..penaltyThreshold$value,
+        lowPattern = function() private$..lowPattern$value,
+        highPattern = function() private$..highPattern$value),
     private = list(
         ..prodeff = NA,
         ..paneff = NA,
         ..likvar = NA,
         ..sensoatt = NA,
         ..tuto = NA,
-        ..jarmod = NA)
+        ..showCode = NA,
+        ..jarmod = NA,
+        ..consumerThreshold = NA,
+        ..penaltyThreshold = NA,
+        ..lowPattern = NA,
+        ..highPattern = NA)
 )
 
 JARResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
@@ -84,12 +127,22 @@ JARResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
         instructions = function() private$.items[["instructions"]],
-        frequencebrut = function() private$.items[["frequencebrut"]],
-        frequencebrutdes = function() private$.items[["frequencebrutdes"]],
-        plotjar = function() private$.items[["plotjar"]],
-        penalty = function() private$.items[["penalty"]],
-        frequence = function() private$.items[["frequence"]],
-        plotpen = function() private$.items[["plotpen"]]),
+        step1Guide = function() private$.items[["step1Guide"]],
+        step1Coding = function() private$.items[["step1Coding"]],
+        step2Guide = function() private$.items[["step2Guide"]],
+        step2Distribution = function() private$.items[["step2Distribution"]],
+        step3Guide = function() private$.items[["step3Guide"]],
+        step3GlobalPenalty = function() private$.items[["step3GlobalPenalty"]],
+        step3ProductExposure = function() private$.items[["step3ProductExposure"]],
+        step3GlobalPlots = function() private$.items[["step3GlobalPlots"]],
+        step4Guide = function() private$.items[["step4Guide"]],
+        step4Penalty = function() private$.items[["step4Penalty"]],
+        step4Plots = function() private$.items[["step4Plots"]],
+        step5Guide = function() private$.items[["step5Guide"]],
+        step5Description = function() private$.items[["step5Description"]],
+        step5Map = function() private$.items[["step5Map"]],
+        step5Frequency = function() private$.items[["step5Frequency"]],
+        rCode = function() private$.items[["rCode"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -106,64 +159,84 @@ JARResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 name="instructions",
                 title="Instructions",
                 visible="(tuto)"))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="step1Guide",
+                title=""))
             self$add(jmvcore::Table$new(
                 options=options,
-                name="frequencebrut",
-                title="Frequency Table (Stimuli \u00D7 Defects)",
+                name="step1Coding",
+                title="JAR Coding Used for the Classical Penalty Analysis",
                 clearWith=list(
-                    "prodeff",
-                    "paneff",
-                    "sensoatt"),
-                columns=list()))
-            self$add(jmvcore::Table$new(
-                options=options,
-                name="frequencebrutdes",
-                title="Description of the Products According to Defects",
+                    "sensoatt",
+                    "jarmod",
+                    "lowPattern",
+                    "highPattern"),
                 columns=list(
                     list(
-                        `name`="product", 
-                        `title`="", 
+                        `name`="attribute", 
+                        `title`="Attribute", 
                         `type`="text", 
                         `combineBelow`=TRUE),
                     list(
-                        `name`="defect", 
-                        `title`="Defect", 
+                        `name`="level", 
+                        `title`="Original level", 
                         `type`="text"),
                     list(
-                        `name`="internper", 
-                        `title`="Intern %", 
-                        `type`="Number"),
-                    list(
-                        `name`="globper", 
-                        `title`="Global %", 
-                        `type`="Number"),
-                    list(
-                        `name`="internfreq", 
-                        `title`="Intern frequency", 
-                        `type`="Number"),
-                    list(
-                        `name`="globfreq", 
-                        `title`="Global frequency", 
-                        `type`="Number"),
-                    list(
-                        `name`="pvaluedfres", 
-                        `title`="p", 
-                        `format`="zto,pvalue"),
-                    list(
-                        `name`="vtest", 
-                        `title`="Vtest", 
-                        `type`="Number"))))
-            self$add(jmvcore::Image$new(
+                        `name`="group", 
+                        `title`="Group used", 
+                        `type`="text"))))
+            self$add(jmvcore::Html$new(
                 options=options,
-                name="plotjar",
-                title="Representation of the Products and the Defects",
-                width=600,
-                height=500,
-                renderFun=".plotboth"))
+                name="step2Guide",
+                title=""))
             self$add(jmvcore::Table$new(
                 options=options,
-                name="penalty",
-                title="Penalties Obtained from All Defects",
+                name="step2Distribution",
+                title="Distribution of JAR Responses by Product and Attribute",
+                clearWith=list(
+                    "prodeff",
+                    "sensoatt",
+                    "jarmod",
+                    "lowPattern",
+                    "highPattern"),
+                columns=list(
+                    list(
+                        `name`="product", 
+                        `title`="Product", 
+                        `type`="text", 
+                        `combineBelow`=TRUE),
+                    list(
+                        `name`="attribute", 
+                        `title`="Attribute", 
+                        `type`="text"),
+                    list(
+                        `name`="below", 
+                        `title`="Below JAR (%)", 
+                        `type`="Number", 
+                        `format`="zto"),
+                    list(
+                        `name`="jar", 
+                        `title`="JAR (%)", 
+                        `type`="Number", 
+                        `format`="zto"),
+                    list(
+                        `name`="above", 
+                        `title`="Above JAR (%)", 
+                        `type`="Number", 
+                        `format`="zto"),
+                    list(
+                        `name`="n", 
+                        `title`="N", 
+                        `type`="Integer"))))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="step3Guide",
+                title=""))
+            self$add(jmvcore::Table$new(
+                options=options,
+                name="step3GlobalPenalty",
+                title="Global Multidimensional Penalties (All Products)",
                 clearWith=list(
                     "prodeff",
                     "paneff",
@@ -176,31 +249,252 @@ JARResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                         `title`="Defect", 
                         `type`="text"),
                     list(
-                        `name`="estimate", 
-                        `title`="Penalty", 
-                        `type`="number"),
+                        `name`="meandrop", 
+                        `title`="Mean drop", 
+                        `type`="Number", 
+                        `format`="zto"),
                     list(
                         `name`="stderr", 
                         `title`="Std. Error", 
-                        `type`="number"),
+                        `type`="Number", 
+                        `format`="zto"),
                     list(
                         `name`="pvalue", 
                         `title`="p", 
                         `format`="zto,pvalue"))))
-            self$add(jmvcore::Preformatted$new(
+            self$add(jmvcore::Table$new(
                 options=options,
-                name="frequence",
-                title="Frequencies of Defects by Product and Sensory Attribute"))
+                name="step3ProductExposure",
+                title="Global Defects Applied to Each Product",
+                clearWith=list(
+                    "prodeff",
+                    "paneff",
+                    "likvar",
+                    "sensoatt",
+                    "jarmod",
+                    "consumerThreshold",
+                    "penaltyThreshold"),
+                columns=list(
+                    list(
+                        `name`="product", 
+                        `title`="Product", 
+                        `type`="text", 
+                        `combineBelow`=TRUE),
+                    list(
+                        `name`="defect", 
+                        `title`="Defect", 
+                        `type`="text"),
+                    list(
+                        `name`="consumers", 
+                        `title`="Consumers (%)", 
+                        `type`="Number", 
+                        `format`="zto"),
+                    list(
+                        `name`="meandrop", 
+                        `title`="Global mean drop", 
+                        `type`="Number", 
+                        `format`="zto"),
+                    list(
+                        `name`="pvalue", 
+                        `title`="p", 
+                        `format`="zto,pvalue"),
+                    list(
+                        `name`="priority", 
+                        `title`="Priority", 
+                        `type`="text"))))
             self$add(jmvcore::Array$new(
                 options=options,
-                name="plotpen",
-                title="Representation of the Penalties for Each Product",
+                name="step3GlobalPlots",
+                title="Global Penalty Context for Each Product",
+                clearWith=list(
+                    "prodeff",
+                    "paneff",
+                    "likvar",
+                    "sensoatt",
+                    "jarmod"),
                 template=jmvcore::Image$new(
                     options=options,
                     title="$key",
                     width=600,
                     height=500,
-                    renderFun=".plotpenalty")))}))
+                    renderFun=".plotpenalty")))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="step4Guide",
+                title=""))
+            self$add(jmvcore::Table$new(
+                options=options,
+                name="step4Penalty",
+                title="Product-Specific Classical Penalty Analysis",
+                clearWith=list(
+                    "prodeff",
+                    "paneff",
+                    "likvar",
+                    "sensoatt",
+                    "jarmod",
+                    "consumerThreshold",
+                    "penaltyThreshold",
+                    "lowPattern",
+                    "highPattern"),
+                columns=list(
+                    list(
+                        `name`="product", 
+                        `title`="Product", 
+                        `type`="text", 
+                        `combineBelow`=TRUE),
+                    list(
+                        `name`="attribute", 
+                        `title`="Attribute", 
+                        `type`="text", 
+                        `combineBelow`=TRUE),
+                    list(
+                        `name`="direction", 
+                        `title`="Direction", 
+                        `type`="text"),
+                    list(
+                        `name`="consumers", 
+                        `title`="Consumers (%)", 
+                        `type`="Number", 
+                        `format`="zto"),
+                    list(
+                        `name`="meanjar", 
+                        `title`="Mean liking JAR", 
+                        `type`="Number", 
+                        `format`="zto"),
+                    list(
+                        `name`="meannonjar", 
+                        `title`="Mean liking non-JAR", 
+                        `type`="Number", 
+                        `format`="zto"),
+                    list(
+                        `name`="meandrop", 
+                        `title`="Mean drop", 
+                        `type`="Number", 
+                        `format`="zto"),
+                    list(
+                        `name`="cilow", 
+                        `title`="CI 95% low", 
+                        `type`="Number", 
+                        `format`="zto"),
+                    list(
+                        `name`="cihigh", 
+                        `title`="CI 95% high", 
+                        `type`="Number", 
+                        `format`="zto"),
+                    list(
+                        `name`="pvalue", 
+                        `title`="p", 
+                        `format`="zto,pvalue"))))
+            self$add(jmvcore::Array$new(
+                options=options,
+                name="step4Plots",
+                title="Product-Specific Penalty Plots",
+                clearWith=list(
+                    "prodeff",
+                    "paneff",
+                    "likvar",
+                    "sensoatt",
+                    "jarmod",
+                    "consumerThreshold",
+                    "penaltyThreshold",
+                    "lowPattern",
+                    "highPattern"),
+                template=jmvcore::Image$new(
+                    options=options,
+                    title="$key",
+                    width=700,
+                    height=520,
+                    renderFun=".plotClassical")))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="step5Guide",
+                title=""))
+            self$add(jmvcore::Table$new(
+                options=options,
+                name="step5Description",
+                title="Description of the Products According to Defects",
+                clearWith=list(
+                    "prodeff",
+                    "paneff",
+                    "sensoatt",
+                    "jarmod"),
+                columns=list(
+                    list(
+                        `name`="product", 
+                        `title`="Product", 
+                        `type`="text", 
+                        `combineBelow`=TRUE),
+                    list(
+                        `name`="defect", 
+                        `title`="Defect", 
+                        `type`="text"),
+                    list(
+                        `name`="internper", 
+                        `title`="Internal %", 
+                        `type`="Number", 
+                        `format`="zto"),
+                    list(
+                        `name`="globper", 
+                        `title`="Global %", 
+                        `type`="Number", 
+                        `format`="zto"),
+                    list(
+                        `name`="internfreq", 
+                        `title`="Internal frequency", 
+                        `type`="Number", 
+                        `format`="zto"),
+                    list(
+                        `name`="globfreq", 
+                        `title`="Global frequency", 
+                        `type`="Number", 
+                        `format`="zto"),
+                    list(
+                        `name`="pvaluedfres", 
+                        `title`="p", 
+                        `format`="zto,pvalue"),
+                    list(
+                        `name`="vtest", 
+                        `title`="V-test", 
+                        `type`="Number", 
+                        `format`="zto"))))
+            self$add(jmvcore::Image$new(
+                options=options,
+                name="step5Map",
+                title="Representation of the Products and the Defects",
+                width=600,
+                height=500,
+                renderFun=".plotboth",
+                clearWith=list(
+                    "prodeff",
+                    "paneff",
+                    "sensoatt",
+                    "jarmod")))
+            self$add(jmvcore::Table$new(
+                options=options,
+                name="step5Frequency",
+                title="Frequency Table Used for the Correspondence Analysis",
+                clearWith=list(
+                    "prodeff",
+                    "paneff",
+                    "sensoatt",
+                    "jarmod"),
+                columns=list()))
+            self$add(jmvcore::Preformatted$new(
+                options=options,
+                name="rCode",
+                title="R Code",
+                visible="(showCode)",
+                clearWith=list(
+                    "showCode",
+                    "prodeff",
+                    "paneff",
+                    "likvar",
+                    "sensoatt",
+                    "jarmod",
+                    "consumerThreshold",
+                    "penaltyThreshold",
+                    "lowPattern",
+                    "highPattern")))}))
 
 JARBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "JARBase",
@@ -210,7 +504,7 @@ JARBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             super$initialize(
                 package = "SEDA",
                 name = "JAR",
-                version = c(1,0,0),
+                version = c(1,1,0),
                 options = options,
                 results = JARResults$new(options=options),
                 data = data,
@@ -232,23 +526,38 @@ JARBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param likvar .
 #' @param sensoatt .
 #' @param tuto .
+#' @param showCode .
 #' @param jarmod .
+#' @param consumerThreshold .
+#' @param penaltyThreshold .
+#' @param lowPattern .
+#' @param highPattern .
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
-#'   \code{results$frequencebrut} \tab \tab \tab \tab \tab a table \cr
-#'   \code{results$frequencebrutdes} \tab \tab \tab \tab \tab a table \cr
-#'   \code{results$plotjar} \tab \tab \tab \tab \tab an image \cr
-#'   \code{results$penalty} \tab \tab \tab \tab \tab a table \cr
-#'   \code{results$frequence} \tab \tab \tab \tab \tab a preformatted \cr
-#'   \code{results$plotpen} \tab \tab \tab \tab \tab an array of images \cr
+#'   \code{results$step1Guide} \tab \tab \tab \tab \tab a html \cr
+#'   \code{results$step1Coding} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$step2Guide} \tab \tab \tab \tab \tab a html \cr
+#'   \code{results$step2Distribution} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$step3Guide} \tab \tab \tab \tab \tab a html \cr
+#'   \code{results$step3GlobalPenalty} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$step3ProductExposure} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$step3GlobalPlots} \tab \tab \tab \tab \tab an array of images \cr
+#'   \code{results$step4Guide} \tab \tab \tab \tab \tab a html \cr
+#'   \code{results$step4Penalty} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$step4Plots} \tab \tab \tab \tab \tab an array of images \cr
+#'   \code{results$step5Guide} \tab \tab \tab \tab \tab a html \cr
+#'   \code{results$step5Description} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$step5Map} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$step5Frequency} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$rCode} \tab \tab \tab \tab \tab a preformatted \cr
 #' }
 #'
 #' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
 #'
-#' \code{results$frequencebrut$asDF}
+#' \code{results$step1Coding$asDF}
 #'
-#' \code{as.data.frame(results$frequencebrut)}
+#' \code{as.data.frame(results$step1Coding)}
 #'
 #' @export
 JAR <- function(
@@ -258,7 +567,12 @@ JAR <- function(
     likvar,
     sensoatt,
     tuto = TRUE,
-    jarmod = "jar") {
+    showCode = FALSE,
+    jarmod = "jar",
+    consumerThreshold = 20,
+    penaltyThreshold = 1,
+    lowPattern = "too low|not enough|too weak|plain|low",
+    highPattern = "too high|too much|too strong|vivid|high") {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("JAR requires jmvcore to be installed (restart may be required)")
@@ -285,7 +599,12 @@ JAR <- function(
         likvar = likvar,
         sensoatt = sensoatt,
         tuto = tuto,
-        jarmod = jarmod)
+        showCode = showCode,
+        jarmod = jarmod,
+        consumerThreshold = consumerThreshold,
+        penaltyThreshold = penaltyThreshold,
+        lowPattern = lowPattern,
+        highPattern = highPattern)
 
     analysis <- JARClass$new(
         options = options,

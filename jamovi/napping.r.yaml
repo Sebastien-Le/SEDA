@@ -1,88 +1,174 @@
----
 name: Napping
 title: Analysis of Napping Data
 jrs: '1.1'
-refs: 
-    - napping
-    - sensominer
-    - mfa
-    - senso
-
+refs:
+- napping
+- sensominer
+- mfa
+- senso
 items:
-  - name: instructions
-    title: Instructions
-    visible: (tuto)
-    type: Html
+- name: instructions
+  title: Instructions
+  visible: (tuto)
+  type: Html
 
-  - name: plotind
-    title: Representation of the Stimuli
-    type: Image
-    width: 800
-    height: 600
-    renderFun: .plotindividus
+- name: step1Guide
+  title: ''
+  type: Html
 
-  - name: plotgroup
-    title: Representation of the Subjects
-    type: Image
-    width: 600
-    height: 600
-    renderFun: .plotgroups
+- name: eigengroup
+  title: Eigenvalue Decomposition
+  type: Group
+  clearWith:
+  - actvars
+  - qualisup
+  - individus
+  - ncp
+  - nFactors
+  - abs
+  - ord
+  items:
+  - name: eigen
+    title: Eigenvalue and (Cumulative) Percentage of Variance
+    type: Table
+    columns:
+    - name: component
+      title: ''
+      type: text
+    - name: eigenvalue
+      title: Eigenvalue
+      type: Number
+      format: zto
+    - name: purcent
+      title: '% of the variance'
+      type: Number
+      format: zto
+    - name: purcentcum
+      title: Cumulative %
+      type: Number
+      format: zto
 
-  - name: eigengroup
-    title: Eigenvalue Decomposition
-    type: Group
-    items:
-      - name: eigen
-        title: 'Eigenvalue and (Cumulative) Percentage of Variance'
-        type: Table
-        columns:
-          - name: component
-            title: ''
-            type: 'text'
-          - name: eigenvalue
-            title: 'Eigenvalue'
-            type: number
-          - name: purcent
-            title: '% of the variance'
-            type: number
-          - name: purcentcum
-            title: 'Cumulative %'
-            type: number
-            
-  - name: descdesdim
-    title: Automatic Description of the Dimensions
-    type: Preformatted
+- name: plotind
+  title: Representation of the Stimuli
+  type: Image
+  clearWith:
+  - actvars
+  - qualisup
+  - individus
+  - abs
+  - ord
+  - ncp
+  - nFactors
+  width: 800
+  height: 600
+  renderFun: .plotindividus
 
-  - name: plotclassif
-    title: Representation of the Stimuli According to Clusters
-    visible: (graphclassif)
-    type: Image
-    width: 800
-    height: 600
-    renderFun: .plotclassif
+- name: step2Guide
+  title: ''
+  type: Html
 
-  - name: newvar
-    type: Output
-    title: Coordinates
-    measureType: continuous
-    initInRun: true
-    clearWith:
-      - actvars
-      - quantisup
-      - qualisup
-      - individus
-      - nFactors
-      - norme
+- name: plotgroup
+  title: Representation of the Subjects
+  type: Image
+  clearWith:
+  - actvars
+  - qualisup
+  - individus
+  - abs
+  - ord
+  - ncp
+  - nFactors
+  width: 600
+  height: 600
+  renderFun: .plotgroups
 
-  - name: newvar2
-    type: Output
-    title: Coordinates
-    measureType: continuous
-    initInRun: true
-    clearWith:
-      - actvars
-      - quantisup
-      - qualisup
-      - individus
-      - nFactors
-      - norme
+- name: descdesdim
+  title: Automatic Description of the Dimensions
+  type: Table
+  clearWith:
+  - actvars
+  - qualisup
+  - individus
+  - nFactors
+  - proba
+  columns:
+  - name: dimension
+    title: Dimension
+    type: text
+    combineBelow: true
+  - name: variable
+    title: Coordinate
+    type: text
+  - name: correlation
+    title: Correlation
+    type: Number
+    format: zto
+  - name: p
+    title: p
+    type: Number
+    format: zto,pvalue
+  - name: n
+    title: N
+    type: Integer
+
+- name: step3Guide
+  title: ''
+  visible: (graphclassif)
+  type: Html
+
+- name: plotclassif
+  title: Representation of the Stimuli According to Clusters
+  visible: (graphclassif)
+  type: Image
+  clearWith:
+  - actvars
+  - qualisup
+  - individus
+  - abs
+  - ord
+  - ncp
+  - nbclust
+  - graphclassif
+  width: 800
+  height: 600
+  renderFun: .plotclassif
+
+- name: newvar
+  type: Output
+  title: Coordinates
+  measureType: continuous
+  initInRun: true
+  clearWith:
+  - actvars
+  - qualisup
+  - individus
+  - ncp
+
+- name: newvar2
+  type: Output
+  title: Cluster
+  measureType: nominal
+  initInRun: true
+  clearWith:
+  - actvars
+  - qualisup
+  - individus
+  - ncp
+  - nbclust
+
+- name: code
+  title: R Code
+  type: Preformatted
+  visible: (showCode)
+  clearWith:
+  - showCode
+  - actvars
+  - qualisup
+  - individus
+  - abs
+  - ord
+  - nFactors
+  - proba
+  - ncp
+  - graphclassif
+  - nbclust

@@ -10,6 +10,7 @@ QDABOOTOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             pane = NULL,
             senso = NULL,
             tuto = TRUE,
+            showCode = FALSE,
             thresh = 5,
             nbsimul = 300,
             nbpane = 20,
@@ -55,6 +56,10 @@ QDABOOTOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "tuto",
                 tuto,
                 default=TRUE)
+            private$..showCode <- jmvcore::OptionBool$new(
+                "showCode",
+                showCode,
+                default=FALSE)
             private$..thresh <- jmvcore::OptionNumber$new(
                 "thresh",
                 thresh,
@@ -119,6 +124,7 @@ QDABOOTOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..pane)
             self$.addOption(private$..senso)
             self$.addOption(private$..tuto)
+            self$.addOption(private$..showCode)
             self$.addOption(private$..thresh)
             self$.addOption(private$..nbsimul)
             self$.addOption(private$..nbpane)
@@ -138,6 +144,7 @@ QDABOOTOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         pane = function() private$..pane$value,
         senso = function() private$..senso$value,
         tuto = function() private$..tuto$value,
+        showCode = function() private$..showCode$value,
         thresh = function() private$..thresh$value,
         nbsimul = function() private$..nbsimul$value,
         nbpane = function() private$..nbpane$value,
@@ -156,6 +163,7 @@ QDABOOTOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..pane = NA,
         ..senso = NA,
         ..tuto = NA,
+        ..showCode = NA,
         ..thresh = NA,
         ..nbsimul = NA,
         ..nbpane = NA,
@@ -176,14 +184,18 @@ QDABOOTResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
         instructions = function() private$.items[["instructions"]],
+        step1Guide = function() private$.items[["step1Guide"]],
         plotind = function() private$.items[["plotind"]],
         plotvar = function() private$.items[["plotvar"]],
-        eigenGr = function() private$.items[["eigenGr"]],
         dimdesc = function() private$.items[["dimdesc"]],
+        eigenGr = function() private$.items[["eigenGr"]],
+        step2Guide = function() private$.items[["step2Guide"]],
         plotspa = function() private$.items[["plotspa"]],
         hotGr = function() private$.items[["hotGr"]],
+        step3Guide = function() private$.items[["step3Guide"]],
         plotpane = function() private$.items[["plotpane"]],
-        plotvaria = function() private$.items[["plotvaria"]]),
+        plotvaria = function() private$.items[["plotvaria"]],
+        code = function() private$.items[["code"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -200,10 +212,25 @@ QDABOOTResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 name="instructions",
                 title="Instructions",
                 visible="(tuto)"))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="step1Guide",
+                title=""))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="plotind",
                 title="Representation of the Stimuli",
+                clearWith=list(
+                    "prod",
+                    "pane",
+                    "senso",
+                    "abs",
+                    "ord",
+                    "scale_unit_box",
+                    "center_pane_box",
+                    "scale_pane_box",
+                    "level_search",
+                    "nFactors"),
                 width=900,
                 height=600,
                 renderFun=".plotIndaxe"))
@@ -211,9 +238,58 @@ QDABOOTResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 options=options,
                 name="plotvar",
                 title="Representation of the Sensory Attributes",
+                clearWith=list(
+                    "prod",
+                    "pane",
+                    "senso",
+                    "abs",
+                    "ord",
+                    "scale_unit_box",
+                    "center_pane_box",
+                    "scale_pane_box",
+                    "level_search",
+                    "nFactors"),
                 width=600,
                 height=600,
                 renderFun=".plotVaraxe"))
+            self$add(jmvcore::Table$new(
+                options=options,
+                name="dimdesc",
+                title="Automatic Description of the Dimensions",
+                clearWith=list(
+                    "prod",
+                    "pane",
+                    "senso",
+                    "level_search",
+                    "scale_unit_box",
+                    "center_pane_box",
+                    "scale_pane_box",
+                    "nFactors",
+                    "proba"),
+                columns=list(
+                    list(
+                        `name`="dimension", 
+                        `title`="Dimension", 
+                        `type`="text", 
+                        `combineBelow`=TRUE),
+                    list(
+                        `name`="variable", 
+                        `title`="Sensory Attribute", 
+                        `type`="text"),
+                    list(
+                        `name`="correlation", 
+                        `title`="Correlation", 
+                        `type`="number", 
+                        `format`="zto"),
+                    list(
+                        `name`="p", 
+                        `title`="p", 
+                        `type`="number", 
+                        `format`="zto,pvalue"),
+                    list(
+                        `name`="n", 
+                        `title`="N", 
+                        `type`="integer"))))
             self$add(R6::R6Class(
                 inherit = jmvcore::Group,
                 active = list(
@@ -224,7 +300,19 @@ QDABOOTResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                         super$initialize(
                             options=options,
                             name="eigenGr",
-                            title="Eigenvalue Decomposition")
+                            title="Eigenvalue Decomposition",
+                            clearWith=list(
+                    "prod",
+                    "pane",
+                    "senso",
+                    "nbsimul",
+                    "nbpane",
+                    "abs",
+                    "ord",
+                    "scale_unit_box",
+                    "center_pane_box",
+                    "scale_pane_box",
+                    "level_search"))
                         self$add(jmvcore::Table$new(
                             options=options,
                             name="eigen_table",
@@ -237,23 +325,39 @@ QDABOOTResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                                 list(
                                     `name`="eig", 
                                     `title`="Eigenvalue", 
-                                    `type`="number"),
+                                    `type`="number", 
+                                    `format`="zto"),
                                 list(
                                     `name`="eig_pct", 
                                     `title`="% of variance", 
-                                    `type`="number"),
+                                    `type`="number", 
+                                    `format`="zto"),
                                 list(
                                     `name`="eig_pct_cum", 
                                     `title`="Cumulative %", 
-                                    `type`="number"))))}))$new(options=options))
-            self$add(jmvcore::Preformatted$new(
+                                    `type`="number", 
+                                    `format`="zto"))))}))$new(options=options))
+            self$add(jmvcore::Html$new(
                 options=options,
-                name="dimdesc",
-                title="Automatic Description of the Dimensions"))
+                name="step2Guide",
+                title=""))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="plotspa",
                 title="Representation of the Stimuli with Confidence Ellipses",
+                clearWith=list(
+                    "prod",
+                    "pane",
+                    "senso",
+                    "thresh",
+                    "nbsimul",
+                    "nbpane",
+                    "abs",
+                    "ord",
+                    "scale_unit_box",
+                    "center_pane_box",
+                    "scale_pane_box",
+                    "level_search"),
                 width=900,
                 height=600,
                 renderFun=".plotSpace"))
@@ -267,17 +371,44 @@ QDABOOTResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                         super$initialize(
                             options=options,
                             name="hotGr",
-                            title="Hotelling Test")
+                            title="Hotelling Test",
+                            clearWith=list(
+                    "prod",
+                    "pane",
+                    "senso",
+                    "nbsimul",
+                    "nbpane",
+                    "abs",
+                    "ord",
+                    "scale_unit_box",
+                    "center_pane_box",
+                    "scale_pane_box",
+                    "level_search"))
                         self$add(jmvcore::Table$new(
                             options=options,
                             name="hot_table",
                             title="p-values Associated with the Hotelling Test",
                             columns=list()))}))$new(options=options))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="step3Guide",
+                title=""))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="plotpane",
                 visible="(ind_gr_box)",
                 title="Individual Variability Around Stimuli",
+                clearWith=list(
+                    "prod",
+                    "pane",
+                    "senso",
+                    "ind_gr_box",
+                    "abs",
+                    "ord",
+                    "scale_unit_box",
+                    "center_pane_box",
+                    "scale_pane_box",
+                    "level_search"),
                 width=900,
                 height=600,
                 renderFun=".plotPane"))
@@ -286,9 +417,43 @@ QDABOOTResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 name="plotvaria",
                 visible="(var_gr_box)",
                 title="Variability of the Sensory Attributes",
+                clearWith=list(
+                    "prod",
+                    "pane",
+                    "senso",
+                    "var_gr_box",
+                    "nbsimul",
+                    "abs",
+                    "ord",
+                    "scale_unit_box",
+                    "center_pane_box",
+                    "scale_pane_box",
+                    "level_search"),
                 width=600,
                 height=600,
-                renderFun=".plotvariavar"))}))
+                renderFun=".plotvariavar"))
+            self$add(jmvcore::Preformatted$new(
+                options=options,
+                name="code",
+                title="R Code",
+                visible="(showCode)",
+                clearWith=list(
+                    "showCode",
+                    "prod",
+                    "pane",
+                    "senso",
+                    "thresh",
+                    "nbsimul",
+                    "nbpane",
+                    "abs",
+                    "ord",
+                    "scale_unit_box",
+                    "center_pane_box",
+                    "scale_pane_box",
+                    "level_search",
+                    "nFactors",
+                    "proba",
+                    "var_gr_box")))}))
 
 QDABOOTBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "QDABOOTBase",
@@ -298,7 +463,7 @@ QDABOOTBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             super$initialize(
                 package = "SEDA",
                 name = "QDABOOT",
-                version = c(1,0,0),
+                version = c(1,1,0),
                 options = options,
                 results = QDABOOTResults$new(options=options),
                 data = data,
@@ -319,6 +484,7 @@ QDABOOTBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param pane .
 #' @param senso .
 #' @param tuto .
+#' @param showCode .
 #' @param thresh .
 #' @param nbsimul .
 #' @param nbpane .
@@ -335,15 +501,25 @@ QDABOOTBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
+#'   \code{results$step1Guide} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$plotind} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$plotvar} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$dimdesc} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$eigenGr$eigen_table} \tab \tab \tab \tab \tab a table \cr
-#'   \code{results$dimdesc} \tab \tab \tab \tab \tab a preformatted \cr
+#'   \code{results$step2Guide} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$plotspa} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$hotGr$hot_table} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$step3Guide} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$plotpane} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$plotvaria} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$code} \tab \tab \tab \tab \tab a preformatted \cr
 #' }
+#'
+#' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
+#'
+#' \code{results$dimdesc$asDF}
+#'
+#' \code{as.data.frame(results$dimdesc)}
 #'
 #' @export
 QDABOOT <- function(
@@ -352,6 +528,7 @@ QDABOOT <- function(
     pane,
     senso,
     tuto = TRUE,
+    showCode = FALSE,
     thresh = 5,
     nbsimul = 300,
     nbpane = 20,
@@ -387,6 +564,7 @@ QDABOOT <- function(
         pane = pane,
         senso = senso,
         tuto = tuto,
+        showCode = showCode,
         thresh = thresh,
         nbsimul = nbsimul,
         nbpane = nbpane,

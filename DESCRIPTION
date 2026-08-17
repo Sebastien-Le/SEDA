@@ -1,11 +1,30 @@
 Package: SEDA
 Type: Package
 Title: Sensory Evaluation Data Analysis
-Version: 1.1.0
-Author: TL/FT
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: Proposes univariate and multivariate analyses based on the SensoMineR package
-License: What license is it under?
+Version: 1.4.0
+Authors@R: c(
+    person("Thomas", "Leblay", role = "aut"),
+    person("Fiona", "Tuffin", role = "aut"),
+    person("Thomas", "Vincent", role = "aut"),
+    person("Maëlle", "Beaudinet", role = "aut"),
+    person("Maxime", "Saland", role = "aut"),
+    person("Maïwen", "Faure", role = "aut"),
+    person(
+        "Sébastien", "Lê",
+        email = "sebastien.le@institut-agro.fr",
+        role = c("aut", "cre"),
+        comment = c(ORCID = "0000-0001-8814-6714")
+    )
+    )
+Maintainer: Sébastien Lê <sebastien.le@institut-agro.fr>
+Description: Provides sensory and consumer data analyses for fixed-list
+    methods (QDA, confidence ellipses, CATA and JAR), holistic methods
+    (Napping and sorting), and preference mapping. Analyses rely primarily
+    on SensoMineR and FactoMineR and provide reproducible R code for use in
+    the jamovi Rj Editor.
+License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
-Imports: jmvcore (>= 0.8.5), R6, FactoMineR, SensoMineR,ggplot2, factoextra
+URL: https://github.com/Sebastien-Le/SEDA
+BugReports: https://github.com/Sebastien-Le/SEDA/issues
+Imports: jmvcore (>= 0.8.5), R6, FactoMineR, SensoMineR, ggplot2, ggrepel

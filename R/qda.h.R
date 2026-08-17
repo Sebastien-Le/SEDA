@@ -10,6 +10,7 @@ QDAOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             paneff = NULL,
             sensoatt = NULL,
             tuto = TRUE,
+            showCode = FALSE,
             threshold = 5, ...) {
 
             super$initialize(
@@ -43,6 +44,10 @@ QDAOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "tuto",
                 tuto,
                 default=TRUE)
+            private$..showCode <- jmvcore::OptionBool$new(
+                "showCode",
+                showCode,
+                default=FALSE)
             private$..threshold <- jmvcore::OptionNumber$new(
                 "threshold",
                 threshold,
@@ -52,6 +57,7 @@ QDAOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..paneff)
             self$.addOption(private$..sensoatt)
             self$.addOption(private$..tuto)
+            self$.addOption(private$..showCode)
             self$.addOption(private$..threshold)
         }),
     active = list(
@@ -59,12 +65,14 @@ QDAOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         paneff = function() private$..paneff$value,
         sensoatt = function() private$..sensoatt$value,
         tuto = function() private$..tuto$value,
+        showCode = function() private$..showCode$value,
         threshold = function() private$..threshold$value),
     private = list(
         ..prodeff = NA,
         ..paneff = NA,
         ..sensoatt = NA,
         ..tuto = NA,
+        ..showCode = NA,
         ..threshold = NA)
 )
 
@@ -73,8 +81,11 @@ QDAResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
         instructions = function() private$.items[["instructions"]],
+        step1Guide = function() private$.items[["step1Guide"]],
         resF = function() private$.items[["resF"]],
-        resT = function() private$.items[["resT"]]),
+        step2Guide = function() private$.items[["step2Guide"]],
+        resT = function() private$.items[["resT"]],
+        code = function() private$.items[["code"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -90,10 +101,19 @@ QDAResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 name="instructions",
                 title="Instructions",
                 visible="(tuto)"))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="step1Guide",
+                title=""))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="resF",
                 title="Identification of the Sensory Dimensions",
+                clearWith=list(
+                    "prodeff",
+                    "paneff",
+                    "sensoatt",
+                    "threshold"),
                 columns=list(
                     list(
                         `name`="att", 
@@ -103,16 +123,25 @@ QDAResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                         `name`="vtest", 
                         `title`="Vtest", 
                         `type`="number", 
-                        `format`="zto,pvalue"),
+                        `format`="zto"),
                     list(
                         `name`="pvalue", 
                         `title`="p", 
                         `type`="number", 
                         `format`="zto,pvalue"))))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="step2Guide",
+                title=""))
             self$add(jmvcore::Table$new(
                 options=options,
                 name="resT",
                 title="Sensory Description of the Stimuli",
+                clearWith=list(
+                    "prodeff",
+                    "paneff",
+                    "sensoatt",
+                    "threshold"),
                 columns=list(
                     list(
                         `name`="component", 
@@ -126,11 +155,13 @@ QDAResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     list(
                         `name`="coeff", 
                         `title`="Coefficient", 
-                        `type`="number"),
+                        `type`="number", 
+                        `format`="zto"),
                     list(
                         `name`="adjmean", 
                         `title`="Adjusted mean", 
-                        `type`="number"),
+                        `type`="number", 
+                        `format`="zto"),
                     list(
                         `name`="pvalue", 
                         `title`="p", 
@@ -139,7 +170,19 @@ QDAResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     list(
                         `name`="vtest", 
                         `title`="Vtest", 
-                        `type`="number"))))}))
+                        `type`="number", 
+                        `format`="zto"))))
+            self$add(jmvcore::Preformatted$new(
+                options=options,
+                name="code",
+                title="R Code",
+                visible="(showCode)",
+                clearWith=list(
+                    "showCode",
+                    "prodeff",
+                    "paneff",
+                    "sensoatt",
+                    "threshold")))}))
 
 QDABase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "QDABase",
@@ -149,7 +192,7 @@ QDABase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             super$initialize(
                 package = "SEDA",
                 name = "QDA",
-                version = c(1,0,0),
+                version = c(1,1,0),
                 options = options,
                 results = QDAResults$new(options=options),
                 data = data,
@@ -170,12 +213,16 @@ QDABase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param paneff .
 #' @param sensoatt .
 #' @param tuto .
+#' @param showCode .
 #' @param threshold .
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
+#'   \code{results$step1Guide} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$resF} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$step2Guide} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$resT} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$code} \tab \tab \tab \tab \tab a preformatted \cr
 #' }
 #'
 #' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
@@ -191,6 +238,7 @@ QDA <- function(
     paneff,
     sensoatt,
     tuto = TRUE,
+    showCode = FALSE,
     threshold = 5) {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
@@ -214,6 +262,7 @@ QDA <- function(
         paneff = paneff,
         sensoatt = sensoatt,
         tuto = tuto,
+        showCode = showCode,
         threshold = threshold)
 
     analysis <- QDAClass$new(

@@ -6,7 +6,7 @@ menuGroup: SEDA
 menuSubgroup: Fixed List of Attributes
 menuTitle: Characterization of the Stimulus Space
 
-version: '1.0.0'
+version: '1.1.0'
 jas: '1.2'
 
 options:
@@ -40,8 +40,13 @@ options:
   - name: tuto
     title: Read me before running
     type: Bool
-    default: true      
-      
+    default: true
+
+  - name: showCode
+    title: R code
+    type: Bool
+    default: false
+
   - name: threshold
     title: Significance threshold (%)
     type: Number

@@ -2,7 +2,7 @@
 name: Sorting
 title: Analysis of Sorting Data
 menuGroup: SEDA
-version: '1.0.0'
+version: '1.1.0'
 jas: '1.2'
 
 options:
@@ -10,7 +10,7 @@ options:
     type: Data
 
   - name: actvars
-    title: Subjects
+    title: Active Subjects
     type: Variables
     suggested:
       - nominal
@@ -38,7 +38,12 @@ options:
   - name: tuto
     title: Read me before running
     type: Bool
-    default: true            
+    default: true
+
+  - name: showCode
+    title: R code
+    type: Bool
+    default: false
 
   - name: nFactors
     title: Number of dimensions
@@ -111,14 +116,14 @@ options:
     default: cos2 10
 
   - name: leveltext
-    title: Level description (%)
+    title: Significance threshold (%)
     type: Number
     default: 5
 
   - name: longformat
-    title: Long format dataset
+    title: Show long-format textual data
     type: Bool
-    default: false    
+    default: false
 
   - name: ncp
     title: Number of components
@@ -128,7 +133,7 @@ options:
   - name: graphclassif
     title: Representation of the clusters
     type: Bool
-    default: false        
+    default: false
 
   - name: newvar
     title: Coordinates

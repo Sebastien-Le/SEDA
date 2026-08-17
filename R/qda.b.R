@@ -12,37 +12,117 @@ QDAClass <- if (requireNamespace('jmvcore')) R6::R6Class(
         if (isTRUE(self$options$tuto))
           self$results$instructions$setVisible(visible = TRUE)
       }
+
       self$results$instructions$setContent(
-        "<html>
-        <head></head>
-        <body>
-        <div class='justified-text'>
-        <p><b>What you need to know before analysing QDA data in jamovi (1)</b></p>
-        <p>______________________________________________________________________________</p>
-        <p> Quantitative Descriptive Analysis (QDA) is a sensory evaluation technique used to objectively and systematically measure
-        and describe the sensory characteristics of products, such as food, beverages, personal care products, and more (<I>stimuli</I>).</p>
-        <p> The goal of QDA is to generate a detailed, quantitative profile of evaluated stimuli based on sensory attributes.</p>
-        <p> Therefore, we are interested in pointing out the attributes that are the most characteristic of the set of stimuli as a whole,
-        and to each of the stimulus as such.</p>
-        <p> The interface returns two types of results. A sorted list of the sensory attributes that characterize the stimulus space and,
-        for each stimulus, a list of the attributes that characterize it.</p>
-        <p> Open the <b>sensochoc</b> dataset. Use all the sensory attributes to characterize your products. You can see that the chocolate
-        <B>choc1</B> was perceived as very bitter and not sweet at all.</p>
-        <p>______________________________________________________________________________</p>
-        </div>
-        </body>
-        </html>"
+        "
+  <div style='
+      font-family: inherit;
+      margin: 8px 0;
+      padding: 14px 18px;
+      background-color: #F4F7FB;
+      border: 1px solid #CBD8E8;
+      border-left: 5px solid #6B9DE8;
+      border-radius: 6px;
+      color: #333333;
+      line-height: 1.45;
+  '>
+
+    <p style='margin: 0 0 10px 0; color: #355F98; font-size: 1.08em;'>
+      <b>What you should know before analyzing QDA data in jamovi</b>
+    </p>
+
+    <div style='border-top: 1px solid #CBD8E8; margin-bottom: 12px;'></div>
+
+    <p style='margin: 0 0 9px 0;'>
+      <b>Purpose.</b>
+      Quantitative Descriptive Analysis (QDA) describes a set of stimuli using
+      a common list of sensory attributes rated quantitatively by subjects.
+      The analysis first identifies the attributes that discriminate the
+      stimuli and then determines which attributes characterize each stimulus.
+    </p>
+
+    <p style='margin: 0 0 9px 0;'>
+      <b>Data structure.</b>
+      Select one categorical variable as the <i>Stimulus Effect</i>, one
+      categorical variable as the <i>Subject Effect</i>, and one or more
+      quantitative variables as <i>Sensory Attributes</i>. Each row should
+      correspond to an assessment of a stimulus by a subject.
+    </p>
+
+    <p style='margin: 0 0 9px 0;'>
+      <b>Analysis.</b>
+      For each sensory attribute, SEDA tests the stimulus effect while taking
+      the subject effect into account. Only attributes whose stimulus effect
+      is significant at the selected <i>Significance threshold</i> are retained
+      for the detailed characterization of the stimuli.
+    </p>
+
+    <p style='margin: 0 0 9px 0;'>
+      <b>Interpretation.</b>
+      Read the analysis in two steps. First identify the sensory dimensions
+      that discriminate the stimuli. Then use the stimulus-description table
+      to determine the direction and strength of each characterization. A
+      positive V-test indicates a higher-than-overall level of the attribute,
+      whereas a negative V-test indicates a lower-than-overall level.
+    </p>
+
+    <p style='margin: 0;'>
+      <b>Example.</b>
+      Open the <b>sensochoc</b> dataset, select the stimulus variable, the
+      subject variable, and the sensory attributes. With the default threshold,
+      for example, <b>choc1</b> is characterized by high bitterness and low
+      sweetness.
+    </p>
+
+  </div>"
+      )
+
+      self$results$step1Guide$setContent(
+        "
+  <div style='margin: 6px 0 10px 0; padding: 9px 13px;
+      background-color: #F4F7FB; border-left: 4px solid #6B9DE8;
+      color: #333333; line-height: 1.4;'>
+    <b style='color: #355F98;'>Step 1 — Identify the sensory dimensions.</b>
+    Start with the global stimulus test for each sensory attribute. Attributes
+    retained here are those for which the stimuli differ significantly at the
+    selected threshold. This step determines which dimensions are worth using
+    for the detailed sensory characterization.
+  </div>"
+      )
+
+      self$results$step2Guide$setContent(
+        "
+  <div style='margin: 6px 0 10px 0; padding: 9px 13px;
+      background-color: #F4F7FB; border-left: 4px solid #6B9DE8;
+      color: #333333; line-height: 1.4;'>
+    <b style='color: #355F98;'>Step 2 — Characterize each stimulus.</b>
+    The coefficient and adjusted mean describe the direction and magnitude of
+    the stimulus profile on each retained attribute. The V-test standardizes
+    this characterization, while the p-value quantifies its statistical
+    evidence. Positive and negative V-tests correspond respectively to
+    higher- and lower-than-overall attribute levels.
+  </div>"
       )
     },
-    
+
     .run = function() {
       if (is.null(self$options$sensoatt)) return()
       if (is.null(self$options$prodeff))  return()
       if (is.null(self$options$paneff))   return()
+
+      if (isTRUE(self$options$showCode))
+        self$results$code$setContent(private$.code())
+
+      private$.validateInputs()
       
       data_eff <- self$data[, c(self$options$prodeff, self$options$paneff), drop = FALSE]
       for (nm in names(data_eff))
         data_eff[[nm]] <- as.factor(data_eff[[nm]])
+
+      # Use safe internal names for the two effects. This mirrors the Rj code
+      # and prevents spaces or symbols in jamovi variable names from breaking
+      # the ANOVA formula used by the historical QDA engine.
+      names(data_eff) <- c(".Stimulus", ".Subject")
       
       data_att <- self$data[, self$options$sensoatt, drop = FALSE]
       
@@ -109,13 +189,129 @@ QDAClass <- if (requireNamespace('jmvcore')) R6::R6Class(
       private$.printresTable(tab)
     },
     
+
+    .validateInputs = function() {
+      prodeff <- as.character(self$options$prodeff)
+      paneff <- as.character(self$options$paneff)
+      sensoatt <- as.character(self$options$sensoatt)
+
+      if (length(prodeff) != 1L || is.na(prodeff) || !nzchar(prodeff))
+        jmvcore::reject("Select one Stimulus Effect.")
+      if (length(paneff) != 1L || is.na(paneff) || !nzchar(paneff))
+        jmvcore::reject("Select one Subject Effect.")
+      if (identical(prodeff, paneff))
+        jmvcore::reject("Stimulus Effect and Subject Effect must be different variables.")
+      if (length(sensoatt) < 1L)
+        jmvcore::reject("Select at least one sensory attribute.")
+      if (prodeff %in% sensoatt || paneff %in% sensoatt)
+        jmvcore::reject("Stimulus Effect, Subject Effect and Sensory Attributes must be selected from different variables.")
+      if (anyDuplicated(sensoatt))
+        jmvcore::reject("The same sensory attribute cannot be selected more than once.")
+
+      threshold <- suppressWarnings(as.numeric(self$options$threshold))
+      if (length(threshold) != 1L || !is.finite(threshold) || threshold <= 0 || threshold >= 100)
+        jmvcore::reject("Significance threshold (%) must be greater than 0 and lower than 100.")
+
+      stimulus <- droplevels(as.factor(self$data[[prodeff]]))
+      subject <- droplevels(as.factor(self$data[[paneff]]))
+      if (nlevels(stimulus) < 2L)
+        jmvcore::reject("Stimulus Effect must contain at least two observed levels.")
+      if (nlevels(subject) < 2L)
+        jmvcore::reject("Subject Effect must contain at least two observed levels.")
+
+      bad <- character()
+      for (nm in sensoatt) {
+        x <- self$data[[nm]]
+        if (!is.numeric(x)) {
+          bad <- c(bad, nm)
+          next
+        }
+        finite <- x[is.finite(x)]
+        if (length(finite) < 2L || stats::var(finite) <= sqrt(.Machine$double.eps))
+          bad <- c(bad, nm)
+      }
+      if (length(bad) > 0L)
+        jmvcore::reject(paste0(
+          "The following sensory attributes are not informative numeric variables: ",
+          paste(unique(bad), collapse = ", "), "."
+        ))
+
+      invisible(TRUE)
+    },
+
+    #### R code ----
+
+    .code = function() {
+      r_literal <- function(value) {
+        if (is.null(value))
+          return("NULL")
+        paste(deparse(value, width.cutoff = 500L), collapse = "\n")
+      }
+
+      prodeff <- as.character(self$options$prodeff)
+      paneff  <- as.character(self$options$paneff)
+      sensoatt <- as.character(self$options$sensoatt)
+
+      if (length(prodeff) == 0L || is.na(prodeff[1]) || !nzchar(prodeff[1]))
+        return("# Select a stimulus variable to generate the QDA code.")
+      if (length(paneff) == 0L || is.na(paneff[1]) || !nzchar(paneff[1]))
+        return("# Select a subject variable to generate the QDA code.")
+      if (length(sensoatt) == 0L)
+        return("# Select at least one sensory attribute to generate the QDA code.")
+
+      variables <- c(prodeff[1], paneff[1], sensoatt)
+      threshold <- suppressWarnings(as.numeric(self$options$threshold)) / 100
+      if (length(threshold) == 0L || !is.finite(threshold))
+        threshold <- 0.05
+
+      code <- c(
+        "library(SensoMineR)",
+        "",
+        "# This script can be pasted directly into the jamovi Rj Editor.",
+        "# The dataset open in jamovi is available as data.",
+        "",
+        "# Keep the stimulus and subject variables first, followed by the sensory attributes.",
+        paste0(
+          "data_QDA <- data[, ", r_literal(variables),
+          ", drop = FALSE]"
+        ),
+        "",
+        "# The first two variables must be factors.",
+        "data_QDA[[1]] <- as.factor(data_QDA[[1]])",
+        "data_QDA[[2]] <- as.factor(data_QDA[[2]])",
+        "",
+        "# Use simple internal names so the ANOVA formula remains valid even",
+        "# when the original jamovi variable names contain spaces or symbols.",
+        "names(data_QDA)[1:2] <- c(\".Stimulus\", \".Subject\")",
+        "",
+        "# Characterization of the stimulus space",
+        "res_QDA <- decat(",
+        "  data_QDA,",
+        "  formul = \"~.Stimulus+.Subject\",",
+        "  firstvar = 3,",
+        "  lastvar = ncol(data_QDA),",
+        paste0("  proba = ", r_literal(threshold), ","),
+        "  graph = FALSE,",
+        "  random = TRUE",
+        ")",
+        "",
+        "# Attributes showing a significant overall stimulus effect",
+        "res_QDA$resF",
+        "",
+        "# Attributes characterizing each stimulus",
+        "res_QDA$resT"
+      )
+
+      paste(code, collapse = "\n")
+    },
+
     #### Compute results ----
     
     .decat = function(data) {
       
       threshold <- self$options$threshold / 100
-      prodeff   <- self$options$prodeff
-      paneff    <- self$options$paneff
+      prodeff   <- ".Stimulus"
+      paneff    <- ".Subject"
       formul    <- paste0("~", prodeff, "+", paneff)
       firstvar  <- 3
       lastvar   <- ncol(data)
@@ -131,8 +327,10 @@ QDAClass <- if (requireNamespace('jmvcore')) R6::R6Class(
       for (j in 1:(firstvar - 1)) donnee[, j] <- as.factor(donnee[, j])
       level.lower <- -qnorm(proba / 2)
       formul      <- as.formula(paste(formul, collapse = " "))
-      lab.sauv    <- lab <- colnames(donnee)
-      for (i in 1:length(lab)) lab[i] <- gsub(" ", ".", lab[i])
+      lab.sauv    <- colnames(donnee)
+      # Use formula-safe internal names for every column while retaining the
+      # original sensory names for the output tables.
+      lab <- c(".Stimulus", ".Subject", paste0(".Sensory", seq_len(ncol(donnee) - 2L)))
       colnames(donnee) <- lab
       equation <- as.character(formul)
       Terms    <- attr(terms(as.formula(paste(equation, collapse = " "))), "term.labels")

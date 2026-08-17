@@ -1,86 +1,220 @@
----
 name: QDABOOT
 title: Multivariate Representation of the Stimulus Space
 jrs: '1.1'
-refs: 
-    - ellipse
-    - sensominer
-    - senso
-
+refs:
+- ellipse
+- sensominer
+- senso
 items:
-  - name: instructions
-    title: Instructions
-    visible: (tuto)
-    type: Html
-
-  - name: plotind
-    title: Representation of the Stimuli
-    type: Image
-    width: 900
-    height: 600
-    renderFun: .plotIndaxe
-
-  - name: plotvar
-    title: Representation of the Sensory Attributes
-    type: Image
-    width: 600
-    height: 600
-    renderFun: .plotVaraxe
-
-  - name: eigenGr
-    title: Eigenvalue Decomposition
-    type: Group
-    visible: false
-    items:
-      - name: eigen_table
-        title: Eigenvalue and (Cumulative) Percentage of Variance
-        type: Table
-        columns:
-          - name: facto
-            title: ''
-            type: text
-          - name: eig
-            title: 'Eigenvalue'
-            type: number
-          - name: eig_pct
-            title: '% of variance'
-            type: number
-          - name: eig_pct_cum
-            title: 'Cumulative %'
-            type: number
-
-  - name: dimdesc
-    title: Automatic Description of the Dimensions
-    type: Preformatted
-
-  - name: plotspa
-    title: Representation of the Stimuli with Confidence Ellipses
-    type: Image
-    width: 900
-    height: 600
-    renderFun: .plotSpace
-
-  - name: hotGr
-    title: Hotelling Test
-    type: Group
-    items:
-      - name: hot_table
-        title: p-values Associated with the Hotelling Test
-        type: Table
-        columns: []
-
-  - name: plotpane
-    visible: (ind_gr_box)
-    title: Individual Variability Around Stimuli
-    type: Image
-    width: 900
-    height: 600
-    renderFun: .plotPane
-
-  - name: plotvaria
-    visible: (var_gr_box)
-    title: Variability of the Sensory Attributes
-    type: Image
-    width: 600
-    height: 600
-    renderFun: .plotvariavar
+- name: instructions
+  title: Instructions
+  visible: (tuto)
+  type: Html
+- name: step1Guide
+  title: ''
+  type: Html
+- name: plotind
+  title: Representation of the Stimuli
+  type: Image
+  clearWith:
+  - prod
+  - pane
+  - senso
+  - abs
+  - ord
+  - scale_unit_box
+  - center_pane_box
+  - scale_pane_box
+  - level_search
+  - nFactors
+  width: 900
+  height: 600
+  renderFun: .plotIndaxe
+- name: plotvar
+  title: Representation of the Sensory Attributes
+  type: Image
+  clearWith:
+  - prod
+  - pane
+  - senso
+  - abs
+  - ord
+  - scale_unit_box
+  - center_pane_box
+  - scale_pane_box
+  - level_search
+  - nFactors
+  width: 600
+  height: 600
+  renderFun: .plotVaraxe
+- name: dimdesc
+  title: Automatic Description of the Dimensions
+  type: Table
+  clearWith:
+  - prod
+  - pane
+  - senso
+  - level_search
+  - scale_unit_box
+  - center_pane_box
+  - scale_pane_box
+  - nFactors
+  - proba
+  columns:
+  - name: dimension
+    title: Dimension
+    type: text
+    combineBelow: true
+  - name: variable
+    title: Sensory Attribute
+    type: text
+  - name: correlation
+    title: Correlation
+    type: number
+    format: zto
+  - name: p
+    title: p
+    type: number
+    format: zto,pvalue
+  - name: n
+    title: N
+    type: integer
+- name: eigenGr
+  title: Eigenvalue Decomposition
+  type: Group
+  clearWith:
+  - prod
+  - pane
+  - senso
+  - nbsimul
+  - nbpane
+  - abs
+  - ord
+  - scale_unit_box
+  - center_pane_box
+  - scale_pane_box
+  - level_search
+  visible: false
+  items:
+  - name: eigen_table
+    title: Eigenvalue and (Cumulative) Percentage of Variance
+    type: Table
+    columns:
+    - name: facto
+      title: ''
+      type: text
+    - name: eig
+      title: Eigenvalue
+      type: number
+      format: zto
+    - name: eig_pct
+      title: '% of variance'
+      type: number
+      format: zto
+    - name: eig_pct_cum
+      title: Cumulative %
+      type: number
+      format: zto
+- name: step2Guide
+  title: ''
+  type: Html
+- name: plotspa
+  title: Representation of the Stimuli with Confidence Ellipses
+  type: Image
+  clearWith:
+  - prod
+  - pane
+  - senso
+  - thresh
+  - nbsimul
+  - nbpane
+  - abs
+  - ord
+  - scale_unit_box
+  - center_pane_box
+  - scale_pane_box
+  - level_search
+  width: 900
+  height: 600
+  renderFun: .plotSpace
+- name: hotGr
+  title: Hotelling Test
+  type: Group
+  clearWith:
+  - prod
+  - pane
+  - senso
+  - nbsimul
+  - nbpane
+  - abs
+  - ord
+  - scale_unit_box
+  - center_pane_box
+  - scale_pane_box
+  - level_search
+  items:
+  - name: hot_table
+    title: p-values Associated with the Hotelling Test
+    type: Table
+    columns: []
+- name: step3Guide
+  title: ''
+  type: Html
+- name: plotpane
+  visible: (ind_gr_box)
+  title: Individual Variability Around Stimuli
+  type: Image
+  clearWith:
+  - prod
+  - pane
+  - senso
+  - ind_gr_box
+  - abs
+  - ord
+  - scale_unit_box
+  - center_pane_box
+  - scale_pane_box
+  - level_search
+  width: 900
+  height: 600
+  renderFun: .plotPane
+- name: plotvaria
+  visible: (var_gr_box)
+  title: Variability of the Sensory Attributes
+  type: Image
+  clearWith:
+  - prod
+  - pane
+  - senso
+  - var_gr_box
+  - nbsimul
+  - abs
+  - ord
+  - scale_unit_box
+  - center_pane_box
+  - scale_pane_box
+  - level_search
+  width: 600
+  height: 600
+  renderFun: .plotvariavar
+- name: code
+  title: R Code
+  type: Preformatted
+  visible: (showCode)
+  clearWith:
+  - showCode
+  - prod
+  - pane
+  - senso
+  - thresh
+  - nbsimul
+  - nbpane
+  - abs
+  - ord
+  - scale_unit_box
+  - center_pane_box
+  - scale_pane_box
+  - level_search
+  - nFactors
+  - proba
+  - var_gr_box

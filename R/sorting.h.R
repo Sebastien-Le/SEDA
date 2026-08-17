@@ -10,6 +10,7 @@ SortingOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             individus = NULL,
             qualisup = NULL,
             tuto = TRUE,
+            showCode = FALSE,
             nFactors = 2,
             abs = 1,
             ord = 2,
@@ -63,6 +64,10 @@ SortingOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "tuto",
                 tuto,
                 default=TRUE)
+            private$..showCode <- jmvcore::OptionBool$new(
+                "showCode",
+                showCode,
+                default=FALSE)
             private$..nFactors <- jmvcore::OptionInteger$new(
                 "nFactors",
                 nFactors,
@@ -148,6 +153,7 @@ SortingOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..individus)
             self$.addOption(private$..qualisup)
             self$.addOption(private$..tuto)
+            self$.addOption(private$..showCode)
             self$.addOption(private$..nFactors)
             self$.addOption(private$..abs)
             self$.addOption(private$..ord)
@@ -175,6 +181,7 @@ SortingOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         individus = function() private$..individus$value,
         qualisup = function() private$..qualisup$value,
         tuto = function() private$..tuto$value,
+        showCode = function() private$..showCode$value,
         nFactors = function() private$..nFactors$value,
         abs = function() private$..abs$value,
         ord = function() private$..ord$value,
@@ -201,6 +208,7 @@ SortingOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..individus = NA,
         ..qualisup = NA,
         ..tuto = NA,
+        ..showCode = NA,
         ..nFactors = NA,
         ..abs = NA,
         ..ord = NA,
@@ -228,19 +236,25 @@ SortingResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "SortingResults",
     inherit = jmvcore::Group,
     active = list(
+        mcaCache = function() private$.items[["mcaCache"]],
+        classifCache = function() private$.items[["classifCache"]],
         instructions = function() private$.items[["instructions"]],
+        step1Guide = function() private$.items[["step1Guide"]],
         dfresgroup = function() private$.items[["dfresgroup"]],
+        longformatdata = function() private$.items[["longformatdata"]],
+        step2Guide = function() private$.items[["step2Guide"]],
+        eigengroup = function() private$.items[["eigengroup"]],
         plotindiv = function() private$.items[["plotindiv"]],
         plotvar = function() private$.items[["plotvar"]],
         plotitemvar = function() private$.items[["plotitemvar"]],
-        eigengroup = function() private$.items[["eigengroup"]],
         dimdesc = function() private$.items[["dimdesc"]],
         individus = function() private$.items[["individus"]],
         variables = function() private$.items[["variables"]],
+        step3Guide = function() private$.items[["step3Guide"]],
         plotclassif = function() private$.items[["plotclassif"]],
-        longformatdata = function() private$.items[["longformatdata"]],
         newvar = function() private$.items[["newvar"]],
-        newvar2 = function() private$.items[["newvar2"]]),
+        newvar2 = function() private$.items[["newvar2"]],
+        code = function() private$.items[["code"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -252,11 +266,41 @@ SortingResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "sorting",
                     "sensominer",
                     "senso"))
+            self$add(jmvcore::Preformatted$new(
+                options=options,
+                name="mcaCache",
+                title="MCA cache",
+                visible=FALSE,
+                clearWith=list(
+                    "actvars",
+                    "qualisup",
+                    "individus",
+                    "ventil",
+                    "ncp",
+                    "nFactors",
+                    "abs",
+                    "ord")))
+            self$add(jmvcore::Preformatted$new(
+                options=options,
+                name="classifCache",
+                title="Classification cache",
+                visible=FALSE,
+                clearWith=list(
+                    "actvars",
+                    "qualisup",
+                    "individus",
+                    "ventil",
+                    "ncp",
+                    "nbclust")))
             self$add(jmvcore::Html$new(
                 options=options,
                 name="instructions",
                 title="Instructions",
                 visible="(tuto)"))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="step1Guide",
+                title=""))
             self$add(R6::R6Class(
                 inherit = jmvcore::Group,
                 active = list(
@@ -267,15 +311,20 @@ SortingResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                         super$initialize(
                             options=options,
                             name="dfresgroup",
-                            title="Description of the Stimuli")
+                            title="Description of the Stimuli from Sorting Labels")
                         self$add(jmvcore::Table$new(
                             options=options,
                             name="dfres",
-                            title="Description of the Stimuli",
+                            title="Words Associated with the Stimuli",
+                            clearWith=list(
+                                "actvars",
+                                "qualisup",
+                                "individus",
+                                "leveltext"),
                             columns=list(
                                 list(
                                     `name`="component", 
-                                    `title`="", 
+                                    `title`="Stimulus", 
                                     `type`="text", 
                                     `combineBelow`=TRUE),
                                 list(
@@ -284,49 +333,48 @@ SortingResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                                     `type`="text"),
                                 list(
                                     `name`="internper", 
-                                    `title`="Intern %", 
-                                    `type`="Number"),
+                                    `title`="Internal %", 
+                                    `type`="Number", 
+                                    `format`="zto"),
                                 list(
                                     `name`="globper", 
                                     `title`="Global %", 
-                                    `type`="Number"),
+                                    `type`="Number", 
+                                    `format`="zto"),
                                 list(
                                     `name`="internfreq", 
-                                    `title`="Intern frequency", 
-                                    `type`="Number"),
+                                    `title`="Internal frequency", 
+                                    `type`="Number", 
+                                    `format`="zto"),
                                 list(
                                     `name`="globfreq", 
                                     `title`="Global frequency", 
-                                    `type`="Number"),
+                                    `type`="Number", 
+                                    `format`="zto"),
                                 list(
                                     `name`="pvaluedfres", 
                                     `title`="p", 
+                                    `type`="Number", 
                                     `format`="zto,pvalue"),
                                 list(
                                     `name`="vtest", 
-                                    `title`="Vtest", 
-                                    `type`="Number"))))}))$new(options=options))
-            self$add(jmvcore::Image$new(
+                                    `title`="V-test", 
+                                    `type`="Number", 
+                                    `format`="zto"))))}))$new(options=options))
+            self$add(jmvcore::Preformatted$new(
                 options=options,
-                name="plotindiv",
-                title="Representation of the Stimuli",
-                width=700,
-                height=500,
-                renderFun=".plotindiv"))
-            self$add(jmvcore::Image$new(
+                name="longformatdata",
+                title="Long-Format Sorting Labels",
+                visible="(longformat)",
+                clearWith=list(
+                    "actvars",
+                    "qualisup",
+                    "individus",
+                    "longformat")))
+            self$add(jmvcore::Html$new(
                 options=options,
-                name="plotvar",
-                title="Representation of the Subjects",
-                width=700,
-                height=500,
-                renderFun=".plotvar"))
-            self$add(jmvcore::Image$new(
-                options=options,
-                name="plotitemvar",
-                title="Representation of the Categories",
-                width=700,
-                height=500,
-                renderFun=".plotitemvar"))
+                name="step2Guide",
+                title=""))
             self$add(R6::R6Class(
                 inherit = jmvcore::Group,
                 active = list(
@@ -342,6 +390,14 @@ SortingResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                             options=options,
                             name="eigen",
                             title="Eigenvalue and (Cumulative) Percentage of Variance",
+                            clearWith=list(
+                                "actvars",
+                                "qualisup",
+                                "ventil",
+                                "ncp",
+                                "nFactors",
+                                "abs",
+                                "ord"),
                             columns=list(
                                 list(
                                     `name`="component", 
@@ -350,19 +406,143 @@ SortingResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                                 list(
                                     `name`="eigenvalue", 
                                     `title`="Eigenvalue", 
-                                    `type`="number"),
+                                    `type`="Number", 
+                                    `format`="zto"),
                                 list(
                                     `name`="purcent", 
-                                    `title`="% of variance", 
-                                    `type`="number"),
+                                    `title`="% of the variance", 
+                                    `type`="Number", 
+                                    `format`="zto"),
                                 list(
                                     `name`="purcentcum", 
                                     `title`="Cumulative %", 
-                                    `type`="number"))))}))$new(options=options))
-            self$add(jmvcore::Preformatted$new(
+                                    `type`="Number", 
+                                    `format`="zto"))))}))$new(options=options))
+            self$add(jmvcore::Image$new(
                 options=options,
-                name="dimdesc",
-                title="Automatic Description of the Dimensions"))
+                name="plotindiv",
+                title="Representation of the Stimuli",
+                width=800,
+                height=600,
+                renderFun=".plotindiv",
+                clearWith=list(
+                    "actvars",
+                    "qualisup",
+                    "individus",
+                    "ventil",
+                    "ncp",
+                    "nFactors",
+                    "abs",
+                    "ord")))
+            self$add(jmvcore::Image$new(
+                options=options,
+                name="plotvar",
+                title="Representation of the Subjects",
+                width=800,
+                height=600,
+                renderFun=".plotvar",
+                clearWith=list(
+                    "actvars",
+                    "qualisup",
+                    "individus",
+                    "ventil",
+                    "ncp",
+                    "nFactors",
+                    "abs",
+                    "ord")))
+            self$add(jmvcore::Image$new(
+                options=options,
+                name="plotitemvar",
+                title="Representation of the Sorting Categories",
+                width=800,
+                height=600,
+                renderFun=".plotitemvar",
+                clearWith=list(
+                    "actvars",
+                    "qualisup",
+                    "individus",
+                    "ventil",
+                    "ncp",
+                    "nFactors",
+                    "abs",
+                    "ord",
+                    "varmodqualisup",
+                    "varmodvar",
+                    "modality")))
+            self$add(R6::R6Class(
+                inherit = jmvcore::Group,
+                active = list(
+                    categorical = function() private$.items[["categorical"]],
+                    categories = function() private$.items[["categories"]]),
+                private = list(),
+                public=list(
+                    initialize=function(options) {
+                        super$initialize(
+                            options=options,
+                            name="dimdesc",
+                            title="Automatic Description of the Dimensions")
+                        self$add(jmvcore::Table$new(
+                            options=options,
+                            name="categorical",
+                            title="Subjects Associated with the Dimensions",
+                            clearWith=list(
+                                "actvars",
+                                "qualisup",
+                                "individus",
+                                "ventil",
+                                "nFactors",
+                                "proba"),
+                            columns=list(
+                                list(
+                                    `name`="dimension", 
+                                    `title`="Dimension", 
+                                    `type`="text", 
+                                    `combineBelow`=TRUE),
+                                list(
+                                    `name`="variable", 
+                                    `title`="Subject", 
+                                    `type`="text"),
+                                list(
+                                    `name`="r2", 
+                                    `title`="R\u00B2", 
+                                    `type`="Number", 
+                                    `format`="zto"),
+                                list(
+                                    `name`="p", 
+                                    `title`="p", 
+                                    `type`="Number", 
+                                    `format`="zto,pvalue"))))
+                        self$add(jmvcore::Table$new(
+                            options=options,
+                            name="categories",
+                            title="Sorting Categories Associated with the Dimensions",
+                            clearWith=list(
+                                "actvars",
+                                "qualisup",
+                                "individus",
+                                "ventil",
+                                "nFactors",
+                                "proba"),
+                            columns=list(
+                                list(
+                                    `name`="dimension", 
+                                    `title`="Dimension", 
+                                    `type`="text", 
+                                    `combineBelow`=TRUE),
+                                list(
+                                    `name`="category", 
+                                    `title`="Category", 
+                                    `type`="text"),
+                                list(
+                                    `name`="estimate", 
+                                    `title`="Estimate", 
+                                    `type`="Number", 
+                                    `format`="zto"),
+                                list(
+                                    `name`="p", 
+                                    `title`="p", 
+                                    `type`="Number", 
+                                    `format`="zto,pvalue"))))}))$new(options=options))
             self$add(R6::R6Class(
                 inherit = jmvcore::Group,
                 active = list(
@@ -375,14 +555,19 @@ SortingResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                         super$initialize(
                             options=options,
                             name="individus",
-                            title="Individual Tables")
+                            title="Stimulus Tables")
                         self$add(jmvcore::Table$new(
                             options=options,
                             name="coordonnees",
                             title="Coordinates Table",
                             visible="(indcoord)",
                             clearWith=list(
-                                "nFactors"),
+                                "actvars",
+                                "qualisup",
+                                "individus",
+                                "ventil",
+                                "nFactors",
+                                "ncp"),
                             columns=list()))
                         self$add(jmvcore::Table$new(
                             options=options,
@@ -390,7 +575,12 @@ SortingResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                             title="Contributions Table",
                             visible="(indcontrib)",
                             clearWith=list(
-                                "nFactors"),
+                                "actvars",
+                                "qualisup",
+                                "individus",
+                                "ventil",
+                                "nFactors",
+                                "ncp"),
                             columns=list()))
                         self$add(jmvcore::Table$new(
                             options=options,
@@ -398,7 +588,12 @@ SortingResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                             title="Cosine Table",
                             visible="(indcos)",
                             clearWith=list(
-                                "nFactors"),
+                                "actvars",
+                                "qualisup",
+                                "individus",
+                                "ventil",
+                                "nFactors",
+                                "ncp"),
                             columns=list()))}))$new(options=options))
             self$add(R6::R6Class(
                 inherit = jmvcore::Group,
@@ -412,7 +607,7 @@ SortingResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                         super$initialize(
                             options=options,
                             name="variables",
-                            title="Variable Tables")
+                            title="Subject Tables")
                         self$add(jmvcore::Table$new(
                             options=options,
                             name="coordonnees",
@@ -420,7 +615,10 @@ SortingResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                             visible="(varcoord)",
                             clearWith=list(
                                 "actvars",
-                                "nFactors"),
+                                "qualisup",
+                                "ventil",
+                                "nFactors",
+                                "ncp"),
                             columns=list()))
                         self$add(jmvcore::Table$new(
                             options=options,
@@ -429,7 +627,10 @@ SortingResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                             visible="(varcontrib)",
                             clearWith=list(
                                 "actvars",
-                                "nFactors"),
+                                "qualisup",
+                                "ventil",
+                                "nFactors",
+                                "ncp"),
                             columns=list()))
                         self$add(jmvcore::Table$new(
                             options=options,
@@ -438,21 +639,33 @@ SortingResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                             visible="(varcos)",
                             clearWith=list(
                                 "actvars",
-                                "nFactors"),
+                                "qualisup",
+                                "ventil",
+                                "nFactors",
+                                "ncp"),
                             columns=list()))}))$new(options=options))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="step3Guide",
+                title="",
+                visible="(graphclassif)"))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="plotclassif",
                 title="Representation of the Stimuli According to Clusters",
                 visible="(graphclassif)",
-                width=700,
-                height=500,
-                renderFun=".plotclassif"))
-            self$add(jmvcore::Preformatted$new(
-                options=options,
-                name="longformatdata",
-                title="Long Format Data",
-                visible="(longformat)"))
+                width=800,
+                height=600,
+                renderFun=".plotclassif",
+                clearWith=list(
+                    "actvars",
+                    "qualisup",
+                    "individus",
+                    "ventil",
+                    "ncp",
+                    "nbclust",
+                    "abs",
+                    "ord")))
             self$add(jmvcore::Output$new(
                 options=options,
                 name="newvar",
@@ -461,24 +674,51 @@ SortingResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 initInRun=TRUE,
                 clearWith=list(
                     "actvars",
-                    "quantisup",
                     "qualisup",
                     "individus",
-                    "nFactors",
-                    "norme")))
+                    "ventil",
+                    "ncp")))
             self$add(jmvcore::Output$new(
                 options=options,
                 name="newvar2",
-                title="Coordinates",
-                measureType="continuous",
+                title="Cluster",
+                measureType="nominal",
                 initInRun=TRUE,
                 clearWith=list(
                     "actvars",
-                    "quantisup",
                     "qualisup",
                     "individus",
+                    "ventil",
+                    "ncp",
+                    "nbclust")))
+            self$add(jmvcore::Preformatted$new(
+                options=options,
+                name="code",
+                title="R Code",
+                visible="(showCode)",
+                clearWith=list(
+                    "showCode",
+                    "actvars",
+                    "qualisup",
+                    "individus",
+                    "ventil",
+                    "leveltext",
+                    "abs",
+                    "ord",
+                    "varmodqualisup",
+                    "varmodvar",
+                    "modality",
                     "nFactors",
-                    "norme")))}))
+                    "proba",
+                    "indcoord",
+                    "indcontrib",
+                    "indcos",
+                    "varcoord",
+                    "varcontrib",
+                    "varcos",
+                    "ncp",
+                    "graphclassif",
+                    "nbclust")))}))
 
 SortingBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "SortingBase",
@@ -488,7 +728,7 @@ SortingBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             super$initialize(
                 package = "SEDA",
                 name = "Sorting",
-                version = c(1,0,0),
+                version = c(1,1,0),
                 options = options,
                 results = SortingResults$new(options=options),
                 data = data,
@@ -509,6 +749,7 @@ SortingBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param individus .
 #' @param qualisup .
 #' @param tuto .
+#' @param showCode .
 #' @param nFactors .
 #' @param abs .
 #' @param ord .
@@ -530,23 +771,30 @@ SortingBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param nbclust .
 #' @return A results object containing:
 #' \tabular{llllll}{
+#'   \code{results$mcaCache} \tab \tab \tab \tab \tab a preformatted \cr
+#'   \code{results$classifCache} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
+#'   \code{results$step1Guide} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$dfresgroup$dfres} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$longformatdata} \tab \tab \tab \tab \tab a preformatted \cr
+#'   \code{results$step2Guide} \tab \tab \tab \tab \tab a html \cr
+#'   \code{results$eigengroup$eigen} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$plotindiv} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$plotvar} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$plotitemvar} \tab \tab \tab \tab \tab an image \cr
-#'   \code{results$eigengroup$eigen} \tab \tab \tab \tab \tab a table \cr
-#'   \code{results$dimdesc} \tab \tab \tab \tab \tab a preformatted \cr
+#'   \code{results$dimdesc$categorical} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$dimdesc$categories} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$individus$coordonnees} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$individus$contribution} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$individus$cosinus} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$variables$coordonnees} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$variables$contribution} \tab \tab \tab \tab \tab a table \cr
 #'   \code{results$variables$cosinus} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$step3Guide} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$plotclassif} \tab \tab \tab \tab \tab an image \cr
-#'   \code{results$longformatdata} \tab \tab \tab \tab \tab a preformatted \cr
 #'   \code{results$newvar} \tab \tab \tab \tab \tab an output \cr
 #'   \code{results$newvar2} \tab \tab \tab \tab \tab an output \cr
+#'   \code{results$code} \tab \tab \tab \tab \tab a preformatted \cr
 #' }
 #'
 #' @export
@@ -556,6 +804,7 @@ Sorting <- function(
     individus,
     qualisup,
     tuto = TRUE,
+    showCode = FALSE,
     nFactors = 2,
     abs = 1,
     ord = 2,
@@ -598,6 +847,7 @@ Sorting <- function(
         individus = individus,
         qualisup = qualisup,
         tuto = tuto,
+        showCode = showCode,
         nFactors = nFactors,
         abs = abs,
         ord = ord,

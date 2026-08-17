@@ -1,24 +1,137 @@
 ---
-name:  carto
+name: carto
 title: Preference Mapping
-jrs:   '1.1'
+jrs: '1.1'
 refs:
-    - sensominer
-    - senso
-    - carto1
-    - carto2
+  - sensominer
+  - senso
+  - carto1
+  - carto2
 
 items:
-    - name: instructions
-      title: Instructions
-      visible: (tuto)
-      type: Html
+  - name: instructions
+    title: Instructions
+    visible: (tuto)
+    type: Html
 
-    - name: plotcarto
-      title: Representation of the Products
+  - name: step1Guide
+    title: ''
+    type: Html
+
+  - name: plotcarto
+    title: Overall Preference Map
+    type: Image
+    width: 650
+    height: 520
+    renderFun: .plotcartograph
+    clearWith:
+      - individus
+      - coox
+      - cooy
+      - hedo
+      - regtype
+      - level
+      - colbelow
+      - colabove
+
+  - name: step2Guide
+    title: ''
+    type: Html
+    visible: (classify)
+
+  - name: clusterSizes
+    title: Consumer Cluster Sizes
+    type: Table
+    visible: (classify)
+    clearWith:
+      - hedo
+      - classify
+      - nbclust
+    columns:
+      - name: cluster
+        title: Cluster
+        type: integer
+      - name: n
+        title: N consumers
+        type: integer
+      - name: percent
+        title: Consumers (%)
+        type: number
+        format: zto
+
+  - name: clusterMembership
+    title: Consumer Cluster Membership
+    type: Table
+    visible: (classify)
+    clearWith:
+      - hedo
+      - classify
+      - nbclust
+    columns:
+      - name: consumer
+        title: Consumer
+        type: text
+      - name: cluster
+        title: Cluster
+        type: integer
+
+  - name: dendrogram
+    title: Consumer Cluster Dendrogram
+    type: Image
+    width: 700
+    height: 500
+    renderFun: .plotDendrogram
+    visible: (classify && graphdendro)
+    clearWith:
+      - hedo
+      - classify
+      - nbclust
+      - graphdendro
+
+  - name: step3Guide
+    title: ''
+    type: Html
+    visible: (classify && graphgroups)
+
+  - name: clusterMaps
+    title: Preference Maps by Consumer Cluster
+    type: Array
+    visible: (classify && graphgroups)
+    clearWith:
+      - individus
+      - coox
+      - cooy
+      - hedo
+      - regtype
+      - level
+      - colbelow
+      - colabove
+      - classify
+      - nbclust
+      - graphgroups
+    template:
+      title: $key
       type: Image
-      width:  600
-      height: 500
-      renderFun: .plotcartograph
+      width: 650
+      height: 520
+      renderFun: .plotClusterMap
 
+  - name: code
+    title: R Code
+    type: Preformatted
+    visible: (showCode)
+    clearWith:
+      - showCode
+      - individus
+      - coox
+      - cooy
+      - hedo
+      - regtype
+      - level
+      - colbelow
+      - colabove
+      - classify
+      - nbclust
+      - graphdendro
+      - graphgroups
 ...

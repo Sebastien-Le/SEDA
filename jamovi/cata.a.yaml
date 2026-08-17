@@ -1,12 +1,12 @@
 ---
-name:  cata
+name: cata
 title: Analysis of CATA data
 menuGroup: SEDA
 
 menuSubgroup: Fixed List of Attributes
 menuTitle: Analysis of CATA Data
-menuSubtitle: 'SensoMineR::CATA'
-version: '1.0.0'
+menuSubtitle: 'FactoMineR::CA + HCPC'
+version: '1.1.0'
 jas: '1.2'
 
 options:
@@ -20,7 +20,7 @@ options:
       - nominal
       - ordinal
     permitted:
-      - factor  
+      - factor
 
   - name: group
     title: CATA
@@ -33,12 +33,35 @@ options:
   - name: tuto
     title: Read me before running
     type: Bool
-    default: true            
+    default: true
+
+  - name: showCode
+    title: R code
+    type: Bool
+    default: false
 
   - name: thres
     title: Significance threshold (%)
     type: Number
     default: 5
-  
-...
 
+  - name: abs
+    title: X-axis
+    type: Integer
+    default: 1
+
+  - name: ord
+    title: Y-axis
+    type: Integer
+    default: 2
+
+  - name: ncp
+    title: Number of dimensions for clustering
+    type: Integer
+    default: 5
+
+  - name: nbclust
+    title: Number of clusters
+    type: Integer
+    default: -1
+...

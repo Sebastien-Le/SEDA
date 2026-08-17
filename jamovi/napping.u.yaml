@@ -16,27 +16,45 @@ children:
             maxItemCount: 1
             isTarget: true
       - type: TargetLayoutBox
-        label: '(X,Y) Coordinates'
+        label: 'Active (X,Y) Coordinate Pairs'
         children:
           - type: VariablesListBox
             name: actvars
             isTarget: true
       - type: TargetLayoutBox
-        label: 'Supplementary (X,Y) Coordinates'
+        label: 'Supplementary (X,Y) Coordinate Pairs'
         children:
           - type: VariablesListBox
             name: qualisup
             isTarget: true
+
   - type: LayoutBox
     margin: large
     stretchFactor: 1
     children:
       - type: Label
-        label: Instructions
+        label: Instructions and R Code
         stretchFactor: 1
         children:
-          - type: CheckBox
-            name: tuto                
+          - type: Label
+            label: ''
+            cell:
+              column: 0
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: CheckBox
+                name: tuto
+          - type: Label
+            label: ''
+            cell:
+              column: 1
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: CheckBox
+                name: showCode
+
   - type: LayoutBox
     margin: large
     stretchFactor: 1
@@ -68,6 +86,7 @@ children:
                   - type: TextBox
                     name: ord
                     format: number
+
   - type: LayoutBox
     margin: large
     stretchFactor: 1
@@ -100,7 +119,7 @@ children:
                     name: nFactors
                     format: number
           - type: Label
-            label: Save
+            label: Save / Clustering Dimensions
             children:
               - type: Label
                 label: ''
@@ -121,6 +140,7 @@ children:
                 children:
                   - type: Output
                     name: newvar
+
   - type: LayoutBox
     margin: large
     stretchFactor: 1
@@ -131,7 +151,7 @@ children:
         collapsed: true
         children:
           - type: Label
-            label: Clustering Graphic Options
+            label: Clustering Options
             children:
               - type: Label
                 label: ''
@@ -142,7 +162,6 @@ children:
                 children:
                   - type: CheckBox
                     name: graphclassif
-                    format: number
               - type: Label
                 label: ''
                 cell:
@@ -162,4 +181,3 @@ children:
                 children:
                   - type: Output
                     name: newvar2
-                    enable: (graphclassif)

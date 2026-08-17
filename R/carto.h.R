@@ -11,9 +11,15 @@ cartoOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             cooy = NULL,
             hedo = NULL,
             tuto = TRUE,
+            showCode = FALSE,
             regtype = "1",
+            level = 0,
             colbelow = "blue",
-            colabove = "red", ...) {
+            colabove = "red",
+            classify = FALSE,
+            nbclust = -1,
+            graphdendro = TRUE,
+            graphgroups = TRUE, ...) {
 
             super$initialize(
                 package="SEDA",
@@ -53,6 +59,10 @@ cartoOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "tuto",
                 tuto,
                 default=TRUE)
+            private$..showCode <- jmvcore::OptionBool$new(
+                "showCode",
+                showCode,
+                default=FALSE)
             private$..regtype <- jmvcore::OptionList$new(
                 "regtype",
                 regtype,
@@ -62,6 +72,12 @@ cartoOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "3",
                     "4"),
                 default="1")
+            private$..level <- jmvcore::OptionNumber$new(
+                "level",
+                level,
+                default=0,
+                min=-3,
+                max=3)
             private$..colbelow <- jmvcore::OptionList$new(
                 "colbelow",
                 colbelow,
@@ -88,15 +104,37 @@ cartoOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                     "darkgrey",
                     "black"),
                 default="red")
+            private$..classify <- jmvcore::OptionBool$new(
+                "classify",
+                classify,
+                default=FALSE)
+            private$..nbclust <- jmvcore::OptionInteger$new(
+                "nbclust",
+                nbclust,
+                default=-1)
+            private$..graphdendro <- jmvcore::OptionBool$new(
+                "graphdendro",
+                graphdendro,
+                default=TRUE)
+            private$..graphgroups <- jmvcore::OptionBool$new(
+                "graphgroups",
+                graphgroups,
+                default=TRUE)
 
             self$.addOption(private$..individus)
             self$.addOption(private$..coox)
             self$.addOption(private$..cooy)
             self$.addOption(private$..hedo)
             self$.addOption(private$..tuto)
+            self$.addOption(private$..showCode)
             self$.addOption(private$..regtype)
+            self$.addOption(private$..level)
             self$.addOption(private$..colbelow)
             self$.addOption(private$..colabove)
+            self$.addOption(private$..classify)
+            self$.addOption(private$..nbclust)
+            self$.addOption(private$..graphdendro)
+            self$.addOption(private$..graphgroups)
         }),
     active = list(
         individus = function() private$..individus$value,
@@ -104,18 +142,30 @@ cartoOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         cooy = function() private$..cooy$value,
         hedo = function() private$..hedo$value,
         tuto = function() private$..tuto$value,
+        showCode = function() private$..showCode$value,
         regtype = function() private$..regtype$value,
+        level = function() private$..level$value,
         colbelow = function() private$..colbelow$value,
-        colabove = function() private$..colabove$value),
+        colabove = function() private$..colabove$value,
+        classify = function() private$..classify$value,
+        nbclust = function() private$..nbclust$value,
+        graphdendro = function() private$..graphdendro$value,
+        graphgroups = function() private$..graphgroups$value),
     private = list(
         ..individus = NA,
         ..coox = NA,
         ..cooy = NA,
         ..hedo = NA,
         ..tuto = NA,
+        ..showCode = NA,
         ..regtype = NA,
+        ..level = NA,
         ..colbelow = NA,
-        ..colabove = NA)
+        ..colabove = NA,
+        ..classify = NA,
+        ..nbclust = NA,
+        ..graphdendro = NA,
+        ..graphgroups = NA)
 )
 
 cartoResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
@@ -123,7 +173,15 @@ cartoResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
         instructions = function() private$.items[["instructions"]],
-        plotcarto = function() private$.items[["plotcarto"]]),
+        step1Guide = function() private$.items[["step1Guide"]],
+        plotcarto = function() private$.items[["plotcarto"]],
+        step2Guide = function() private$.items[["step2Guide"]],
+        clusterSizes = function() private$.items[["clusterSizes"]],
+        clusterMembership = function() private$.items[["clusterMembership"]],
+        dendrogram = function() private$.items[["dendrogram"]],
+        step3Guide = function() private$.items[["step3Guide"]],
+        clusterMaps = function() private$.items[["clusterMaps"]],
+        code = function() private$.items[["code"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -141,13 +199,132 @@ cartoResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 name="instructions",
                 title="Instructions",
                 visible="(tuto)"))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="step1Guide",
+                title=""))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="plotcarto",
-                title="Representation of the Products",
-                width=600,
+                title="Overall Preference Map",
+                width=650,
+                height=520,
+                renderFun=".plotcartograph",
+                clearWith=list(
+                    "individus",
+                    "coox",
+                    "cooy",
+                    "hedo",
+                    "regtype",
+                    "level",
+                    "colbelow",
+                    "colabove")))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="step2Guide",
+                title="",
+                visible="(classify)"))
+            self$add(jmvcore::Table$new(
+                options=options,
+                name="clusterSizes",
+                title="Consumer Cluster Sizes",
+                visible="(classify)",
+                clearWith=list(
+                    "hedo",
+                    "classify",
+                    "nbclust"),
+                columns=list(
+                    list(
+                        `name`="cluster", 
+                        `title`="Cluster", 
+                        `type`="integer"),
+                    list(
+                        `name`="n", 
+                        `title`="N consumers", 
+                        `type`="integer"),
+                    list(
+                        `name`="percent", 
+                        `title`="Consumers (%)", 
+                        `type`="number", 
+                        `format`="zto"))))
+            self$add(jmvcore::Table$new(
+                options=options,
+                name="clusterMembership",
+                title="Consumer Cluster Membership",
+                visible="(classify)",
+                clearWith=list(
+                    "hedo",
+                    "classify",
+                    "nbclust"),
+                columns=list(
+                    list(
+                        `name`="consumer", 
+                        `title`="Consumer", 
+                        `type`="text"),
+                    list(
+                        `name`="cluster", 
+                        `title`="Cluster", 
+                        `type`="integer"))))
+            self$add(jmvcore::Image$new(
+                options=options,
+                name="dendrogram",
+                title="Consumer Cluster Dendrogram",
+                width=700,
                 height=500,
-                renderFun=".plotcartograph"))}))
+                renderFun=".plotDendrogram",
+                visible="(classify && graphdendro)",
+                clearWith=list(
+                    "hedo",
+                    "classify",
+                    "nbclust",
+                    "graphdendro")))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="step3Guide",
+                title="",
+                visible="(classify && graphgroups)"))
+            self$add(jmvcore::Array$new(
+                options=options,
+                name="clusterMaps",
+                title="Preference Maps by Consumer Cluster",
+                visible="(classify && graphgroups)",
+                clearWith=list(
+                    "individus",
+                    "coox",
+                    "cooy",
+                    "hedo",
+                    "regtype",
+                    "level",
+                    "colbelow",
+                    "colabove",
+                    "classify",
+                    "nbclust",
+                    "graphgroups"),
+                template=jmvcore::Image$new(
+                    options=options,
+                    title="$key",
+                    width=650,
+                    height=520,
+                    renderFun=".plotClusterMap")))
+            self$add(jmvcore::Preformatted$new(
+                options=options,
+                name="code",
+                title="R Code",
+                visible="(showCode)",
+                clearWith=list(
+                    "showCode",
+                    "individus",
+                    "coox",
+                    "cooy",
+                    "hedo",
+                    "regtype",
+                    "level",
+                    "colbelow",
+                    "colabove",
+                    "classify",
+                    "nbclust",
+                    "graphdendro",
+                    "graphgroups")))}))
 
 cartoBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "cartoBase",
@@ -157,7 +334,7 @@ cartoBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             super$initialize(
                 package = "SEDA",
                 name = "carto",
-                version = c(1,0,0),
+                version = c(1,1,0),
                 options = options,
                 results = cartoResults$new(options=options),
                 data = data,
@@ -179,14 +356,34 @@ cartoBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param cooy .
 #' @param hedo .
 #' @param tuto .
+#' @param showCode .
 #' @param regtype .
+#' @param level .
 #' @param colbelow .
 #' @param colabove .
+#' @param classify .
+#' @param nbclust .
+#' @param graphdendro .
+#' @param graphgroups .
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
+#'   \code{results$step1Guide} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$plotcarto} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$step2Guide} \tab \tab \tab \tab \tab a html \cr
+#'   \code{results$clusterSizes} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$clusterMembership} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$dendrogram} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$step3Guide} \tab \tab \tab \tab \tab a html \cr
+#'   \code{results$clusterMaps} \tab \tab \tab \tab \tab an array of images \cr
+#'   \code{results$code} \tab \tab \tab \tab \tab a preformatted \cr
 #' }
+#'
+#' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
+#'
+#' \code{results$clusterSizes$asDF}
+#'
+#' \code{as.data.frame(results$clusterSizes)}
 #'
 #' @export
 carto <- function(
@@ -196,9 +393,15 @@ carto <- function(
     cooy,
     hedo,
     tuto = TRUE,
+    showCode = FALSE,
     regtype = "1",
+    level = 0,
     colbelow = "blue",
-    colabove = "red") {
+    colabove = "red",
+    classify = FALSE,
+    nbclust = -1,
+    graphdendro = TRUE,
+    graphgroups = TRUE) {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("carto requires jmvcore to be installed (restart may be required)")
@@ -223,9 +426,15 @@ carto <- function(
         cooy = cooy,
         hedo = hedo,
         tuto = tuto,
+        showCode = showCode,
         regtype = regtype,
+        level = level,
         colbelow = colbelow,
-        colabove = colabove)
+        colabove = colabove,
+        classify = classify,
+        nbclust = nbclust,
+        graphdendro = graphdendro,
+        graphgroups = graphgroups)
 
     analysis <- cartoClass$new(
         options = options,

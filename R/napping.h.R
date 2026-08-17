@@ -10,6 +10,7 @@ NappingOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             individus = NULL,
             qualisup = NULL,
             tuto = TRUE,
+            showCode = FALSE,
             nFactors = 2,
             proba = 5,
             abs = 1,
@@ -49,6 +50,10 @@ NappingOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "tuto",
                 tuto,
                 default=TRUE)
+            private$..showCode <- jmvcore::OptionBool$new(
+                "showCode",
+                showCode,
+                default=FALSE)
             private$..nFactors <- jmvcore::OptionInteger$new(
                 "nFactors",
                 nFactors,
@@ -86,6 +91,7 @@ NappingOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             self$.addOption(private$..individus)
             self$.addOption(private$..qualisup)
             self$.addOption(private$..tuto)
+            self$.addOption(private$..showCode)
             self$.addOption(private$..nFactors)
             self$.addOption(private$..proba)
             self$.addOption(private$..abs)
@@ -101,6 +107,7 @@ NappingOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         individus = function() private$..individus$value,
         qualisup = function() private$..qualisup$value,
         tuto = function() private$..tuto$value,
+        showCode = function() private$..showCode$value,
         nFactors = function() private$..nFactors$value,
         proba = function() private$..proba$value,
         abs = function() private$..abs$value,
@@ -115,6 +122,7 @@ NappingOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
         ..individus = NA,
         ..qualisup = NA,
         ..tuto = NA,
+        ..showCode = NA,
         ..nFactors = NA,
         ..proba = NA,
         ..abs = NA,
@@ -131,13 +139,17 @@ NappingResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
         instructions = function() private$.items[["instructions"]],
-        plotind = function() private$.items[["plotind"]],
-        plotgroup = function() private$.items[["plotgroup"]],
+        step1Guide = function() private$.items[["step1Guide"]],
         eigengroup = function() private$.items[["eigengroup"]],
+        plotind = function() private$.items[["plotind"]],
+        step2Guide = function() private$.items[["step2Guide"]],
+        plotgroup = function() private$.items[["plotgroup"]],
         descdesdim = function() private$.items[["descdesdim"]],
+        step3Guide = function() private$.items[["step3Guide"]],
         plotclassif = function() private$.items[["plotclassif"]],
         newvar = function() private$.items[["newvar"]],
-        newvar2 = function() private$.items[["newvar2"]]),
+        newvar2 = function() private$.items[["newvar2"]],
+        code = function() private$.items[["code"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -155,20 +167,10 @@ NappingResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 name="instructions",
                 title="Instructions",
                 visible="(tuto)"))
-            self$add(jmvcore::Image$new(
+            self$add(jmvcore::Html$new(
                 options=options,
-                name="plotind",
-                title="Representation of the Stimuli",
-                width=800,
-                height=600,
-                renderFun=".plotindividus"))
-            self$add(jmvcore::Image$new(
-                options=options,
-                name="plotgroup",
-                title="Representation of the Subjects",
-                width=600,
-                height=600,
-                renderFun=".plotgroups"))
+                name="step1Guide",
+                title=""))
             self$add(R6::R6Class(
                 inherit = jmvcore::Group,
                 active = list(
@@ -179,7 +181,15 @@ NappingResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                         super$initialize(
                             options=options,
                             name="eigengroup",
-                            title="Eigenvalue Decomposition")
+                            title="Eigenvalue Decomposition",
+                            clearWith=list(
+                    "actvars",
+                    "qualisup",
+                    "individus",
+                    "ncp",
+                    "nFactors",
+                    "abs",
+                    "ord"))
                         self$add(jmvcore::Table$new(
                             options=options,
                             name="eigen",
@@ -192,24 +202,105 @@ NappingResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                                 list(
                                     `name`="eigenvalue", 
                                     `title`="Eigenvalue", 
-                                    `type`="number"),
+                                    `type`="Number", 
+                                    `format`="zto"),
                                 list(
                                     `name`="purcent", 
                                     `title`="% of the variance", 
-                                    `type`="number"),
+                                    `type`="Number", 
+                                    `format`="zto"),
                                 list(
                                     `name`="purcentcum", 
                                     `title`="Cumulative %", 
-                                    `type`="number"))))}))$new(options=options))
-            self$add(jmvcore::Preformatted$new(
+                                    `type`="Number", 
+                                    `format`="zto"))))}))$new(options=options))
+            self$add(jmvcore::Image$new(
+                options=options,
+                name="plotind",
+                title="Representation of the Stimuli",
+                clearWith=list(
+                    "actvars",
+                    "qualisup",
+                    "individus",
+                    "abs",
+                    "ord",
+                    "ncp",
+                    "nFactors"),
+                width=800,
+                height=600,
+                renderFun=".plotindividus"))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="step2Guide",
+                title=""))
+            self$add(jmvcore::Image$new(
+                options=options,
+                name="plotgroup",
+                title="Representation of the Subjects",
+                clearWith=list(
+                    "actvars",
+                    "qualisup",
+                    "individus",
+                    "abs",
+                    "ord",
+                    "ncp",
+                    "nFactors"),
+                width=600,
+                height=600,
+                renderFun=".plotgroups"))
+            self$add(jmvcore::Table$new(
                 options=options,
                 name="descdesdim",
-                title="Automatic Description of the Dimensions"))
+                title="Automatic Description of the Dimensions",
+                clearWith=list(
+                    "actvars",
+                    "qualisup",
+                    "individus",
+                    "nFactors",
+                    "proba"),
+                columns=list(
+                    list(
+                        `name`="dimension", 
+                        `title`="Dimension", 
+                        `type`="text", 
+                        `combineBelow`=TRUE),
+                    list(
+                        `name`="variable", 
+                        `title`="Coordinate", 
+                        `type`="text"),
+                    list(
+                        `name`="correlation", 
+                        `title`="Correlation", 
+                        `type`="Number", 
+                        `format`="zto"),
+                    list(
+                        `name`="p", 
+                        `title`="p", 
+                        `type`="Number", 
+                        `format`="zto,pvalue"),
+                    list(
+                        `name`="n", 
+                        `title`="N", 
+                        `type`="Integer"))))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="step3Guide",
+                title="",
+                visible="(graphclassif)"))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="plotclassif",
                 title="Representation of the Stimuli According to Clusters",
                 visible="(graphclassif)",
+                clearWith=list(
+                    "actvars",
+                    "qualisup",
+                    "individus",
+                    "abs",
+                    "ord",
+                    "ncp",
+                    "nbclust",
+                    "graphclassif"),
                 width=800,
                 height=600,
                 renderFun=".plotclassif"))
@@ -221,24 +312,38 @@ NappingResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 initInRun=TRUE,
                 clearWith=list(
                     "actvars",
-                    "quantisup",
                     "qualisup",
                     "individus",
-                    "nFactors",
-                    "norme")))
+                    "ncp")))
             self$add(jmvcore::Output$new(
                 options=options,
                 name="newvar2",
-                title="Coordinates",
-                measureType="continuous",
+                title="Cluster",
+                measureType="nominal",
                 initInRun=TRUE,
                 clearWith=list(
                     "actvars",
-                    "quantisup",
                     "qualisup",
                     "individus",
+                    "ncp",
+                    "nbclust")))
+            self$add(jmvcore::Preformatted$new(
+                options=options,
+                name="code",
+                title="R Code",
+                visible="(showCode)",
+                clearWith=list(
+                    "showCode",
+                    "actvars",
+                    "qualisup",
+                    "individus",
+                    "abs",
+                    "ord",
                     "nFactors",
-                    "norme")))}))
+                    "proba",
+                    "ncp",
+                    "graphclassif",
+                    "nbclust")))}))
 
 NappingBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "NappingBase",
@@ -248,7 +353,7 @@ NappingBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             super$initialize(
                 package = "SEDA",
                 name = "Napping",
-                version = c(1,0,0),
+                version = c(1,1,0),
                 options = options,
                 results = NappingResults$new(options=options),
                 data = data,
@@ -269,6 +374,7 @@ NappingBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param individus .
 #' @param qualisup .
 #' @param tuto .
+#' @param showCode .
 #' @param nFactors .
 #' @param proba .
 #' @param abs .
@@ -279,14 +385,24 @@ NappingBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
-#'   \code{results$plotind} \tab \tab \tab \tab \tab an image \cr
-#'   \code{results$plotgroup} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$step1Guide} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$eigengroup$eigen} \tab \tab \tab \tab \tab a table \cr
-#'   \code{results$descdesdim} \tab \tab \tab \tab \tab a preformatted \cr
+#'   \code{results$plotind} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$step2Guide} \tab \tab \tab \tab \tab a html \cr
+#'   \code{results$plotgroup} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$descdesdim} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$step3Guide} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$plotclassif} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$newvar} \tab \tab \tab \tab \tab an output \cr
 #'   \code{results$newvar2} \tab \tab \tab \tab \tab an output \cr
+#'   \code{results$code} \tab \tab \tab \tab \tab a preformatted \cr
 #' }
+#'
+#' Tables can be converted to data frames with \code{asDF} or \code{\link{as.data.frame}}. For example:
+#'
+#' \code{results$descdesdim$asDF}
+#'
+#' \code{as.data.frame(results$descdesdim)}
 #'
 #' @export
 Napping <- function(
@@ -295,6 +411,7 @@ Napping <- function(
     individus,
     qualisup,
     tuto = TRUE,
+    showCode = FALSE,
     nFactors = 2,
     proba = 5,
     abs = 1,
@@ -323,6 +440,7 @@ Napping <- function(
         individus = individus,
         qualisup = qualisup,
         tuto = tuto,
+        showCode = showCode,
         nFactors = nFactors,
         proba = proba,
         abs = abs,

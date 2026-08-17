@@ -7,7 +7,7 @@ menuTitle: Preference Mapping
 menuSubgroup: Hedonic Data
 menuSubtitle: SensoMineR::carto
 
-version: '1.0.0'
+version: '1.1.0'
 jas: '1.2'
 
 options:
@@ -28,7 +28,7 @@ options:
     suggested:
       - continuous
     permitted:
-      - numeric  
+      - numeric
 
   - name: cooy
     title: Y-axis
@@ -36,7 +36,7 @@ options:
     suggested:
       - continuous
     permitted:
-      - numeric  
+      - numeric
 
   - name: hedo
     title: Liking Variables
@@ -49,7 +49,12 @@ options:
   - name: tuto
     title: Read me before running
     type: Bool
-    default: true          
+    default: true
+
+  - name: showCode
+    title: R code
+    type: Bool
+    default: false
 
   - name: regtype
     title: Regression Model
@@ -64,6 +69,13 @@ options:
       - title: Elliptical
         name: '4'
     default: '1'
+
+  - name: level
+    title: Preference threshold (SD)
+    type: Number
+    default: 0
+    min: -3
+    max: 3
 
   - name: colbelow
     title: Color for low preference areas
@@ -108,4 +120,24 @@ options:
       - name: black
         title: Black
     default: red
+
+  - name: classify
+    title: Classification of consumers
+    type: Bool
+    default: false
+
+  - name: nbclust
+    title: Number of clusters
+    type: Integer
+    default: -1
+
+  - name: graphdendro
+    title: Cluster dendrogram
+    type: Bool
+    default: true
+
+  - name: graphgroups
+    title: Preference maps by cluster
+    type: Bool
+    default: true
 ...

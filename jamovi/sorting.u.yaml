@@ -16,7 +16,7 @@ children:
             maxItemCount: 1
             isTarget: true
       - type: TargetLayoutBox
-        label: Subjects
+        label: Active Subjects
         children:
           - type: VariablesListBox
             name: actvars
@@ -27,11 +27,34 @@ children:
           - type: VariablesListBox
             name: qualisup
             isTarget: true
+
   - type: LayoutBox
     margin: large
+    stretchFactor: 1
     children:
-      - type: CheckBox
-        name: tuto            
+      - type: Label
+        label: Instructions and R Code
+        stretchFactor: 1
+        children:
+          - type: Label
+            label: ''
+            cell:
+              column: 0
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: CheckBox
+                name: tuto
+          - type: Label
+            label: ''
+            cell:
+              column: 1
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: CheckBox
+                name: showCode
+
   - type: LayoutBox
     margin: large
     stretchFactor: 1
@@ -42,7 +65,8 @@ children:
         children:
           - type: TextBox
             name: ventil
-            format: number
+            format: number              
+
   - type: LayoutBox
     margin: large
     stretchFactor: 1
@@ -85,6 +109,7 @@ children:
                 format: string
               - type: CheckBox
                 name: varmodqualisup
+
   - type: LayoutBox
     margin: large
     stretchFactor: 1
@@ -117,7 +142,7 @@ children:
                     name: nFactors
                     format: number
           - type: Label
-            label: Description of the Stimuli
+            label: Description of the Stimuli from Sorting Labels
             children:
               - type: Label
                 label: ''
@@ -139,7 +164,7 @@ children:
                   - type: CheckBox
                     name: longformat
           - type: Label
-            label: Individual Table Options
+            label: Stimulus Table Options
             children:
               - type: LayoutBox
                 margin: large
@@ -152,7 +177,7 @@ children:
                   - type: CheckBox
                     name: indcos
           - type: Label
-            label: Variable Table Options
+            label: Subject Table Options
             children:
               - type: LayoutBox
                 margin: large
@@ -185,7 +210,8 @@ children:
                 stretchFactor: 1
                 children:
                   - type: Output
-                    name: newvar     
+                    name: newvar
+
   - type: LayoutBox
     margin: large
     stretchFactor: 1
@@ -196,7 +222,7 @@ children:
         collapsed: true
         children:
           - type: Label
-            label: Clustering Graphic Options
+            label: Clustering Options
             children:
               - type: Label
                 label: ''
@@ -207,7 +233,6 @@ children:
                 children:
                   - type: CheckBox
                     name: graphclassif
-                    format: number
               - type: Label
                 label: ''
                 cell:
@@ -227,4 +252,3 @@ children:
                 children:
                   - type: Output
                     name: newvar2
-                    enable: (graphclassif)

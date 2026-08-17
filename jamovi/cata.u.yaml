@@ -2,7 +2,7 @@ title: Analysis of CATA data
 name: cata
 jus: '3.0'
 stage: 0
-compilerMode: aggressive
+compilerMode: tame
 children:
   - type: VariableSupplier
     persistentItems: false
@@ -21,14 +21,103 @@ children:
           - type: VariablesListBox
             name: group
             isTarget: true
+
   - type: LayoutBox
     margin: large
+    stretchFactor: 1
     children:
-      - type: CheckBox
-        name: tuto
+      - type: Label
+        label: Instructions and R Code
+        stretchFactor: 1
+        children:
+          - type: Label
+            label: ''
+            cell:
+              column: 0
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: CheckBox
+                name: tuto
+          - type: Label
+            label: ''
+            cell:
+              column: 1
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: CheckBox
+                name: showCode
+
   - type: LayoutBox
     margin: large
     children:
       - type: TextBox
         name: thres
         format: number
+
+  - type: LayoutBox
+    margin: large
+    stretchFactor: 1
+    children:
+      - type: CollapseBox
+        label: Graphic Options
+        collapsed: true
+        stretchFactor: 1
+        children:
+          - type: Label
+            label: Components to Plot
+            children:
+              - type: Label
+                label: ''
+                cell:
+                  column: 0
+                  row: 0
+                stretchFactor: 1
+                children:
+                  - type: TextBox
+                    name: abs
+                    format: number
+              - type: Label
+                label: ''
+                cell:
+                  column: 1
+                  row: 0
+                stretchFactor: 1
+                children:
+                  - type: TextBox
+                    name: ord
+                    format: number
+
+  - type: LayoutBox
+    margin: large
+    stretchFactor: 1
+    children:
+      - type: CollapseBox
+        label: Clustering
+        collapsed: true
+        stretchFactor: 1
+        children:
+          - type: Label
+            label: Clustering Options
+            children:
+              - type: Label
+                label: ''
+                cell:
+                  column: 0
+                  row: 0
+                stretchFactor: 1
+                children:
+                  - type: TextBox
+                    name: ncp
+                    format: number
+              - type: Label
+                label: ''
+                cell:
+                  column: 1
+                  row: 0
+                stretchFactor: 1
+                children:
+                  - type: TextBox
+                    name: nbclust
+                    format: number

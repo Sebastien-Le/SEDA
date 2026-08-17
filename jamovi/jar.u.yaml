@@ -2,7 +2,7 @@ title: Analysis of JAR data
 name: JAR
 jus: '3.0'
 stage: 0
-compilerMode: aggressive
+compilerMode: tame
 children:
   - type: VariableSupplier
     persistentItems: false
@@ -35,14 +35,60 @@ children:
           - type: VariablesListBox
             name: sensoatt
             isTarget: true
+
   - type: LayoutBox
     margin: large
+    stretchFactor: 1
     children:
-      - type: CheckBox
-        name: tuto
+      - type: Label
+        label: Instructions and R Code
+        stretchFactor: 1
+        children:
+          - type: Label
+            label: ''
+            cell:
+              column: 0
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: CheckBox
+                name: tuto
+          - type: Label
+            label: ''
+            cell:
+              column: 1
+              row: 0
+            stretchFactor: 1
+            children:
+              - type: CheckBox
+                name: showCode
+
   - type: LayoutBox
     margin: large
     children:
       - type: TextBox
         name: jarmod
         format: string
+
+  - type: LayoutBox
+    margin: large
+    stretchFactor: 1
+    children:
+      - type: Label
+        label: Classical Penalty Analysis
+        stretchFactor: 1
+        children:
+          - type: TextBox
+            name: consumerThreshold
+            format: number
+          - type: TextBox
+            name: penaltyThreshold
+            format: number
+          - type: TextBox
+            name: lowPattern
+            format: string
+            stretchFactor: 2
+          - type: TextBox
+            name: highPattern
+            format: string
+            stretchFactor: 2

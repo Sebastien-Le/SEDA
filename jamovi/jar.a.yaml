@@ -2,12 +2,10 @@
 name:  JAR
 title: Analysis of JAR data
 menuGroup: SEDA
-
 menuSubgroup: Fixed List of Attributes
 menuTitle: Analysis of JAR Data
-menuSubtitle: 'SensoMineR::JAR'
-
-version: '1.0.0'
+menuSubtitle: 'SensoMineR::JAR + product-specific penalties'
+version: '1.1.0'
 jas: '1.2'
 
 options:
@@ -21,7 +19,7 @@ options:
       - nominal
     permitted:
       - factor
-      
+
   - name: paneff
     title: Subject Effect
     type: Variable
@@ -36,8 +34,8 @@ options:
     suggested:
       - continuous
     permitted:
-      - numeric      
-      
+      - numeric
+
   - name: sensoatt
     title: Sensory Attributes
     type: Variables
@@ -49,9 +47,37 @@ options:
   - name: tuto
     title: Read me before running
     type: Bool
-    default: true            
-      
+    default: true
+
+  - name: showCode
+    title: R code
+    type: Bool
+    default: false
+
   - name: jarmod
     title: Coding of the JAR level
     type: String
     default: "jar"
+
+  - name: consumerThreshold
+    title: Consumer threshold (%)
+    type: Number
+    min: 0
+    max: 100
+    default: 20
+
+  - name: penaltyThreshold
+    title: Mean-drop threshold
+    type: Number
+    min: 0
+    default: 1
+
+  - name: lowPattern
+    title: Below-JAR keywords
+    type: String
+    default: "too low|not enough|too weak|plain|low"
+
+  - name: highPattern
+    title: Above-JAR keywords
+    type: String
+    default: "too high|too much|too strong|vivid|high"

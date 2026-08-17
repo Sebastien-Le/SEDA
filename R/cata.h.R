@@ -9,7 +9,12 @@ cataOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             stimuli = NULL,
             group = NULL,
             tuto = TRUE,
-            thres = 5, ...) {
+            showCode = FALSE,
+            thres = 5,
+            abs = 1,
+            ord = 2,
+            ncp = 5,
+            nbclust = -1, ...) {
 
             super$initialize(
                 package="SEDA",
@@ -36,26 +41,61 @@ cataOptions <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 "tuto",
                 tuto,
                 default=TRUE)
+            private$..showCode <- jmvcore::OptionBool$new(
+                "showCode",
+                showCode,
+                default=FALSE)
             private$..thres <- jmvcore::OptionNumber$new(
                 "thres",
                 thres,
                 default=5)
+            private$..abs <- jmvcore::OptionInteger$new(
+                "abs",
+                abs,
+                default=1)
+            private$..ord <- jmvcore::OptionInteger$new(
+                "ord",
+                ord,
+                default=2)
+            private$..ncp <- jmvcore::OptionInteger$new(
+                "ncp",
+                ncp,
+                default=5)
+            private$..nbclust <- jmvcore::OptionInteger$new(
+                "nbclust",
+                nbclust,
+                default=-1)
 
             self$.addOption(private$..stimuli)
             self$.addOption(private$..group)
             self$.addOption(private$..tuto)
+            self$.addOption(private$..showCode)
             self$.addOption(private$..thres)
+            self$.addOption(private$..abs)
+            self$.addOption(private$..ord)
+            self$.addOption(private$..ncp)
+            self$.addOption(private$..nbclust)
         }),
     active = list(
         stimuli = function() private$..stimuli$value,
         group = function() private$..group$value,
         tuto = function() private$..tuto$value,
-        thres = function() private$..thres$value),
+        showCode = function() private$..showCode$value,
+        thres = function() private$..thres$value,
+        abs = function() private$..abs$value,
+        ord = function() private$..ord$value,
+        ncp = function() private$..ncp$value,
+        nbclust = function() private$..nbclust$value),
     private = list(
         ..stimuli = NA,
         ..group = NA,
         ..tuto = NA,
-        ..thres = NA)
+        ..showCode = NA,
+        ..thres = NA,
+        ..abs = NA,
+        ..ord = NA,
+        ..ncp = NA,
+        ..nbclust = NA)
 )
 
 cataResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
@@ -63,11 +103,16 @@ cataResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     inherit = jmvcore::Group,
     active = list(
         instructions = function() private$.items[["instructions"]],
-        textualgroup = function() private$.items[["textualgroup"]],
+        step1Guide = function() private$.items[["step1Guide"]],
         dfresgroup = function() private$.items[["dfresgroup"]],
+        step2Guide = function() private$.items[["step2Guide"]],
         plotcata = function() private$.items[["plotcata"]],
+        step3Guide = function() private$.items[["step3Guide"]],
         plotclassif = function() private$.items[["plotclassif"]],
-        clustergroup = function() private$.items[["clustergroup"]]),
+        clustergroup = function() private$.items[["clustergroup"]],
+        step4Guide = function() private$.items[["step4Guide"]],
+        textualgroup = function() private$.items[["textualgroup"]],
+        code = function() private$.items[["code"]]),
     private = list(),
     public=list(
         initialize=function(options) {
@@ -76,34 +121,18 @@ cataResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                 name="",
                 title="Analysis of CATA data",
                 refs=list(
-                    "cata",
-                    "sensominer",
-                    "senso"))
+                    "factominer",
+                    "explo",
+                    "cata"))
             self$add(jmvcore::Html$new(
                 options=options,
                 name="instructions",
                 title="Instructions",
                 visible="(tuto)"))
-            self$add(R6::R6Class(
-                inherit = jmvcore::Group,
-                active = list(
-                    textual = function() private$.items[["textual"]]),
-                private = list(),
-                public=list(
-                    initialize=function(options) {
-                        super$initialize(
-                            options=options,
-                            name="textualgroup",
-                            title="Stimuli by CATA Data Table")
-                        self$add(jmvcore::Table$new(
-                            options=options,
-                            name="textual",
-                            title="Contingency Table",
-                            visible="stimuli",
-                            clearWith=list(
-                                "stimuli",
-                                "group"),
-                            columns=list()))}))$new(options=options))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="step1Guide",
+                title=""))
             self$add(R6::R6Class(
                 inherit = jmvcore::Group,
                 active = list(
@@ -120,6 +149,10 @@ cataResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                             name="dfres",
                             title="Description of the Stimuli According to CATA",
                             visible="stimuli",
+                            clearWith=list(
+                                "stimuli",
+                                "group",
+                                "thres"),
                             columns=list(
                                 list(
                                     `name`="component", 
@@ -133,41 +166,67 @@ cataResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                                 list(
                                     `name`="internper", 
                                     `title`="Intern %", 
-                                    `type`="Number"),
+                                    `type`="Number", 
+                                    `format`="zto"),
                                 list(
                                     `name`="globper", 
                                     `title`="Global %", 
-                                    `type`="Number"),
+                                    `type`="Number", 
+                                    `format`="zto"),
                                 list(
                                     `name`="internfreq", 
                                     `title`="Intern frequency", 
-                                    `type`="Number"),
+                                    `type`="Number", 
+                                    `format`="zto"),
                                 list(
                                     `name`="globfreq", 
                                     `title`="Global frequency", 
-                                    `type`="Number"),
+                                    `type`="Number", 
+                                    `format`="zto"),
                                 list(
                                     `name`="pvaluedfres", 
                                     `title`="p", 
                                     `format`="zto,pvalue"),
                                 list(
                                     `name`="vtest", 
-                                    `title`="Vtest", 
-                                    `type`="Number"))))}))$new(options=options))
+                                    `title`="V-test", 
+                                    `type`="Number", 
+                                    `format`="zto"))))}))$new(options=options))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="step2Guide",
+                title=""))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="plotcata",
                 title="Representation of the Stimuli and the CATA",
                 width=600,
                 height=500,
-                renderFun=".plotcatatis"))
+                renderFun=".plotcatatis",
+                clearWith=list(
+                    "stimuli",
+                    "group",
+                    "abs",
+                    "ord",
+                    "ncp")))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="step3Guide",
+                title=""))
             self$add(jmvcore::Image$new(
                 options=options,
                 name="plotclassif",
                 title="Representation of the Stimuli According to Clusters",
                 width=600,
                 height=500,
-                renderFun=".plotclassif"))
+                renderFun=".plotclassif",
+                clearWith=list(
+                    "stimuli",
+                    "group",
+                    "abs",
+                    "ord",
+                    "ncp",
+                    "nbclust")))
             self$add(R6::R6Class(
                 inherit = jmvcore::Group,
                 active = list(
@@ -185,7 +244,10 @@ cataResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                             title="CATA Attributes Characterising Each Cluster",
                             clearWith=list(
                                 "stimuli",
-                                "group"),
+                                "group",
+                                "thres",
+                                "ncp",
+                                "nbclust"),
                             columns=list(
                                 list(
                                     `name`="cluster", 
@@ -199,27 +261,70 @@ cataResults <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
                                 list(
                                     `name`="internper", 
                                     `title`="Intern %", 
-                                    `type`="Number"),
+                                    `type`="Number", 
+                                    `format`="zto"),
                                 list(
                                     `name`="globper", 
                                     `title`="Global %", 
-                                    `type`="Number"),
+                                    `type`="Number", 
+                                    `format`="zto"),
                                 list(
                                     `name`="internfreq", 
                                     `title`="Intern frequency", 
-                                    `type`="Number"),
+                                    `type`="Number", 
+                                    `format`="zto"),
                                 list(
                                     `name`="globfreq", 
                                     `title`="Global frequency", 
-                                    `type`="Number"),
+                                    `type`="Number", 
+                                    `format`="zto"),
                                 list(
                                     `name`="pvaluedfres", 
                                     `title`="p", 
                                     `format`="zto,pvalue"),
                                 list(
                                     `name`="vtest", 
-                                    `title`="Vtest", 
-                                    `type`="Number"))))}))$new(options=options))}))
+                                    `title`="V-test", 
+                                    `type`="Number", 
+                                    `format`="zto"))))}))$new(options=options))
+            self$add(jmvcore::Html$new(
+                options=options,
+                name="step4Guide",
+                title=""))
+            self$add(R6::R6Class(
+                inherit = jmvcore::Group,
+                active = list(
+                    textual = function() private$.items[["textual"]]),
+                private = list(),
+                public=list(
+                    initialize=function(options) {
+                        super$initialize(
+                            options=options,
+                            name="textualgroup",
+                            title="Aggregated CATA Table")
+                        self$add(jmvcore::Table$new(
+                            options=options,
+                            name="textual",
+                            title="Stimuli \u00D7 CATA Frequency Table",
+                            visible="stimuli",
+                            clearWith=list(
+                                "stimuli",
+                                "group"),
+                            columns=list()))}))$new(options=options))
+            self$add(jmvcore::Preformatted$new(
+                options=options,
+                name="code",
+                title="R Code",
+                visible="(showCode)",
+                clearWith=list(
+                    "showCode",
+                    "stimuli",
+                    "group",
+                    "thres",
+                    "abs",
+                    "ord",
+                    "ncp",
+                    "nbclust")))}))
 
 cataBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
     "cataBase",
@@ -229,7 +334,7 @@ cataBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
             super$initialize(
                 package = "SEDA",
                 name = "cata",
-                version = c(1,0,0),
+                version = c(1,1,0),
                 options = options,
                 results = cataResults$new(options=options),
                 data = data,
@@ -249,15 +354,25 @@ cataBase <- if (requireNamespace("jmvcore", quietly=TRUE)) R6::R6Class(
 #' @param stimuli .
 #' @param group .
 #' @param tuto .
+#' @param showCode .
 #' @param thres .
+#' @param abs .
+#' @param ord .
+#' @param ncp .
+#' @param nbclust .
 #' @return A results object containing:
 #' \tabular{llllll}{
 #'   \code{results$instructions} \tab \tab \tab \tab \tab a html \cr
-#'   \code{results$textualgroup$textual} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$step1Guide} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$dfresgroup$dfres} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$step2Guide} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$plotcata} \tab \tab \tab \tab \tab an image \cr
+#'   \code{results$step3Guide} \tab \tab \tab \tab \tab a html \cr
 #'   \code{results$plotclassif} \tab \tab \tab \tab \tab an image \cr
 #'   \code{results$clustergroup$clusterdesc} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$step4Guide} \tab \tab \tab \tab \tab a html \cr
+#'   \code{results$textualgroup$textual} \tab \tab \tab \tab \tab a table \cr
+#'   \code{results$code} \tab \tab \tab \tab \tab a preformatted \cr
 #' }
 #'
 #' @export
@@ -266,7 +381,12 @@ cata <- function(
     stimuli,
     group,
     tuto = TRUE,
-    thres = 5) {
+    showCode = FALSE,
+    thres = 5,
+    abs = 1,
+    ord = 2,
+    ncp = 5,
+    nbclust = -1) {
 
     if ( ! requireNamespace("jmvcore", quietly=TRUE))
         stop("cata requires jmvcore to be installed (restart may be required)")
@@ -285,7 +405,12 @@ cata <- function(
         stimuli = stimuli,
         group = group,
         tuto = tuto,
-        thres = thres)
+        showCode = showCode,
+        thres = thres,
+        abs = abs,
+        ord = ord,
+        ncp = ncp,
+        nbclust = nbclust)
 
     analysis <- cataClass$new(
         options = options,

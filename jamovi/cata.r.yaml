@@ -1,115 +1,161 @@
----
 name: cata
 title: Analysis of CATA data
 jrs: '1.1'
 refs:
-    - cata
-    - sensominer
-    - senso
-
+- factominer
+- explo
+- cata
 items:
-  - name: instructions
-    title: Instructions
-    visible: (tuto)
-    type: Html
-
-  - name: textualgroup
-    title: Stimuli by CATA Data Table
-    type: Group
-    items:
-      - name: textual
-        title: Contingency Table
-        type: Table
-        visible: stimuli
-        clearWith:
-          - stimuli
-          - group
-        columns: []
-        
-  - name: dfresgroup
+- name: instructions
+  title: Instructions
+  visible: (tuto)
+  type: Html
+- name: step1Guide
+  title: ''
+  type: Html
+- name: dfresgroup
+  title: Description of the Stimuli According to CATA
+  type: Group
+  items:
+  - name: dfres
     title: Description of the Stimuli According to CATA
-    type: Group
-    items:
-      - name: dfres
-        title: Description of the Stimuli According to CATA
-        type: Table
-        visible: stimuli
-        columns:
-          - name: component
-            title: ''
-            type: text
-            combineBelow: true
-          - name: word
-            title: CATA
-            type: text
-          - name: internper
-            title: Intern %
-            type: Number
-          - name: globper
-            title: Global %
-            type: Number
-          - name: internfreq
-            title: Intern frequency
-            type: Number
-          - name: globfreq
-            title: Global frequency
-            type: Number
-          - name: pvaluedfres
-            title: p
-            format: zto,pvalue
-          - name: vtest
-            title: Vtest
-            type: Number
-
-  - name: plotcata
-    title: Representation of the Stimuli and the CATA
-    type: Image
-    width: 600
-    height: 500
-    renderFun: .plotcatatis
-    
-  - name: plotclassif
-    title: Representation of the Stimuli According to Clusters
-    type: Image
-    width: 600
-    height: 500
-    renderFun: .plotclassif
-
-  - name: clustergroup
-    title: Description of the Clusters
-    type: Group
-    items:
-      - name: clusterdesc
-        title: CATA Attributes Characterising Each Cluster
-        type: Table
-        clearWith:
-          - stimuli
-          - group
-        columns:
-          - name: cluster
-            title: ''
-            type: text
-            combineBelow: true
-          - name: word
-            title: CATA
-            type: text
-          - name: internper
-            title: Intern %
-            type: Number
-          - name: globper
-            title: Global %
-            type: Number
-          - name: internfreq
-            title: Intern frequency
-            type: Number
-          - name: globfreq
-            title: Global frequency
-            type: Number
-          - name: pvaluedfres
-            title: p
-            format: zto,pvalue
-          - name: vtest
-            title: Vtest
-            type: Number
-
-...
+    type: Table
+    visible: stimuli
+    clearWith:
+    - stimuli
+    - group
+    - thres
+    columns:
+    - name: component
+      title: ''
+      type: text
+      combineBelow: true
+    - name: word
+      title: CATA
+      type: text
+    - name: internper
+      title: Intern %
+      type: Number
+      format: zto
+    - name: globper
+      title: Global %
+      type: Number
+      format: zto
+    - name: internfreq
+      title: Intern frequency
+      type: Number
+      format: zto
+    - name: globfreq
+      title: Global frequency
+      type: Number
+      format: zto
+    - name: pvaluedfres
+      title: p
+      format: zto,pvalue
+    - name: vtest
+      title: V-test
+      type: Number
+      format: zto
+- name: step2Guide
+  title: ''
+  type: Html
+- name: plotcata
+  title: Representation of the Stimuli and the CATA
+  type: Image
+  width: 600
+  height: 500
+  renderFun: .plotcatatis
+  clearWith:
+  - stimuli
+  - group
+  - abs
+  - ord
+  - ncp
+- name: step3Guide
+  title: ''
+  type: Html
+- name: plotclassif
+  title: Representation of the Stimuli According to Clusters
+  type: Image
+  width: 600
+  height: 500
+  renderFun: .plotclassif
+  clearWith:
+  - stimuli
+  - group
+  - abs
+  - ord
+  - ncp
+  - nbclust
+- name: clustergroup
+  title: Description of the Clusters
+  type: Group
+  items:
+  - name: clusterdesc
+    title: CATA Attributes Characterising Each Cluster
+    type: Table
+    clearWith:
+    - stimuli
+    - group
+    - thres
+    - ncp
+    - nbclust
+    columns:
+    - name: cluster
+      title: ''
+      type: text
+      combineBelow: true
+    - name: word
+      title: CATA
+      type: text
+    - name: internper
+      title: Intern %
+      type: Number
+      format: zto
+    - name: globper
+      title: Global %
+      type: Number
+      format: zto
+    - name: internfreq
+      title: Intern frequency
+      type: Number
+      format: zto
+    - name: globfreq
+      title: Global frequency
+      type: Number
+      format: zto
+    - name: pvaluedfres
+      title: p
+      format: zto,pvalue
+    - name: vtest
+      title: V-test
+      type: Number
+      format: zto
+- name: step4Guide
+  title: ''
+  type: Html
+- name: textualgroup
+  title: Aggregated CATA Table
+  type: Group
+  items:
+  - name: textual
+    title: Stimuli × CATA Frequency Table
+    type: Table
+    visible: stimuli
+    clearWith:
+    - stimuli
+    - group
+    columns: []
+- name: code
+  title: R Code
+  type: Preformatted
+  visible: (showCode)
+  clearWith:
+  - showCode
+  - stimuli
+  - group
+  - thres
+  - abs
+  - ord
+  - ncp
+  - nbclust
