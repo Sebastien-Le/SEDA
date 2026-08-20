@@ -244,7 +244,11 @@ JARClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
       })
       if (is.null(res.classic)) return()
 
-      self$results$step5Map$setState(res.freq)
+      res.ca <- tryCatch(
+        FactoMineR::CA(res.freq$Frequency, graph = FALSE),
+        error = function(e) NULL
+      )
+      self$results$step5Map$setState(res.ca)
 
       # Native SensoMineR global penalty context: one plot per product.
       stimuli <- colnames(res.jar$Frequency)
@@ -743,13 +747,7 @@ JARClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
 
     .plotboth = function(image, ...) {
       if (is.null(self$options$sensoatt)) return()
-      res.freq <- image$state
-      if (is.null(res.freq) || is.null(res.freq$Frequency)) return()
-
-      res.ca <- tryCatch(
-        FactoMineR::CA(res.freq$Frequency, graph = FALSE),
-        error = function(e) NULL
-      )
+      res.ca <- image$state
       if (is.null(res.ca)) return()
 
       FactoMineR::plot.CA(
