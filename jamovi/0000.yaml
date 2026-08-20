@@ -1,7 +1,7 @@
 ---
 title: Sensory Evaluation Data Analysis
 name: SEDA
-version: 1.4.0
+version: 1.4.1
 jms: '1.0'
 authors:
   - Thomas Leblay
