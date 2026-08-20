@@ -325,19 +325,19 @@ QDAClass <- if (requireNamespace('jmvcore')) R6::R6Class(
       options(contrasts = c("contr.sum", "contr.sum"))
       
       for (j in 1:(firstvar - 1)) donnee[, j] <- as.factor(donnee[, j])
-      level.lower <- -qnorm(proba / 2)
-      formul      <- as.formula(paste(formul, collapse = " "))
+      level.lower <- -stats::qnorm(proba / 2)
+      formul      <- stats::as.formula(paste(formul, collapse = " "))
       lab.sauv    <- colnames(donnee)
       # Use formula-safe internal names for every column while retaining the
       # original sensory names for the output tables.
       lab <- c(".Stimulus", ".Subject", paste0(".Sensory", seq_len(ncol(donnee) - 2L)))
       colnames(donnee) <- lab
       equation <- as.character(formul)
-      Terms    <- attr(terms(as.formula(paste(equation, collapse = " "))), "term.labels")
+      Terms    <- attr(stats::terms(stats::as.formula(paste(equation, collapse = " "))), "term.labels")
       equation <- paste("~", Terms[1])
       if (length(Terms) > 1)
         for (i in 2:length(Terms)) equation <- paste(equation, "+", Terms[i])
-      equation <- as.character(as.formula(paste(equation, collapse = " ")))
+      equation <- as.character(stats::as.formula(paste(equation, collapse = " ")))
       
       dim.donnee <- ncol(donnee)
       
@@ -363,7 +363,7 @@ QDAClass <- if (requireNamespace('jmvcore')) R6::R6Class(
       adjmean <- coeff <- tabT <- matrix(0, lastvar + 1 - firstvar, nb.modalite)
       
       for (varendo in firstvar:lastvar) {
-        formule      <- as.formula(paste(lab[varendo], "~", equation[2]))
+        formule      <- stats::as.formula(paste(lab[varendo], "~", equation[2]))
         res          <- summary(aov(formule, data = donnee, na.action = na.exclude))[[1]]
         nrow.facteur <- nrow(res)
         
@@ -378,10 +378,10 @@ QDAClass <- if (requireNamespace('jmvcore')) R6::R6Class(
           }
         }
         
-        tabF[varendo - firstvar + 1, 1] <- -qnorm(pf(
+        tabF[varendo - firstvar + 1, 1] <- -stats::qnorm(stats::pf(
           res[1, 3] / res[nrow.facteur, 3], res[1, 1], res[nrow.facteur, 1],
           lower.tail = FALSE))
-        tabF[varendo - firstvar + 1, 2] <- pf(
+        tabF[varendo - firstvar + 1, 2] <- stats::pf(
           res[1, 3] / res[nrow.facteur, 3], res[1, 1], res[nrow.facteur, 1],
           lower.tail = FALSE)
         
@@ -391,20 +391,20 @@ QDAClass <- if (requireNamespace('jmvcore')) R6::R6Class(
         
         if (nb.modalite > 2) {
           tabT[varendo - firstvar + 1, 1:(nb.modalite - 1)] <-
-            -qnorm((pf(res2[, 3]^2 * (res[nrow(res), 3] / res[nrow.facteur, 3]),
+            -stats::qnorm((stats::pf(res2[, 3]^2 * (res[nrow(res), 3] / res[nrow.facteur, 3]),
                        1, res[nrow.facteur, 1], lower.tail = FALSE)) / 2) * sign(res2[, 1])
           coeff[varendo - firstvar + 1, 1:(nb.modalite - 1)] <- res2[, 1]
         }
         if (nb.modalite == 2) {
           tabT[varendo - firstvar + 1, 1:(nb.modalite - 1)] <-
-            -qnorm((pf(res2[3]^2 * (res[nrow(res), 3] / res[nrow.facteur, 3]),
+            -stats::qnorm((stats::pf(res2[3]^2 * (res[nrow(res), 3] / res[nrow.facteur, 3]),
                        1, res[nrow.facteur, 1], lower.tail = FALSE)) / 2) * sign(res2[1])
           coeff[varendo - firstvar + 1, 1:(nb.modalite - 1)] <- res2[1]
         }
         
         res2 <- summary.lm(aov(formule, data = don.aux, na.action = na.exclude))$coef[2, ]
         tabT[varendo - firstvar + 1, nb.modalite] <-
-          -qnorm((pf(res2[3]^2 * (res[nrow(res), 3] / res[nrow.facteur, 3]),
+          -stats::qnorm((stats::pf(res2[3]^2 * (res[nrow(res), 3] / res[nrow.facteur, 3]),
                      1, res[nrow.facteur, 1], lower.tail = FALSE)) / 2) * sign(res2[1])
         coeff[varendo - firstvar + 1, nb.modalite]   <- res2[1]
         adjmean[varendo - firstvar + 1, ]            <- moy + coeff[varendo - firstvar + 1, ]
@@ -425,7 +425,7 @@ QDAClass <- if (requireNamespace('jmvcore')) R6::R6Class(
       
       if (length(select1) > 0) {
         resF <- cbind.data.frame(
-          qnorm(tabF[order(tabF[, 2]), 2], lower.tail = FALSE)[select1],
+          stats::qnorm(tabF[order(tabF[, 2]), 2], lower.tail = FALSE)[select1],
           tabF[order(tabF[, 2]), 2][select1]
         )
         dimnames(resF)[[2]] <- c("Vtest", "P-value")

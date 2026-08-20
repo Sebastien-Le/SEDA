@@ -57,7 +57,7 @@ options:
     default: false
 
   - name: regtype
-    title: Regression Model
+    title: Regression model
     type: List
     options:
       - title: Quadratic
