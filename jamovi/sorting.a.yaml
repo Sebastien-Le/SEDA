@@ -121,7 +121,7 @@ options:
     default: 5
 
   - name: longformat
-    title: Show long-format textual data
+    title: Long-format textual data
     type: Bool
     default: false
 
