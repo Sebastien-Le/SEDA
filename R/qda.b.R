@@ -364,7 +364,7 @@ QDAClass <- if (requireNamespace('jmvcore')) R6::R6Class(
       
       for (varendo in firstvar:lastvar) {
         formule      <- stats::as.formula(paste(lab[varendo], "~", equation[2]))
-        res          <- summary(aov(formule, data = donnee, na.action = na.exclude))[[1]]
+        res          <- summary(stats::aov(formule, data = donnee, na.action = stats::na.exclude))[[1]]
         nrow.facteur <- nrow(res)
         
         if (random && !is.null(col.j)) {
@@ -385,7 +385,7 @@ QDAClass <- if (requireNamespace('jmvcore')) R6::R6Class(
           res[1, 3] / res[nrow.facteur, 3], res[1, 1], res[nrow.facteur, 1],
           lower.tail = FALSE)
         
-        res2 <- summary.lm(aov(formule, data = donnee, na.action = na.exclude))$coef[1:nb.modalite, ]
+        res2 <- stats::summary.lm(stats::aov(formule, data = donnee, na.action = stats::na.exclude))$coef[1:nb.modalite, ]
         moy  <- res2[1, 1]
         res2 <- res2[-1, ]
         
@@ -402,7 +402,7 @@ QDAClass <- if (requireNamespace('jmvcore')) R6::R6Class(
           coeff[varendo - firstvar + 1, 1:(nb.modalite - 1)] <- res2[1]
         }
         
-        res2 <- summary.lm(aov(formule, data = don.aux, na.action = na.exclude))$coef[2, ]
+        res2 <- stats::summary.lm(stats::aov(formule, data = don.aux, na.action = stats::na.exclude))$coef[2, ]
         tabT[varendo - firstvar + 1, nb.modalite] <-
           -stats::qnorm((stats::pf(res2[3]^2 * (res[nrow(res), 3] / res[nrow.facteur, 3]),
                      1, res[nrow.facteur, 1], lower.tail = FALSE)) / 2) * sign(res2[1])
@@ -436,7 +436,7 @@ QDAClass <- if (requireNamespace('jmvcore')) R6::R6Class(
           resT[[i]] <- cbind.data.frame(
             coeff[rev(order(tabT[, i])), i][select],
             adjmean[rev(order(tabT[, i])), i][select],
-            2 * pnorm(-abs(tabT[rev(order(tabT[, i])), i][select])),
+            2 * stats::pnorm(-abs(tabT[rev(order(tabT[, i])), i][select])),
             tabT[rev(order(tabT[, i])), i][select]
           )
           dimnames(resT[[i]])[[2]] <- c("Coeff", "Adjust mean", "P-value", "Vtest")

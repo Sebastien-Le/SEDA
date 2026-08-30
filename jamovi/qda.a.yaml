@@ -5,6 +5,7 @@ menuGroup: SEDA
 
 menuSubgroup: Fixed List of Attributes
 menuTitle: Characterization of the Stimulus Space
+menuSubtitle: 'SensoMineR::decat'
 
 version: '1.1.0'
 jas: '1.2'
