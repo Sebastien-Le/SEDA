@@ -666,7 +666,7 @@ QDABOOTClass <- if (requireNamespace('jmvcore')) R6::R6Class(
       if (is.null(hote))
         return()
       
-      self$results$hotGr$hot_table$addColumn(name = "Product", title = "Product", type = "text")
+      self$results$hotGr$hot_table$addColumn(name = ".Product", title = "Product", type = "text")
       
       for (i in seq_len(nrow(hote))) {
         self$results$hotGr$hot_table$addColumn(
@@ -679,7 +679,7 @@ QDABOOTClass <- if (requireNamespace('jmvcore')) R6::R6Class(
       
       for (i in seq_len(nrow(hote))) {
         row <- list()
-        row[["Product"]] <- as.character(colnames(hote)[i])
+        row[[".Product"]] <- as.character(colnames(hote)[i])
         for (j in seq_len(ncol(hote)))
           row[[as.character(colnames(hote)[j])]] <- round(hote[i, j], 5)
         self$results$hotGr$hot_table$setRow(rowNo = i, values = row)

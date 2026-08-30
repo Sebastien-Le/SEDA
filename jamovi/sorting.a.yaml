@@ -2,6 +2,9 @@
 name: Sorting
 title: Analysis of Sorting Data
 menuGroup: SEDA
+menuSubgroup: Free Perception
+menuTitle: Analysis of Sorting Data
+menuSubtitle: 'FactoMineR::MCA'
 version: '1.1.0'
 jas: '1.2'
 

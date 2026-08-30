@@ -244,8 +244,8 @@ cataClass <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
     #### Compute results ----
 
     .Dataprod = function(data) {
-      formula <- reformulate(self$options$stimuli, response = ".")
-      data <- aggregate(formula, data = data, sum)
+      formula <- stats::reformulate(self$options$stimuli, response = ".")
+      data <- stats::aggregate(formula, data = data, sum)
       rownames(data) <- data[, 1]
       data[, -1, drop = FALSE]
     },
@@ -547,8 +547,8 @@ cataClass <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
         cluster = clust_var,
         res.dataprod
       )
-      formula <- reformulate("cluster", response = ".")
-      tab_clust <- aggregate(formula, data = data_by_cluster, sum)
+      formula <- stats::reformulate("cluster", response = ".")
+      tab_clust <- stats::aggregate(formula, data = data_by_cluster, sum)
       rownames(tab_clust) <- tab_clust[, 1]
       tab_clust <- tab_clust[, -1, drop = FALSE]
 
