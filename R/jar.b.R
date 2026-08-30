@@ -457,9 +457,13 @@ JARClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
         stop(paste0("JAR level '", jarlevel, "' was not found."))
       mapping[jar.idx] <- "JAR"
 
+      raw <- trimws(tolower(lev))
       norm <- private$.normaliseLabel(lev)
-      is.low <- grepl(lowPattern, norm, perl = TRUE, ignore.case = TRUE)
-      is.high <- grepl(highPattern, norm, perl = TRUE, ignore.case = TRUE)
+
+      is.low <- grepl(lowPattern, raw, perl = TRUE, ignore.case = TRUE) |
+        grepl(lowPattern, norm, perl = TRUE, ignore.case = TRUE)
+      is.high <- grepl(highPattern, raw, perl = TRUE, ignore.case = TRUE) |
+        grepl(highPattern, norm, perl = TRUE, ignore.case = TRUE)
 
       mapping[is.low & !is.high] <- "Below JAR"
       mapping[is.high & !is.low] <- "Above JAR"
@@ -970,9 +974,12 @@ JARClass <- if (requireNamespace('jmvcore', quietly=TRUE)) R6::R6Class(
         "  jar_i <- match(jar_level, lev)",
         "  if (is.na(jar_i)) stop(paste(\"JAR level not found in\", deparse(substitute(x))))",
         "  map[jar_i] <- \"JAR\"",
+        "  raw <- trimws(tolower(lev))",
         "  z <- normalise_label(lev)",
-        "  lo <- grepl(below_pattern, z, perl = TRUE, ignore.case = TRUE)",
-        "  hi <- grepl(above_pattern, z, perl = TRUE, ignore.case = TRUE)",
+        "  lo <- grepl(below_pattern, raw, perl = TRUE, ignore.case = TRUE) |",
+        "    grepl(below_pattern, z, perl = TRUE, ignore.case = TRUE)",
+        "  hi <- grepl(above_pattern, raw, perl = TRUE, ignore.case = TRUE) |",
+        "    grepl(above_pattern, z, perl = TRUE, ignore.case = TRUE)",
         "  map[lo & !hi] <- \"Below JAR\"",
         "  map[hi & !lo] <- \"Above JAR\"",
         "  map",
