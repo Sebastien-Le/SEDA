@@ -215,10 +215,38 @@ cataClass <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
 
       self$results$plotcata$setState(res.ca)
 
-      res.ca.cluster <- private$.CAforClustering(res.ca, ncp_cluster)
+      coord.cluster <- as.data.frame(
+        res.ca$row$coord[, seq_len(ncp_cluster), drop = FALSE],
+        check.names = FALSE
+      )
+      if (!all(is.finite(as.matrix(coord.cluster)))) {
+        jmvcore::reject("Clustering failed: non-finite CA coordinates were detected.")
+        return()
+      }
+
+      # Preserve the CA row masses while expressing the clustering inertia
+      # relative to the retained factorial dimensions. This is equivalent to
+      # FactoMineR's CA handling inside HCPC, but applied to the reduced space.
+      row.weights.cluster <- res.ca$call$marge.row * sum(res.ca$call$X)
+      res.pca.cluster <- tryCatch(
+        FactoMineR::PCA(
+          coord.cluster,
+          scale.unit = FALSE,
+          row.w = row.weights.cluster,
+          ncp = Inf,
+          graph = FALSE
+        ),
+        error = function(e) {
+          jmvcore::reject(paste("Weighted PCA for HCPC failed:", e$message))
+          NULL
+        }
+      )
+      if (is.null(res.pca.cluster))
+        return()
+
       res.classif <- tryCatch(
         FactoMineR::HCPC(
-          res.ca.cluster,
+          res.pca.cluster,
           nb.clust = as.integer(self$options$nbclust),
           graph = FALSE
         ),
@@ -376,17 +404,6 @@ cataClass <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
       as.integer(min(max(1L, requested), maxdim))
     },
 
-    .CAforClustering = function(res.ca, ncp_cluster) {
-      out <- res.ca
-      keep <- seq_len(min(ncp_cluster, ncol(res.ca$row$coord)))
-      out$row$coord <- res.ca$row$coord[, keep, drop = FALSE]
-      if (!is.null(out$eig))
-        out$eig <- res.ca$eig[keep, , drop = FALSE]
-      if (!is.null(out$call$ncp))
-        out$call$ncp <- length(keep)
-      out
-    },
-
     .code = function(maxdim) {
       r_literal <- function(value) {
         if (is.null(value))
@@ -455,14 +472,23 @@ cataClass <- if (requireNamespace('jmvcore', quietly = TRUE)) R6::R6Class(
         "",
         "# HCPC uses only the first dimensions requested for clustering, independently",
         "# of the factorial plane displayed above.",
-        "res_CA_for_HCPC <- res_CA_CATA",
-        "keep_CATA <- seq_len(ncp_clustering_CATA)",
-        "res_CA_for_HCPC$row$coord <- res_CA_for_HCPC$row$coord[, keep_CATA, drop = FALSE]",
-        "res_CA_for_HCPC$eig <- res_CA_for_HCPC$eig[keep_CATA, , drop = FALSE]",
-        "if (!is.null(res_CA_for_HCPC$call$ncp)) res_CA_for_HCPC$call$ncp <- length(keep_CATA)",
+        "# CA row masses are preserved when the retained coordinates are re-expressed",
+        "# as a non-standardized PCA before HCPC.",
+        "coord_HCPC_CATA <- as.data.frame(",
+        "  res_CA_CATA$row$coord[, seq_len(ncp_clustering_CATA), drop = FALSE],",
+        "  check.names = FALSE",
+        ")",
+        "row_weights_HCPC_CATA <- res_CA_CATA$call$marge.row * sum(res_CA_CATA$call$X)",
+        "res_PCA_HCPC_CATA <- FactoMineR::PCA(",
+        "  coord_HCPC_CATA,",
+        "  scale.unit = FALSE,",
+        "  row.w = row_weights_HCPC_CATA,",
+        "  ncp = Inf,",
+        "  graph = FALSE",
+        ")",
         "",
         "res_HCPC_CATA <- FactoMineR::HCPC(",
-        "  res_CA_for_HCPC,",
+        "  res_PCA_HCPC_CATA,",
         paste0("  nb.clust = ", r_literal(nbclust), ","),
         "  graph = FALSE",
         ")",

@@ -415,17 +415,18 @@ NappingClass <- if (requireNamespace('jmvcore')) R6::R6Class(
       if (ncp_cluster < 1L)
         return(NULL)
 
-      res_for_hcpc <- res
-      keep <- seq_len(ncp_cluster)
-      res_for_hcpc$ind$coord <- res_for_hcpc$ind$coord[, keep, drop = FALSE]
-      if (!is.null(res_for_hcpc$eig))
-        res_for_hcpc$eig <- res_for_hcpc$eig[keep, , drop = FALSE]
-      if (!is.null(res_for_hcpc$call$ncp))
-        res_for_hcpc$call$ncp <- ncp_cluster
+      coord <- as.data.frame(
+        res$ind$coord[, seq_len(ncp_cluster), drop = FALSE],
+        check.names = FALSE
+      )
+      if (!all(is.finite(as.matrix(coord)))) {
+        jmvcore::reject('Clustering failed: non-finite MFA coordinates were detected.')
+        return(NULL)
+      }
 
       reshcpc <- tryCatch(
         FactoMineR::HCPC(
-          res_for_hcpc,
+          coord,
           nb.clust = self$nbclust,
           graph = FALSE,
           description = FALSE
@@ -692,14 +693,14 @@ NappingClass <- if (requireNamespace('jmvcore')) R6::R6Class(
         code <- c(code,
           '',
           '# HCPC uses exactly the first dimensions requested for clustering.',
-          'res_NAPPING_for_HCPC <- res_NAPPING',
-          'keep_NAPPING <- seq_len(n_saved_NAPPING)',
-          'res_NAPPING_for_HCPC$ind$coord <- res_NAPPING_for_HCPC$ind$coord[, keep_NAPPING, drop = FALSE]',
-          'res_NAPPING_for_HCPC$eig <- res_NAPPING_for_HCPC$eig[keep_NAPPING, , drop = FALSE]',
-          'if (!is.null(res_NAPPING_for_HCPC$call$ncp)) res_NAPPING_for_HCPC$call$ncp <- length(keep_NAPPING)',
+          '# As in MEDA, clustering is performed on the retained factor coordinates.',
+          'coord_HCPC_NAPPING <- as.data.frame(',
+          '  res_NAPPING$ind$coord[, seq_len(n_saved_NAPPING), drop = FALSE],',
+          '  check.names = FALSE',
+          ')',
           '',
           'res_HCPC_NAPPING <- FactoMineR::HCPC(',
-          '  res_NAPPING_for_HCPC,',
+          '  coord_HCPC_NAPPING,',
           paste0('  nb.clust = ', nbclust, ','),
           '  graph = FALSE,',
           '  description = FALSE',
